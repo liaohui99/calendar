@@ -1,0 +1,50 @@
+# 开发环境配置
+spring:
+  application:
+    name: calendar-chart-backend
+  # Redis配置（保持不变）
+  redis:
+    host: 101.126.13.194
+    port: 6379
+    database: 7
+    password: agwmXT@rjiboR0+BGKWY
+  # H2数据库配置
+  datasource:
+    url: jdbc:h2:mem:calendar_chart;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MySQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  # H2控制台配置
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+  # 自动建表配置
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+  # MyBatis-Plus配置
+  main:
+    allow-bean-definition-overriding: true
+
+# 服务器配置
+server:
+  port: 8080
+
+# 日志配置（开发环境设置为DEBUG级别）
+logging:
+  level:
+    root: INFO
+    com.calendar.chart: DEBUG
+    org.springframework.web: DEBUG
+    org.hibernate: INFO
+# MyBatis-Plus配置
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.calendar.chart.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

@@ -1,0 +1,242 @@
+import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { SemiAdapter } from '@douyinfe/semi-testing';
+import ApprovalPage from './ApprovalPage';
+import { reservationApi } from '../services/api';
+import { ReservationStatus } from '../types';
+
+// Mock API calls
+jest.mock('../services/api', () => ({
+  reservationApi: {
+    getReservations: jest.fn(),
+    updateReservationStatus: jest.fn(),
+  },
+}));
+
+// Mock Modal from Semi UI
+jest.mock('@douyinfe/semi-ui', () => {
+  const originalModule = jest.requireActual('@douyinfe/semi-ui');
+  return {
+    ...originalModule,
+    Modal: {
+      success: jest.fn(),
+      error: jest.fn(),
+      confirm: jest.fn((options) => {
+        // 模拟用户点击确认
+        options.onOk();
+      }),
+    },
+    message: {
+      error: jest.fn(),
+    },
+  };
+});
+
+// Mock icons
+jest.mock('@ant-design/icons', () => ({
+  ReloadOutlined: () => <span>Reload</span>,
+  CheckCircleOutlined: () => <span>Check</span>,
+  CloseCircleOutlined: () => <span>Close</span>,
+}));
+
+describe('ApprovalPage Component', () => {
+  const mockReservations = [
+    {
+      id: '1',
+      userName: '张三',
+      userContact: '13800138000',
+      device: { name: '设备A' },
+      startTime: '2024-01-01T09:00:00Z',
+      endTime: '2024-01-01T10:00:00Z',
+      reason: '测试预约',
+      status: ReservationStatus.PENDING,
+      createdAt: '2024-01-01T00:00:00Z',
+    },
+    {
+      id: '2',
+      userName: '李四',
+      userContact: '13900139000',
+      device: { name: '设备B' },
+      startTime: '2024-01-02T14:00:00Z',
+      endTime: '2024-01-02T15:00:00Z',
+      reason: '演示预约',
+      status: ReservationStatus.CONFIRMED,
+      createdAt: '2024-01-01T12:00:00Z',
+    },
+  ];
+
+  beforeEach(() => {
+    // 重置所有mock
+    jest.clearAllMocks();
+    
+    // 设置默认的API返回
+    (reservationApi.getReservations as jest.Mock).mockResolvedValue({
+      data: {
+        data: mockReservations,
+        total: mockReservations.length,
+      },
+    });
+    
+    (reservationApi.updateReservationStatus as jest.Mock).mockResolvedValue({});
+  });
+
+  test('should render loading state initially', async () => {
+    render(<ApprovalPage />);
+    
+    // 检查是否显示加载状态
+    expect(screen.getByText(/加载中/)).toBeInTheDocument();
+    
+    // 等待加载完成
+    await waitFor(() => {
+      expect(screen.queryByText(/加载中/)).not.toBeInTheDocument();
+    });
+  });
+
+  test('should render reservation data in table', async () => {
+    render(<ApprovalPage />);
+    
+    // 等待表格数据加载完成
+    await waitFor(() => {
+      expect(screen.getByText('张三')).toBeInTheDocument();
+      expect(screen.getByText('李四')).toBeInTheDocument();
+    });
+    
+    // 检查设备名称
+    expect(screen.getByText('设备A')).toBeInTheDocument();
+    expect(screen.getByText('设备B')).toBeInTheDocument();
+    
+    // 检查状态标签
+    expect(screen.getByText('待确认')).toBeInTheDocument();
+    expect(screen.getByText('已确认')).toBeInTheDocument();
+  });
+
+  test('should show action buttons for pending reservations only', async () => {
+    render(<ApprovalPage />);
+    
+    // 等待表格加载完成
+    await waitFor(() => {
+      expect(screen.getByText('张三')).toBeInTheDocument();
+    });
+    
+    // 检查待确认预约是否有操作按钮
+    expect(screen.getByText('通过')).toBeInTheDocument();
+    expect(screen.getByText('拒绝')).toBeInTheDocument();
+  });
+
+  test('should call approve action when approve button is clicked', async () => {
+    render(<ApprovalPage />);
+    
+    // 等待表格加载完成
+    await waitFor(() => {
+      expect(screen.getByText('通过')).toBeInTheDocument();
+    });
+    
+    // 点击通过按钮
+    fireEvent.click(screen.getByText('通过'));
+    
+    // 等待API调用完成
+    await waitFor(() => {
+      expect(reservationApi.updateReservationStatus).toHaveBeenCalledWith(
+        '1',
+        { status: ReservationStatus.CONFIRMED }
+      );
+    });
+  });
+
+  test('should call reject action when reject button is clicked', async () => {
+    render(<ApprovalPage />);
+    
+    // 等待表格加载完成
+    await waitFor(() => {
+      expect(screen.getByText('拒绝')).toBeInTheDocument();
+    });
+    
+    // 点击拒绝按钮
+    fireEvent.click(screen.getByText('拒绝'));
+    
+    // 等待API调用完成
+    await waitFor(() => {
+      expect(reservationApi.updateReservationStatus).toHaveBeenCalledWith(
+        '1',
+        { status: ReservationStatus.CANCELLED }
+      );
+    });
+  });
+
+  test('should handle status filter change', async () => {
+    render(<ApprovalPage />);
+    
+    // 等待页面加载完成
+    await waitFor(() => {
+      expect(screen.getByText('状态筛选：')).toBeInTheDocument();
+    });
+    
+    // 模拟选择筛选条件
+    const selectElement = screen.getByRole('combobox');
+    fireEvent.change(selectElement, { target: { value: ReservationStatus.CONFIRMED } });
+    
+    // 等待API调用，检查是否传递了筛选参数
+    await waitFor(() => {
+      expect(reservationApi.getReservations).toHaveBeenCalledWith({
+        status: ReservationStatus.CONFIRMED,
+        page: 1,
+        pageSize: 10
+      });
+    });
+  });
+
+  test('should handle refresh button click', async () => {
+    render(<ApprovalPage />);
+    
+    // 等待页面加载完成
+    await waitFor(() => {
+      expect(screen.getByText('刷新数据')).toBeInTheDocument();
+    });
+    
+    // 点击刷新按钮
+    fireEvent.click(screen.getByText('刷新数据'));
+    
+    // 等待API调用
+    await waitFor(() => {
+      // 确保API被调用了至少两次（初始加载和刷新）
+      expect(reservationApi.getReservations).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  test('should handle API error correctly', async () => {
+    // 设置API返回错误
+    (reservationApi.getReservations as jest.Mock).mockRejectedValueOnce(
+      new Error('API Error')
+    );
+    
+    render(<ApprovalPage />);
+    
+    // 等待错误显示
+    await waitFor(() => {
+      expect(screen.getByText(/获取预约列表失败/)).toBeInTheDocument();
+      expect(screen.getByText('重新加载')).toBeInTheDocument();
+    });
+  });
+
+  test('should handle approval action error correctly', async () => {
+    render(<ApprovalPage />);
+    
+    // 等待页面加载完成
+    await waitFor(() => {
+      expect(screen.getByText('通过')).toBeInTheDocument();
+    });
+    
+    // 设置API返回错误
+    (reservationApi.updateReservationStatus as jest.Mock).mockRejectedValueOnce(
+      new Error('Approval Error')
+    );
+    
+    // 点击通过按钮
+    fireEvent.click(screen.getByText('通过'));
+    
+    // 等待错误处理
+    await waitFor(() => {
+      expect(require('@douyinfe/semi-ui').Modal.error).toHaveBeenCalled();
+    });
+  });
+});

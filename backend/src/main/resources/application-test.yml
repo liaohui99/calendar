@@ -1,0 +1,37 @@
+# 应用配置
+spring:
+  application:
+    name: calendar-chart-backend
+  # Redis配置
+  redis:
+    host: 101.126.13.194
+    port: 6379
+    database: 7
+    password: agwmXT@rjiboR0+BGKWY
+  # 数据库配置
+  datasource:
+    url: jdbc:mysql://192.168.111.11:3306/calendar_chart?serverTimezone=Asia/Shanghai&characterEncoding=utf8&useUnicode=true&useSSL=false&allowMultiQueries=true
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource  # MyBatis-Plus配置
+  main:
+    allow-bean-definition-overriding: true
+
+# 服务器配置
+server:
+  port: 8080
+
+# 日志配置
+logging:
+  level:
+    root: INFO
+    com.calendar.chart: DEBUG
+
+# MyBatis-Plus配置
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.calendar.chart.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

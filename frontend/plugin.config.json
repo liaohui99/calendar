@@ -1,0 +1,32 @@
+{
+  "siteDomain": "https://project.feishu.cn",
+  "pluginId": "MII_69005847520BC002",
+  "pluginSecret": "8a63c1ecc8dc961fba25a452ee03b9d87f28d7f2da3e9a7b1c8386ed058ba9906664159b75bb24bf499249b536b57087",
+  "baseUrl": "https://bg-test-timeplugin.lundong.com.cn",
+  "boardKey": "board_f3aibp",
+  "pluginVersion": "0.0.1",
+  "framework": "vite",
+  "buildType": "vite",
+  "resources": [
+    {
+      "id": "page-web",
+      "entry": "./src/features/page_web_reservation/App.tsx",
+      "output": "reservationCalendarPage.js"
+    },
+    {
+      "id": "tab-web",
+      "entry": "./src/features/tab_work_item/App.tsx",
+      "output": "tab-web.js"
+    }
+  ],
+  "server": {
+    "port": 3339,
+    "proxy": {
+      "/api": {
+        "target": "http://localhost:8080",
+        "changeOrigin": true,
+        "rewrite": ""
+      }
+    }
+  }
+}

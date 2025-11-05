@@ -1,0 +1,144 @@
+.app-container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding: 20px;
+}
+
+/* 预约日历样式 */
+.reservation-calendar {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.date-navigation {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.today-label {
+  font-weight: 500;
+  margin-right: 8px;
+}
+
+.date-info {
+  margin-left: 8px;
+  color: #666;
+}
+
+.filter-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.calendar-grid {
+  overflow-x: auto;
+  border: 1px solid #e8e8e8;
+  border-radius: 4px;
+}
+
+.reservation-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.reservation-table th {
+  background-color: #fafafa;
+  border-bottom: 1px solid #e0e0e0;
+  border-right: 1px solid #e0e0e0;
+  padding: 8px 4px;
+  text-align: center;
+  font-weight: 500;
+  font-size: 14px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.reservation-table td {
+  border-bottom: 1px solid #e0e0e0;
+  border-right: 1px solid #e0e0e0;
+  padding: 8px 4px;
+  text-align: center;
+  font-size: 12px;
+  height: 32px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  position: relative;
+}
+
+.reservation-table tr:hover td:first-child {
+  background-color: #f5f5f5;
+}
+
+.reservation-table tr:last-child td {
+  border-bottom: none;
+}
+
+.reservation-table th:last-child {
+  border-right: none;
+}
+
+.reservation-table td:last-child {
+  border-right: none;
+}
+
+/* 页面布局样式 */
+.page-layout {
+  min-height: 100vh;
+}
+
+.page-content {
+  padding: 20px;
+  background-color: #f0f2f5;
+}
+
+.page-container {
+  min-height: 100vh;
+}
+
+/* 表格样式优化 */
+.semi-table-row:hover {
+  background-color: #f9f9f9;
+}
+
+/* 预约时间段样式 */
+.reserved-cell {
+  background-color: #ff4d4f20;
+  color: #ff4d4f;
+  cursor: not-allowed;
+}
+
+.available-cell {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.available-cell:hover {
+  background-color: #1890ff20;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .app-container {
+    padding: 10px;
+  }
+  
+  .page-container {
+    padding: 10px !important;
+  }
+}
