@@ -4,6 +4,7 @@ import { SemiAdapter } from '@douyinfe/semi-testing';
 import ApprovalPage from './ApprovalPage';
 import { reservationApi } from '../services/api';
 import { ReservationStatus } from '../types';
+import { Modal } from '@douyinfe/semi-ui';
 
 // Mock API calls
 jest.mock('../services/api', () => ({
@@ -236,7 +237,7 @@ describe('ApprovalPage Component', () => {
     
     // 等待错误处理
     await waitFor(() => {
-      expect(require('@douyinfe/semi-ui').Modal.error).toHaveBeenCalled();
+      expect(Modal.error).toHaveBeenCalled();
     });
   });
 });
