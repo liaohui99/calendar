@@ -8,7 +8,7 @@ export interface DeviceType {
 }
 
 // 地点类型定义
-export interface Location {
+export interface LocationInfo {
   id: number;
   name: string;
   description?: string;
@@ -34,9 +34,10 @@ export interface Device {
   status: DeviceStatus;
   createdAt: string;
   updatedAt: string;
-  // 关联数据
   type?: DeviceType;
-  location?: Location;
+  location?: LocationInfo;
+  locationName?: string;
+  typeName?: string;
 }
 
 // 预约状态枚举
@@ -72,6 +73,20 @@ export interface ReservationFormData {
   startTime: string;
   endTime: string;
   reason: string;
+}
+
+// 全局Window接口扩展
+declare global {
+  interface Window {
+    JSSDK?: {
+      page?: {
+        getContext: () => Promise<any>;
+      };
+      tab?: {
+        getContext: () => Promise<any>;
+      };
+    };
+  }
 }
 
 // API响应类型定义

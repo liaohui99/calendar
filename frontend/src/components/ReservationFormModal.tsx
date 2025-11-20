@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Form, Typography, Button } from '@douyinfe/semi-ui';
+import type { FormState } from '@douyinfe/semi-ui/lib/es/form';
 import dayjs from 'dayjs';
 
 import { reservationApi } from '../services/api';
@@ -43,23 +44,17 @@ const ReservationFormModal: React.FC<ReservationFormModalProps> = ({
   const handleSubmit = async () => {
     // 基本验证 - 添加安全检查确保属性存在且为字符串
     if (!formData.userName || typeof formData.userName !== 'string' || !formData.userName.trim()) {
-      if (import.meta.env.DEV) {
-        console.error('验证失败: 缺少预约人姓名');
-      }
+      console.error('验证失败: 缺少预约人姓名');
       alert('请输入预约人姓名');
       return;
     }
     if (!formData.userContact || typeof formData.userContact !== 'string' || !formData.userContact.trim()) {
-      if (import.meta.env.DEV) {
-        console.error('验证失败: 缺少联系方式');
-      }
+      console.error('验证失败: 缺少联系方式');
       alert('请输入联系方式');
       return;
     }
     if (!formData.reason || typeof formData.reason !== 'string' || !formData.reason.trim()) {
-      if (import.meta.env.DEV) {
-        console.error('验证失败: 缺少预约事由');
-      }
+      console.error('验证失败: 缺少预约事由');
       alert('请输入预约事由');
       return;
     }
@@ -68,9 +63,7 @@ const ReservationFormModal: React.FC<ReservationFormModalProps> = ({
       setLoading(true);
       
       // 验证输入参数
-      if (import.meta.env.DEV) {
-        console.log('输入参数验证:', { date, startTime, endTime, deviceId, deviceName });
-      }
+      console.log('输入参数验证:', { date, startTime, endTime, deviceId, deviceName });
       
       // 使用dayjs确保时间格式正确，后端期望格式为yyyy-MM-dd HH:mm
       // 确保日期和时间格式严格符合Java SimpleDateFormat要求
@@ -81,9 +74,7 @@ const ReservationFormModal: React.FC<ReservationFormModalProps> = ({
       const startDateObj = dayjs(startDateTime);
       const endDateObj = dayjs(endDateTime);
       if (endDateObj.isBefore(startDateObj) || endDateObj.isSame(startDateObj)) {
-        if (import.meta.env.DEV) {
-          console.error('时间顺序验证失败:', { startDateTime, endDateTime });
-        }
+        console.error('时间顺序验证失败:', { startDateTime, endDateTime });
         alert('结束时间必须大于开始时间');
         return;
       }
@@ -98,9 +89,8 @@ const ReservationFormModal: React.FC<ReservationFormModalProps> = ({
         reason: (formData.reason as string).trim(),
       };
       
-      if (import.meta.env.DEV) {
-        console.log('准备发送到后端的预约数据:', JSON.stringify(reservationData));
-      }
+      console.log('准备发送到后端的预约数据:', JSON.stringify(reservationData));
+      
 
       // 提交预约 - 使用已经验证过的安全值
       // 添加额外的参数类型检查
@@ -110,9 +100,8 @@ const ReservationFormModal: React.FC<ReservationFormModalProps> = ({
       
       const response = await reservationApi.createReservation(reservationData);
       
-      if (import.meta.env.DEV) {
-        console.log('预约API调用成功，状态码:', response.status);
-      }
+      console.log('预约API调用成功，状态码:', response.status);
+      
       
       // 显示成功提示
       alert('预约成功！');
@@ -144,22 +133,18 @@ const ReservationFormModal: React.FC<ReservationFormModalProps> = ({
         errorMessage = serverError || '服务器内部错误，请稍后重试';
       }
       
-      // 开发环境下输出关键错误信息
-      if (import.meta.env.DEV) {
-        console.error('预约失败:', { 
-          status: errorStatus, 
-          message: errorMessage,
-          responseData: apiError.response?.data,
-          errorStack: apiError.stack
-        });
-      }
+      // 输出关键错误信息
+      console.error('预约失败:', { 
+        status: errorStatus, 
+        message: errorMessage,
+        responseData: apiError.response?.data,
+        errorStack: apiError.stack
+      });
       
       // 显示友好的错误提示
-      alert(`预约失败: ${errorMessage}`);
+      alert(errorMessage);
     } finally {
-      if (import.meta.env.DEV) {
-        console.log('表单提交流程结束');
-      }
+      console.log('表单提交流程结束');
       setLoading(false);
     }
   };
@@ -207,9 +192,13 @@ const ReservationFormModal: React.FC<ReservationFormModalProps> = ({
         <Form 
           layout="vertical" 
           initValues={formData} 
-          onChange={(formState) => {
-            // FormState包含当前表单的所有值
-            setFormData(formState.values);
+          onChange={(formState: FormState) => {
+            // 安全地更新表单数据
+            setFormData({
+              userName: formState.values.userName || '',
+              userContact: formState.values.userContact || '',
+              reason: formState.values.reason || ''
+            });
           }}
         >
           {/* 调试按钮 */}
@@ -289,7 +278,7 @@ const ReservationFormModal: React.FC<ReservationFormModalProps> = ({
               label="预约事由"
               placeholder="请输入预约事由"
               rows={4}
-              style={{ marginBottom: '8px' }}
+              style={{ marginBottom: '16px' }}
             />
           </div>
         </Form>

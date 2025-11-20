@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Select, Card, DatePicker, Button, Row, Col } from '@douyinfe/semi-ui';
 import dayjs from 'dayjs';
-import type { DeviceType, Location } from '../types';
+import type { DeviceType, LocationInfo } from '../types';
 import { typeApi, locationApi } from '../services/api';
 
 interface FilterComponentProps {
   onFilterChange: (locationId?: number, typeId?: number, date?: string) => void;
+  onNewReservationClick?: () => void;
 }
 
-const FilterComponent: React.FC<FilterComponentProps> = ({ onFilterChange }) => {
-  const [locations, setLocations] = useState<Location[]>([]);
+const FilterComponent: React.FC<FilterComponentProps> = ({ onFilterChange, onNewReservationClick }) => {
+  const [locations, setLocations] = useState<LocationInfo[]>([]);
   const [types, setTypes] = useState<DeviceType[]>([]);
   const [selectedLocationId, setSelectedLocationId] = useState<number | undefined>(undefined);
   const [selectedTypeId, setSelectedTypeId] = useState<number | undefined>(undefined);
@@ -184,7 +185,7 @@ const FilterComponent: React.FC<FilterComponentProps> = ({ onFilterChange }) => 
             </Button>
             
             {/* 新建预约单按钮 */}
-            <Button type="primary" size="small" style={{ textAlign: 'center' }}>
+            <Button type="primary" size="small" style={{ textAlign: 'center' }} onClick={onNewReservationClick}>
               新建预约单
             </Button>
           </Col>

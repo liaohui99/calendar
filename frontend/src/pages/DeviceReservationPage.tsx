@@ -1,12 +1,13 @@
 import React, { useState, useCallback } from 'react';
-import { Layout, Typography } from '@douyinfe/semi-ui';
+import { Typography } from '@douyinfe/semi-ui';
 import dayjs from 'dayjs';
 import CalendarView from '../components/CalendarView';
 import FilterComponent from '../components/FilterComponent';
 import ReservationFormModal from '../components/ReservationFormModal';
+import GeneralReservationForm from '../components/GeneralReservationForm';
 
 
-const { Header, Content } = Layout;
+// 移除未使用的Layout组件
 const { Title } = Typography;
 
 const DeviceReservationPage: React.FC = () => {
@@ -19,6 +20,7 @@ const DeviceReservationPage: React.FC = () => {
   
   // 预约表单模态框状态
   const [showModal, setShowModal] = useState(false);
+  const [showGeneralModal, setShowGeneralModal] = useState(false);
   const [selectedCellInfo, setSelectedCellInfo] = useState({
     deviceId: 0,
     startTime: '',
@@ -33,6 +35,17 @@ const DeviceReservationPage: React.FC = () => {
     if (date) {
       setSelectedDate(date);
     }
+  }, []);
+
+  // 处理新建预约按钮点击
+  const handleNewReservationClick = useCallback(() => {
+    setShowGeneralModal(true);
+  }, []);
+
+  // 处理通用预约成功
+  const handleGeneralReservationSuccess = useCallback(() => {
+    // 刷新数据
+    setRefreshTrigger(prev => prev + 1);
   }, []);
   
   // 处理单元格点击
@@ -55,8 +68,8 @@ const DeviceReservationPage: React.FC = () => {
   }, []);
 
   return (
-    <Layout className="page-layout" style={{ minHeight: '100vh' }}>
-      <Header style={{ 
+    <div className="page-layout" style={{ minHeight: '100vh' }}>
+      <div style={{ 
           backgroundColor: '#fff', 
           padding: '0 16px 0 24px', 
           boxShadow: '0 1px 4px rgba(0,21,41,0.08)',
@@ -69,8 +82,8 @@ const DeviceReservationPage: React.FC = () => {
           <Title style={{ margin: 0, color: '#262626', fontSize: '18px' }}>
             设备预约系统
           </Title>
-        </Header>
-        <Content className="page-content" style={{ 
+        </div>
+        <div className="page-content" style={{ 
           padding: '24px', 
           backgroundColor: '#f0f2f5',
           minHeight: 'calc(100vh - 64px)',
@@ -79,7 +92,7 @@ const DeviceReservationPage: React.FC = () => {
           width: '100%' 
         }}>
           {/* 筛选组件 */}
-          <FilterComponent onFilterChange={handleFilterChange} />
+          <FilterComponent onFilterChange={handleFilterChange} onNewReservationClick={handleNewReservationClick} />
           
           {/* 日历视图组件 */}
           <CalendarView 
@@ -101,8 +114,14 @@ const DeviceReservationPage: React.FC = () => {
             date={selectedDate}
             deviceName={selectedCellInfo.deviceName}
           />
-        </Content>
-    </Layout>
+          
+          <GeneralReservationForm
+            visible={showGeneralModal}
+            onClose={() => setShowGeneralModal(false)}
+            onSuccess={handleGeneralReservationSuccess}
+          />
+        </div>
+    </div>
   );
 };
 

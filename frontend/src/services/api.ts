@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios';
-import type { Device, DeviceType, Location, Reservation, ReservationFormData, ApiResponse, ReservationStatus } from '../types';
+import type { Device, DeviceType, LocationInfo, Reservation, ReservationFormData, ApiResponse, ReservationStatus } from '../types';
 
 // 创建axios实例
 const apiClient = axios.create({
@@ -31,13 +31,11 @@ apiClient.interceptors.request.use(
 // 响应拦截器
 apiClient.interceptors.response.use(
   (response) => {
-    // 仅在开发环境输出日志
-    if (import.meta.env.DEV) {
-      console.log('API响应成功:', {
-        url: response.config?.url,
-        status: response.status
-      });
-    }
+    // 输出日志
+    console.log('API响应成功:', {
+      url: response.config?.url,
+      status: response.status
+    });
     
     // 确保响应数据格式一致
     if (response.data && typeof response.data === 'object') {
@@ -56,37 +54,35 @@ apiClient.interceptors.response.use(
     return response;
   },
   (error: AxiosError) => {
-    // 仅在开发环境输出详细错误日志
-    if (import.meta.env.DEV) {
-      // 更详细的错误信息记录
-      let requestData = null;
-      try {
-        // 安全地解析请求数据，避免JSON.parse错误
-        if (error.config?.data && typeof error.config.data === 'string') {
-          try {
-            requestData = JSON.parse(error.config.data);
-          } catch (parseError) {
-            // 如果解析失败，保留原始字符串
-            requestData = error.config.data;
-          }
-        } else {
-          requestData = error.config?.data;
+    // 输出详细错误日志
+    // 更详细的错误信息记录
+    let requestData = null;
+    try {
+      // 安全地解析请求数据，避免JSON.parse错误
+      if (error.config?.data && typeof error.config.data === 'string') {
+        try {
+          requestData = JSON.parse(error.config.data);
+        } catch (parseError) {
+          // 如果解析失败，保留原始字符串
+          requestData = error.config.data;
         }
-      } catch (err) {
-        requestData = '无法解析请求数据';
+      } else {
+        requestData = error.config?.data;
       }
-      
-      const errorDetails = {
-        url: error.config?.url,
-        method: error.config?.method,
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-        requestData: requestData,
-        responseData: error.response?.data,
-        message: error.message
-      };
-      console.error('API请求错误:', errorDetails);
+    } catch (err) {
+      requestData = '无法解析请求数据';
     }
+    
+    const errorDetails = {
+      url: error.config?.url,
+      method: error.config?.method,
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      requestData: requestData,
+      responseData: error.response?.data,
+      message: error.message
+    };
+    console.error('API请求错误:', errorDetails);
     
     let errorMessage = '未知错误';
     
@@ -205,17 +201,13 @@ export const typeApi = {
 export const locationApi = {
   // 获取地点列表
   getLocations: () => {
-    return apiClient.get<ApiResponse<Location[]>>('/locations');
+    return apiClient.get<ApiResponse<LocationInfo[]>>('/locations');
   },
-  
-  // 创建地点
-  createLocation: (location: Omit<Location, 'id' | 'createdAt' | 'updatedAt'>) => {
-    return apiClient.post<ApiResponse<Location>>('/locations', location);
+  createLocation: (location: Omit<LocationInfo, 'id' | 'createdAt' | 'updatedAt'>) => {
+    return apiClient.post<ApiResponse<LocationInfo>>('/locations', location);
   },
-  
-  // 更新地点
-  updateLocation: (id: number, location: Partial<Location>) => {
-    return apiClient.put<ApiResponse<Location>>(`/locations/${id}`, location);
+  updateLocation: (id: number, location: Partial<LocationInfo>) => {
+    return apiClient.put<ApiResponse<LocationInfo>>(`/locations/${id}`, location);
   },
   
   // 删除地点

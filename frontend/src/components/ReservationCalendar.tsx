@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { DatePicker, Select, Button, Modal, Card, Typography, Space, Row, Col, Input, Tag, Tooltip, TextArea } from '@douyinfe/semi-ui';
 import dayjs, { Dayjs } from 'dayjs';
 import { deviceApi, locationApi, typeApi, reservationApi } from '../services/api';
-import type { Device, Location, DeviceType, Reservation } from '../types';
+import type { Device, LocationInfo, DeviceType, Reservation } from '../types';
+import GeneralReservationForm from './GeneralReservationForm';
 
 const { Text } = Typography;
 const { Option } = Select;
@@ -11,13 +12,14 @@ const ReservationCalendar: React.FC = () => {
   // 状态管理
   const [date, setDate] = useState<Dayjs>(dayjs());
   const [devices, setDevices] = useState<Device[]>([]);
-  const [locations, setLocations] = useState<Location[]>([]);
+  const [locations, setLocations] = useState<LocationInfo[]>([]);
   const [deviceTypes, setDeviceTypes] = useState<DeviceType[]>([]);
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<string>('');
   const [selectedType, setSelectedType] = useState<string>('');
   const [showModal, setShowModal] = useState(false);
   const [selectedDevice, setSelectedDevice] = useState<Device | null>(null);
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState<string>(''); // 选中的时间槽
   const [loading, setLoading] = useState(false);
   const [modalLoading, setModalLoading] = useState(false);
   
@@ -151,17 +153,23 @@ const ReservationCalendar: React.FC = () => {
     try {
       setModalLoading(true);
       
+      // 计算预约时间段
+      const startHour = selectedTimeSlot ? parseInt(selectedTimeSlot) : 8;
+      const endHour = startHour + 1;
+      
       // 提交预约信息
       await reservationApi.createReservation({
         deviceId: selectedDevice?.id || 0,
         userName: '', // 简化实现，实际应从表单获取
         userContact: '', // 简化实现，实际应从表单获取
-        startTime: date.format('YYYY-MM-DD 08:00:00'),
-        endTime: date.format('YYYY-MM-DD 09:00:00'),
+        startTime: `${date.format('YYYY-MM-DD')} ${startHour.toString().padStart(2, '0')}:00:00`,
+        endTime: `${date.format('YYYY-MM-DD')} ${endHour.toString().padStart(2, '0')}:00:00`,
         reason: '' // 简化实现，实际应从表单获取
       });
       
       setShowModal(false);
+      // 重置选择的时间槽
+      setSelectedTimeSlot('');
       loadDevicesAndReservations(); // 重新加载数据
     } catch (error) {
       console.error('预约失败:', error);
@@ -171,10 +179,19 @@ const ReservationCalendar: React.FC = () => {
   };
   
   /**
-   * 打开新建预约模态框
+   * 打开新建预约模态框 - 使用GeneralReservationForm组件
    */
   const openNewReservationModal = () => {
     if (selectedDevice) {
+      // 计算预约时间段
+      const startHour = selectedTimeSlot ? parseInt(selectedTimeSlot) : 8;
+      const endHour = startHour + 1;
+      
+      // 格式化时间字符串
+      const startTime = `${date.format('YYYY-MM-DD')} ${startHour.toString().padStart(2, '0')}:00:00`;
+      const endTime = `${date.format('YYYY-MM-DD')} ${endHour.toString().padStart(2, '0')}:00:00`;
+      
+      // 使用GeneralReservationForm组件
       setShowModal(true);
     } else {
       console.warn('请先选择一个设备');
@@ -301,21 +318,36 @@ const ReservationCalendar: React.FC = () => {
             </thead>
             <tbody>
               {devices.map(device => (
-                <tr key={device.id} onClick={() => handleDeviceSelect(device)}>
-                  <td style={{ cursor: 'pointer', backgroundColor: selectedDevice?.id === device.id ? '#e6f7ff' : 'white' }}>
+                <tr key={device.id}>
+                  <td 
+                    onClick={() => handleDeviceSelect(device)}
+                    style={{ 
+                      cursor: 'pointer', 
+                      backgroundColor: selectedDevice?.id === device.id ? '#e6f7ff' : 'white' 
+                    }}
+                  >
                     {device.name}
                   </td>
                   {timeSlots.map(time => {
                     const reservation = checkTimeSlot(device.id, time);
+                    const isSelectedTimeSlot = selectedDevice?.id === device.id && selectedTimeSlot === time;
                     return (
                       <td
                         key={`${device.id}-${time}`}
                         style={{
-                          backgroundColor: reservation ? '#ffccc7' : '#f0f0f0',
+                          backgroundColor: reservation ? '#ffccc7' : 
+                                         isSelectedTimeSlot ? '#bae7ff' : '#f0f0f0',
                           position: 'relative',
-                          cursor: 'pointer',
+                          cursor: reservation ? 'not-allowed' : 'pointer',
                           fontSize: '12px',
-                          padding: '2px'
+                          padding: '2px',
+                          border: isSelectedTimeSlot ? '2px solid #1890ff' : '1px solid transparent'
+                        }}
+                        onClick={() => {
+                          if (!reservation) {
+                            setSelectedDevice(device);
+                            setSelectedTimeSlot(time);
+                          }
                         }}
                       >
                         {reservation ? (
@@ -328,7 +360,7 @@ const ReservationCalendar: React.FC = () => {
                           <div />
                         )}
                       </td>
-                    );
+                    )
                   })}
                 </tr>
               ))}
@@ -338,48 +370,17 @@ const ReservationCalendar: React.FC = () => {
       </Card>
       
       {/* 新建预约模态框 */}
-      <Modal
-        title="新建预约"
+      <GeneralReservationForm
         visible={showModal}
-        onOk={handleNewReservation}
-        onCancel={() => setShowModal(false)}
-        confirmLoading={modalLoading}
-        width={600}
-      >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', borderRadius: '8px', padding: '16px' }}>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
-            <div style={{ flex: '1 1 300px' }}>
-              <div style={{ marginBottom: '4px' }}>预约设备</div>
-              <div>
-                <Text>{selectedDevice?.name || ''}</Text>
-                <input type="hidden" name="deviceId" value={selectedDevice?.id || ''} />
-                <input type="hidden" name="startTime" value={date.format('YYYY-MM-DD 08:00:00')} />
-                <input type="hidden" name="endTime" value={date.format('YYYY-MM-DD 09:00:00')} />
-              </div>
-            </div>
-            <div style={{ flex: '1 1 300px' }}>
-              <div style={{ marginBottom: '4px' }}>预约日期</div>
-              <Text>{date.format('YYYY-MM-DD')}</Text>
-            </div>
-            <div style={{ flex: '1 1 300px' }}>
-              <div style={{ marginBottom: '4px' }}>设备/会议室</div>
-              <Text>{selectedDevice?.name || ''}</Text>
-            </div>
-            <div style={{ flex: '1 1 300px' }}>
-              <div style={{ marginBottom: '4px' }}>预约人</div>
-              <Input placeholder="请输入预约人姓名" style={{ borderRadius: '8px' }} />
-            </div>
-            <div style={{ flex: '1 1 300px' }}>
-              <div style={{ marginBottom: '4px' }}>联系方式</div>
-              <Input placeholder="请输入联系方式" style={{ borderRadius: '8px' }} />
-            </div>
-            <div style={{ flex: '1 1 100%' }}>
-              <div style={{ marginBottom: '4px' }}>预约事由</div>
-              <TextArea rows={4} placeholder="请输入预约事由" style={{ borderRadius: '8px' }} />
-            </div>
-          </div>
-        </div>
-      </Modal>
+        onClose={() => setShowModal(false)}
+        onSuccess={() => {
+          setShowModal(false);
+          loadDevicesAndReservations(); // 成功后刷新预约数据
+        }}
+        preSelectedDeviceId={selectedDevice?.id}
+        preSelectedStartTime={selectedTimeSlot ? `${date.format('YYYY-MM-DD')} ${parseInt(selectedTimeSlot).toString().padStart(2, '0')}:00:00` : `${date.format('YYYY-MM-DD')} 08:00:00`}
+        preSelectedEndTime={selectedTimeSlot ? `${date.format('YYYY-MM-DD')} ${(parseInt(selectedTimeSlot) + 1).toString().padStart(2, '0')}:00:00` : `${date.format('YYYY-MM-DD')} 09:00:00`}
+      />
     </div>
   );
 };

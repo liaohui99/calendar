@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Input, Button, Space, Typography } from '@douyinfe/semi-ui';
+import { Modal, Input, Button, Space, Typography, TextArea } from '@douyinfe/semi-ui';
 import dayjs from 'dayjs';
 import type { Device } from '../types';
 import { deviceApi, reservationApi } from '../services/api';
@@ -246,20 +246,12 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
         {/* 预约事由 */}
         <div style={{ marginBottom: '16px', textAlign: 'center' }}>
           <label style={{ display: 'block', marginBottom: '8px', fontWeight: 500 }}>预约事由</label>
-          <textarea
-            style={{
-              width: '100%',
-              padding: '8px 12px',
-              border: '1px solid #d9d9d9',
-              borderRadius: '4px',
-              fontSize: '14px',
-              resize: 'vertical'
-            }}
+          <TextArea
             placeholder="请输入预约事由"
             rows={4}
             maxLength={200}
             value={formData.reason}
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleInputChange('reason', e.target.value)}
+            onChange={(value: string) => handleInputChange('reason', value)}
           />
           {errors.reason && (
             <Typography.Text type="danger" style={{ fontSize: '12px', marginTop: '4px', display: 'block' }}>
