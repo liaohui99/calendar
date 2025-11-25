@@ -7,18 +7,18 @@ import ReservationFormModal from '../components/ReservationFormModal';
 import GeneralReservationForm from '../components/GeneralReservationForm';
 
 
-// 移除未使用的Layout组件
+// ???��????Layout???
 const { Title } = Typography;
 
 const DeviceReservationPage: React.FC = () => {
-  // 筛选条件状态
+  // ????????
   const [selectedLocationId, setSelectedLocationId] = useState<number | undefined>(undefined);
   const [selectedTypeId, setSelectedTypeId] = useState<number | undefined>(undefined);
   const [selectedDate, setSelectedDate] = useState<string>(dayjs().format('YYYY-MM-DD'));
-  // 刷新触发器 - 用于预约成功后强制刷新数据
+  // ???????? - ?????????????????????
   const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
   
-  // 预约表单模态框状态
+  // ????????????
   const [showModal, setShowModal] = useState(false);
   const [showGeneralModal, setShowGeneralModal] = useState(false);
   const [selectedCellInfo, setSelectedCellInfo] = useState({
@@ -28,7 +28,7 @@ const DeviceReservationPage: React.FC = () => {
     deviceName: '',
   });
   
-  // 处理筛选条件变化
+  // ???????????��
   const handleFilterChange = useCallback((locationId?: number, typeId?: number, date?: string) => {
     setSelectedLocationId(locationId);
     setSelectedTypeId(typeId);
@@ -37,18 +37,18 @@ const DeviceReservationPage: React.FC = () => {
     }
   }, []);
 
-  // 处理新建预约按钮点击
+  // ???????????????
   const handleNewReservationClick = useCallback(() => {
     setShowGeneralModal(true);
   }, []);
 
-  // 处理通用预约成功
+  // ????????????
   const handleGeneralReservationSuccess = useCallback(() => {
-    // 刷新数据
+    // ???????
     setRefreshTrigger(prev => prev + 1);
   }, []);
   
-  // 处理单元格点击
+  // ???????????
   const handleCellClick = useCallback((deviceId: number, deviceName: string, startTime: string, endTime: string) => {
     setSelectedCellInfo({
       deviceId,
@@ -59,11 +59,11 @@ const DeviceReservationPage: React.FC = () => {
     setShowModal(true);
   }, []);
   
-  // 处理预约成功
+  // ?????????
   const handleReservationSuccess = useCallback(() => {
-    // 预约成功后刷新数据
-    console.log('预约成功');
-    // 更新刷新触发器，强制CalendarView重新加载数据
+    // ??????????????
+    console.log('?????');
+    // ?????????????????CalendarView???????????
     setRefreshTrigger(prev => prev + 1);
   }, []);
 
@@ -80,7 +80,7 @@ const DeviceReservationPage: React.FC = () => {
           zIndex: 10
         }}>
           <Title style={{ margin: 0, color: '#262626', fontSize: '18px' }}>
-            设备预约系统
+            ?��????
           </Title>
         </div>
         <div className="page-content" style={{ 
@@ -91,19 +91,19 @@ const DeviceReservationPage: React.FC = () => {
           margin: '0 auto',
           width: '100%' 
         }}>
-          {/* 筛选组件 */}
+          {/* ????? */}
           <FilterComponent onFilterChange={handleFilterChange} onNewReservationClick={handleNewReservationClick} />
           
-          {/* 日历视图组件 */}
+          {/* ?????????? */}
           <CalendarView 
             selectedLocationId={selectedLocationId}
             selectedTypeId={selectedTypeId}
             selectedDate={selectedDate}
             onCellClick={handleCellClick}
-            key={`calendar-${refreshTrigger}`} // 使用key强制组件重新渲染，确保数据刷新
+            key={`calendar-${refreshTrigger}`} // ???key?????????????????????????
           />
           
-          {/* 预约表单模态框 */}
+          {/* ?????????? */}
           <ReservationFormModal 
             visible={showModal}
             onClose={() => setShowModal(false)}

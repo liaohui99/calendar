@@ -1,6 +1,6 @@
 import SimplifiedReservationForm from './SimplifiedReservationForm';
 
-// 使用mock组件避免实际渲染
+// ???mock?????????????
 jest.mock('./SimplifiedReservationForm', () => {
   return function MockSimplifiedReservationForm() {
     return null;
@@ -8,11 +8,11 @@ jest.mock('./SimplifiedReservationForm', () => {
 });
 
 describe('SimplifiedReservationForm', () => {
-  test('组件能正常导入', () => {
+  test('?????????????', () => {
     expect(SimplifiedReservationForm).toBeDefined();
   });
   
-  test('组件是一个函数/组件', () => {
+  test('????????????/???', () => {
     expect(typeof SimplifiedReservationForm).toBe('function');
   });
 });

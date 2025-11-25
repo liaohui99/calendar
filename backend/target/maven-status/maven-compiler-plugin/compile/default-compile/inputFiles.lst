@@ -2,6 +2,7 @@ E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\dao\DeviceTy
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\entity\Location.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\service\impl\LocationServiceImpl.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\service\DeviceTypeService.java
+E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\ai\demo\Demo.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\dto\ApiResponse.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\entity\Device.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\dao\ReservationDao.java

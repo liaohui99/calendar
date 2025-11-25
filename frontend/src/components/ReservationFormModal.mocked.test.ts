@@ -1,6 +1,6 @@
 import ReservationFormModal from './ReservationFormModal';
 
-// 使用mock组件避免实际渲染
+// ???mock?????????????
 jest.mock('./ReservationFormModal', () => {
   return function MockReservationFormModal() {
     return null;

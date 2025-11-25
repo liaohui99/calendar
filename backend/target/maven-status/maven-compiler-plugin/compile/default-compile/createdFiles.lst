@@ -9,6 +9,7 @@ com\calendar\chart\dto\ApiResponse.class
 com\calendar\chart\dao\DeviceDao.class
 com\calendar\chart\service\DeviceService.class
 com\calendar\chart\dao\DeviceTypeDao.class
+com\calendar\chart\ai\demo\Demo.class
 com\calendar\chart\entity\Location.class
 com\calendar\chart\service\impl\DeviceServiceImpl.class
 com\calendar\chart\entity\Reservation.class

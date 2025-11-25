@@ -1,0 +1,23 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Demo",
+            "request": "launch",
+            "mainClass": "com.calendar.chart.ai.demo.Demo",
+            "projectName": "calendar-chart-backend"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-Application",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "mainClass": "com.calendar.chart.CalendarChartApplication",
+            "projectName": "calendar-chart-backend",
+            "args": "--spring.profiles.active=local",
+            "vmArgs": "-Djava.home=E:\\JDK\\jdk-17.0.7",
+            "java.home": "E:\\JDK\\jdk-17.0.7"
+        }
+    ]
+}

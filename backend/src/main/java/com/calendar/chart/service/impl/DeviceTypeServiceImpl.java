@@ -6,7 +6,7 @@ import com.calendar.chart.entity.DeviceType;
 import com.calendar.chart.service.DeviceTypeService;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.List;
 
 /**

@@ -1,0 +1,43 @@
+{
+    "java.jdt.ls.java.home": "E:\\JDK\\jdk-17.0.7",
+    "java.home": "E:\\JDK\\jdk-17.0.7",
+    "java.configuration.runtimes": [
+        {
+            "name": "JavaSE-17",
+            "path": "E:\\JDK\\jdk-17.0.7",
+            "default": true,
+            "sources": "E:\\JDK\\jdk-17.0.7\\lib\\src.zip",
+            "javadoc": "https://docs.oracle.com/en/java/javase/17/docs/api/"
+        },
+        {
+            "name": "JavaSE-1.8",
+            "path": "D:\\jdk\\jdk1.8.0_211",
+            "sources": "D:\\jdk\\jdk1.8.0_211\\src.zip",
+            "javadoc": "https://docs.oracle.com/javase/8/docs/api/",
+            "systemLibrary": "D:\\jdk\\jdk1.8.0_211\\jre\\lib\\rt.jar"
+        }
+    ],
+    "java.compile.nullAnalysis.mode": "automatic",
+    "java.maven.downloadSources": true,
+    "java.maven.updateSnapshots": true,
+    "java.jdt.ls.vmargs": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=false -Xmx2G -Xms200m",
+    "java.project.referencedLibraries": [],
+    "java.clean.workspace": true,
+    "java.project.importOnFirstTimeStartup": "automatic",
+    "files.autoGuessEncoding": true,
+    "files.defaultLanguage": "plaintext",
+    "java.completion.enabled": true,
+    "java.completion.importOrder": ["#java", "#javax", "#org.springframework", "#", "*"],
+    "java.codeGeneration.hashCodeEquals.useJava7Objects": true,
+    "java.codeGeneration.toString.template": "${object.className}{${member.name()}=${member.value}, ${otherMembers}}",
+    "java.codeGeneration.useBlocks": true,
+    "java.implementationsCodeLens.enabled": true,
+    "java.referencesCodeLens.enabled": true,
+    "java.signatureHelp.enabled": true,
+    "java.format.enabled": true,
+    "java.format.settings.url": "",
+    "java.format.settings.profile": "",
+    "java.refactor.move.moveAllReferences": true,
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.jdt.ls.importHint": true
+}

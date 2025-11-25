@@ -7,7 +7,7 @@ import com.calendar.chart.entity.Reservation;
 import com.calendar.chart.service.ReservationService;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;

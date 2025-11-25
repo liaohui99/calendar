@@ -1,6 +1,6 @@
 import ReservationFormModal from './ReservationFormModal';
 
-// 使用mock组件避免实际渲染
+// ???mock?????????????
 jest.mock('./ReservationFormModal', () => {
   return function MockReservationFormModal() {
     return null;
@@ -8,11 +8,11 @@ jest.mock('./ReservationFormModal', () => {
 });
 
 describe('Simple ReservationFormModal Test', () => {
-  test('组件能正常导入', () => {
+  test('?????????????', () => {
     expect(ReservationFormModal).toBeDefined();
   });
   
-  test('组件是一个函数/组件', () => {
+  test('????????????/???', () => {
     expect(typeof ReservationFormModal).toBe('function');
   });
 });

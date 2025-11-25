@@ -1,4 +1,4 @@
-// ReservationFormModal mockç»„ä»¶
+// ReservationFormModal mock
 const ReservationFormModal = (props) => {
   return <div data-testid="mock-reservation-form-modal">Mock Reservation Form Modal</div>;
 };
