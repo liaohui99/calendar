@@ -98,10 +98,10 @@ public class ApplicationConfig {
     @Value("${langchain4j.open-ai.chat-model.api-key:demo}")
     private String langchain4jApiKey;
 
-    @Value("${langchain4j.open-ai.chat-model.model-name:gpt-3.5-turbo}")
+    @Value("${langchain4j.open-ai.chat-model.model-name:gpt-4o-mini}")
     private String langchain4jModelName;
 
-    @Value("${langchain4j.open-ai.chat-model.base-url:https://api.openai.com/v1}")
+    @Value("${langchain4j.open-ai.chat-model.base-url:http://langchain4j.dev/demo/openai/v1}")
     private String langchain4jBaseUrl;
 
     @Value("${langchain4j.open-ai.chat-model.log-requests:false}")

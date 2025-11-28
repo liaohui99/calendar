@@ -1,4 +1,4 @@
-package com.calendar.chart.ai.config;
+package com.calendar.chart.ai.config.memory;
 
 import com.calendar.chart.dao.ChatMemoryStoreDao;
 import com.calendar.chart.entity.ChatMessages;
@@ -8,12 +8,13 @@ import dev.langchain4j.store.memory.chat.ChatMemoryStore;
 
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MysqlChatMemoryStore implements ChatMemoryStore {
 
-    private static final Logger log = LoggerFactory.getLogger(MysqlChatMemoryStore.class);
+@Slf4j
+public class MysqlChatMemoryStore implements ChatMemoryStore {
 
     private final ChatMemoryStoreDao chatMemoryStoreDao;
 

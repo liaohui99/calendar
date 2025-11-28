@@ -2,6 +2,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "SimpleChat",
+            "request": "launch",
+            "mainClass": "com.calendar.chart.ai.demo.SimpleChat",
+            "projectName": "calendar-chart-backend"
+        },
+        {
+            "type": "java",
             "name": "EncodingTest",
             "request": "launch",
             "mainClass": "com.calendar.chart.ai.demo.EncodingTest",
