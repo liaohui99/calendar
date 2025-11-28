@@ -2,10 +2,27 @@
     "configurations": [
         {
             "type": "java",
+            "name": "EncodingTest",
+            "request": "launch",
+            "mainClass": "com.calendar.chart.ai.demo.EncodingTest",
+            "projectName": "calendar-chart-backend",
+            "vmArgs": "-Dfile.encoding=UTF-8"
+        },
+        {
+            "type": "java",
+            "name": "ChatMemoryDemo",
+            "request": "launch",
+            "mainClass": "com.calendar.chart.ai.demo.ChatMemoryDemo",
+            "projectName": "calendar-chart-backend",
+            "vmArgs": "-Dfile.encoding=UTF-8"
+        },
+        {
+            "type": "java",
             "name": "Demo",
             "request": "launch",
             "mainClass": "com.calendar.chart.ai.demo.Demo",
-            "projectName": "calendar-chart-backend"
+            "projectName": "calendar-chart-backend",
+            "vmArgs": "-Dfile.encoding=UTF-8"
         },
         {
             "type": "java",
@@ -16,7 +33,7 @@
             "mainClass": "com.calendar.chart.CalendarChartApplication",
             "projectName": "calendar-chart-backend",
             "args": "--spring.profiles.active=local",
-            "vmArgs": "-Djava.home=E:\\JDK\\jdk-17.0.7",
+            "vmArgs": "-Djava.home=E:\\JDK\\jdk-17.0.7 -Dfile.encoding=UTF-8",
             "java.home": "E:\\JDK\\jdk-17.0.7"
         }
     ]

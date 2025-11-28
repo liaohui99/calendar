@@ -2,54 +2,55 @@
 # 此文件包含所有环境共享的配置
 # 通过spring.profiles.active指定使用的环境配置文件
 spring:
-  application:
-    name: calendar-chart-backend
-  # 指定默认使用的环境配置
-  profiles:
-    active: local
-  # 默认使用H2数据库，避免尝试连接MySQL
-  datasource:
-    type: com.zaxxer.hikari.HikariDataSource
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:calendar_db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    username: sa
-    password: ''
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
-  # Redis配置（所有环境共享）
-  redis:
-    host: 101.126.13.194
-    port: 6379
-    database: 7
-    password: agwmXT@rjiboR0+BGKWY
-  # MyBatis-Plus配置（所有环境共享）
-  main:
-    allow-bean-definition-overriding: true
+    application:
+        name: calendar-chart-backend
+    # 指定默认使用的环境配置
+    profiles:
+        active: local
+    # 默认使用H2数据库，避免尝试连接MySQL
+    datasource:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: org.h2.Driver
+        url: jdbc:h2:mem:calendar_db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+        username: sa
+        password: ''
+    h2:
+        console:
+            enabled: true
+            path: /h2-console
+    # Redis配置（所有环境共享）
+    redis:
+        host: 101.126.13.194
+        port: 6379
+        database: 7
+        password: agwmXT@rjiboR0+BGKWY
+    # MyBatis-Plus配置（所有环境共享）
+    main:
+        allow-bean-definition-overriding: true
 
 # 服务器配置（所有环境共享）
 server:
-  port: 8080
-  # 字符编码配置，确保所有响应使用UTF-8编码
-  servlet:
-    encoding:
-      charset: UTF-8
-      enabled: true
-      force: true
-      force-request: true
-      force-response: true
+    port: 8080
+    # 字符编码配置，确保所有响应使用UTF-8编码
+    servlet:
+        encoding:
+            charset: UTF-8
+            enabled: true
+            force: true
+            force-request: true
+            force-response: true
 
 # 日志配置（所有环境共享）
 logging:
-  level:
-    root: INFO
-    com.calendar.chart: DEBUG
+    level:
+        root: INFO
+        com.calendar.chart: DEBUG
+        org.springframework.web: DEBUG
 
 # MyBatis-Plus配置（所有环境共享）
 mybatis-plus:
-  mapper-locations: classpath:mapper/*.xml
-  type-aliases-package: com.calendar.chart.entity
-  configuration:
-    map-underscore-to-camel-case: true
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    mapper-locations: classpath:mapper/*.xml
+    type-aliases-package: com.calendar.chart.entity
+    configuration:
+        map-underscore-to-camel-case: true
+        log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

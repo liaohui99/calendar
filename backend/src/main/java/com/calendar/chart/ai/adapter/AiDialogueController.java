@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
  * AI对话控制器
  * @author CalendarChart
  */
-@RestController
-@RequestMapping("/ai")
-@RequiredArgsConstructor
+//@RestController
+// @RequestMapping("/ai")
+// @RequiredArgsConstructor
 public class AiDialogueController {
 
-    private final OpenAiChatModel  openAiChatModel;
+    private /* final */ OpenAiChatModel  openAiChatModel;
 
     
     /**
@@ -25,9 +25,13 @@ public class AiDialogueController {
      * @param prompt 输入内容
      * @return AI对话结果
      */
-    @PostMapping("/dialogue")
+    @PostMapping("/demo/dialogue")
     public ApiResponse<String> getDialogue(@RequestBody String prompt) {
         String aswString = openAiChatModel.chat(prompt);
         return ApiResponse.success(aswString);
     }
+
+
+    
+
 }

@@ -19,14 +19,15 @@
         <java.version>17</java.version>
         <spring-cloud.version>2023.0.0</spring-cloud.version>
         <mybatis-plus.version>3.5.3.1</mybatis-plus.version>
-        <lombok.version>1.18.24</lombok.version>
+        <mybatis-spring.version>3.0.3</mybatis-spring.version>
+        <lombok.version>1.18.30</lombok.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
     </properties>
 
     <dependencies>
-        <!-- Spring Boot ºËÐÄÒÀÀµ -->
+        <!-- Spring Boot ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -41,17 +42,19 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Êý¾Ý¿âÏà¹Ø -->
+        <!-- ï¿½ï¿½ï¿½Ý¿ï¿½ï¿½ï¿½ï¿½ -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
+
+        <!-- ä¿®æ”¹ä¸ºæ–°çš„ä¾èµ– -->
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
             <version>8.0.33</version>
         </dependency>
-        <!-- H2Êý¾Ý¿â -->
+        <!-- H2ï¿½ï¿½ï¿½Ý¿ï¿½ -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
@@ -61,18 +64,36 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
-        <!-- DruidÊý¾ÝÔ´ -->
+        <!-- Druidï¿½ï¿½ï¿½ï¿½Ô´ -->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid-spring-boot-starter</artifactId>
             <version>1.2.15</version>
         </dependency>
 
-        <!-- MyBatis-PlusÒÀÀµ -->
+        <!-- MyBatis-Plusï¿½ï¿½ï¿½ï¿½ -->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
             <version>${mybatis-plus.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>mybatis-spring</artifactId>
+                    <groupId>org.mybatis</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+            <version>3.5.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis-spring</artifactId>
+            <version>${mybatis-spring.version}</version>
         </dependency>
 
         <!-- Lombok -->
@@ -83,21 +104,21 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- Hutool¹¤¾ßÀà¿â -->
+        <!-- Hutoolï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ -->
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
             <version>5.8.25</version>
         </dependency>
 
-        <!-- CORSÖ§³Ö -->
+        <!-- CORSÖ§ï¿½ï¿½ -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
 
-        <!-- langchain4j - Ê¹ÓÃJava 8¼æÈÝ°æ±¾ -->
-        <!-- <dependency>
+        <!-- langchain4j - Ê¹ï¿½ï¿½Java 8ï¿½ï¿½ï¿½Ý°æ±¾ -->
+        <dependency>
         <groupId>dev.langchain4j</groupId>
         <artifactId>langchain4j-open-ai</artifactId>
         <version>1.0.0-beta3</version>
@@ -106,13 +127,13 @@
         <groupId>dev.langchain4j</groupId>
         <artifactId>langchain4j</artifactId>
         <version>1.0.0-beta3</version>
-    </dependency> -->
+    </dependency>
 
-        <dependency>
+     <!--    <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-open-ai-spring-boot-starter</artifactId>
             <version>1.0.0-beta3</version>
-        </dependency>
+        </dependency> -->
 
 
     </dependencies>
@@ -126,11 +147,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.10.1</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                     <encoding>UTF-8</encoding>
-                    <fork>false</fork>
+                    <fork>true</fork>
                     <meminitial>128m</meminitial>
                     <maxmem>512m</maxmem>
                 </configuration>
@@ -140,8 +162,8 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.0.0</version>
                 <configuration>
-                    <executable>java</executable>
-                    <commandlineArgs>-Xms128m -Xmx512m -classpath %classpath ${exec.mainClass}</commandlineArgs>
+                    <executable>E:\JDK\jdk-17.0.7\bin\java</executable>
+                    <commandlineArgs>-Xms128m -Xmx512m -Dfile.encoding=UTF-8 -classpath %classpath ${exec.mainClass}</commandlineArgs>
                 </configuration>
             </plugin>
         </plugins>

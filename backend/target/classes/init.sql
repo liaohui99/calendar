@@ -194,3 +194,14 @@ UNION ALL
 SELECT '设备', COUNT(*) FROM device
 UNION ALL
 SELECT '预约', COUNT(*) FROM reservation;
+
+
+--创建 chat_messages 表，用于存储会话消息 JSON 数据。
+CREATE TABLE `chat_messages` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `messageId` int DEFAULT NULL,
+  `content` text,
+  `create_time` datetime DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
