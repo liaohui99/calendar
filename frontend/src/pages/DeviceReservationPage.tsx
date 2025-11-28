@@ -7,18 +7,18 @@ import ReservationFormModal from '../components/ReservationFormModal';
 import GeneralReservationForm from '../components/GeneralReservationForm';
 
 
-// ???��????Layout???
+// 导入Typography布局组件
 const { Title } = Typography;
 
 const DeviceReservationPage: React.FC = () => {
-  // ????????
+  // 状态管理
   const [selectedLocationId, setSelectedLocationId] = useState<number | undefined>(undefined);
   const [selectedTypeId, setSelectedTypeId] = useState<number | undefined>(undefined);
   const [selectedDate, setSelectedDate] = useState<string>(dayjs().format('YYYY-MM-DD'));
-  // ???????? - ?????????????????????
+  // 刷新触发器 - 用于强制重新渲染日历视图
   const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
   
-  // ????????????
+  // 模态框显示状态
   const [showModal, setShowModal] = useState(false);
   const [showGeneralModal, setShowGeneralModal] = useState(false);
   const [selectedCellInfo, setSelectedCellInfo] = useState({
@@ -28,7 +28,7 @@ const DeviceReservationPage: React.FC = () => {
     deviceName: '',
   });
   
-  // ???????????��
+  // 处理筛选条件变化
   const handleFilterChange = useCallback((locationId?: number, typeId?: number, date?: string) => {
     setSelectedLocationId(locationId);
     setSelectedTypeId(typeId);
@@ -37,18 +37,18 @@ const DeviceReservationPage: React.FC = () => {
     }
   }, []);
 
-  // ???????????????
+  // 处理新建预约按钮点击
   const handleNewReservationClick = useCallback(() => {
     setShowGeneralModal(true);
   }, []);
 
-  // ????????????
+  // 处理通用预约成功
   const handleGeneralReservationSuccess = useCallback(() => {
     // ???????
     setRefreshTrigger(prev => prev + 1);
   }, []);
   
-  // ???????????
+  // 处理日历单元格点击
   const handleCellClick = useCallback((deviceId: number, deviceName: string, startTime: string, endTime: string) => {
     setSelectedCellInfo({
       deviceId,
@@ -59,10 +59,10 @@ const DeviceReservationPage: React.FC = () => {
     setShowModal(true);
   }, []);
   
-  // ?????????
+  // 处理预约成功
   const handleReservationSuccess = useCallback(() => {
     // ??????????????
-    console.log('?????');
+    console.log('预约成功');
     // ?????????????????CalendarView???????????
     setRefreshTrigger(prev => prev + 1);
   }, []);
@@ -80,7 +80,7 @@ const DeviceReservationPage: React.FC = () => {
           zIndex: 10
         }}>
           <Title style={{ margin: 0, color: '#262626', fontSize: '18px' }}>
-            ?��????
+            设备预约
           </Title>
         </div>
         <div className="page-content" style={{ 

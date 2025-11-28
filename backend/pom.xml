@@ -24,6 +24,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
+        <fastjson.version>1.2.78</fastjson.version>
     </properties>
 
     <dependencies>
@@ -134,7 +135,11 @@
             <artifactId>langchain4j-open-ai-spring-boot-starter</artifactId>
             <version>1.0.0-beta3</version>
         </dependency> -->
-
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>${fastjson.version}</version>
+        </dependency>
 
     </dependencies>
 

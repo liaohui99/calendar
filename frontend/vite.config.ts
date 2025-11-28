@@ -10,16 +10,12 @@ export default defineConfig({
       '/api': {
         target: 'http://127.0.0.1:8080',
         changeOrigin: true,
-        rewrite: (path) => path // ±£Áô/apiÇ°×º£¬ÒòÎªºó¶ËAPIÈ·ÊµĞèÒªÕâ¸öÇ°×º
+        rewrite: (path) => path // ä¿ç•™/apiå‰ç¼€ï¼Œå› ä¸ºåç«¯APIå®é™…éœ€è¦çš„æ˜¯è¿™ä¸ªå‰ç¼€
       }
-    },
-    // ½â¾öÇ°¶Ë·şÎñÆ÷ÏìÓ¦ÖĞÎÄÂÒÂëÎÊÌâ
-    headers: {
-      'Content-Type': 'text/html; charset=utf-8'
     }
   },
   build: {
-    // Ìí¼ÓcharsetÅäÖÃÈ·±£¹¹½¨Êä³öÎªUTF-8±àÂë
+    // ï¿½ï¿½ï¿½ï¿½charsetï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÎªUTF-8ï¿½ï¿½ï¿½ï¿½
     rollupOptions: {
       input: {
         main: path.resolve(__dirname, 'index.html'),
@@ -27,9 +23,9 @@ export default defineConfig({
         tabWorkItemPage: path.resolve(__dirname, 'src/features/tab_work_item/App.tsx')
       },
       output: {
-        charset: true, // È·±£Êä³öÎÄ¼ş°üº¬charset±ê¼Ç
+        charset: true, // È·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½charsetï¿½ï¿½ï¿½
         entryFileNames: chunkInfo => {
-          // Îª²»Í¬µÄÈë¿ÚÉú³É²»Í¬µÄÎÄ¼şÃû
+          // Îªï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É²ï¿½Í¬ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½
           if (chunkInfo.name === 'reservationCalendarPage') {
             return 'reservationCalendarPage.js'
           } else if (chunkInfo.name === 'tabWorkItemPage') {

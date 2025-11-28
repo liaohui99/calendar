@@ -1,17 +1,30 @@
 package com.calendar.chart.ai.demo;
 
+import com.alibaba.fastjson.JSON;
 import com.calendar.chart.ai.config.memory.PersistentChatMemoryStore;
+import com.calendar.chart.ai.tools.WeatherTools;
+import dev.langchain4j.agent.tool.ToolSpecification;
+import dev.langchain4j.agent.tool.ToolSpecifications;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.memory.ChatMemory;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
+import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.model.openai.OpenAiChatModel;
+
+import java.util.List;
 import java.util.Scanner;
 import java.util.UUID;
 
-public class MemoryChat {
+/**
+ * @author Gabriel
+ * @version 1.0
+ * @date 2025/11/28 16:51
+ * @description: TODO
+ */
+public class ToolsChat {
     public static OpenAiChatModel simpleChatModel = OpenAiChatModel.builder()
             .baseUrl("http://langchain4j.dev/demo/openai/v1")
             .apiKey("demo")
@@ -26,6 +39,12 @@ public class MemoryChat {
             .maxMessages(10)
             .chatMemoryStore(store)
             .build();
+
+    public static List<ToolSpecification> toolSpecifications = ToolSpecifications.toolSpecificationsFrom(WeatherTools.class);
+
+
+
+
 
     public static void memoryChat() {
         String uuid = UUID.randomUUID().toString();
@@ -50,10 +69,15 @@ public class MemoryChat {
             }
             UserMessage userMessage = UserMessage.from(userMessageStr);
             store.getMessages(uuid).add(userMessage);
-            ChatResponse chatResponse2 = simpleChatModel.chat(store.getMessages(uuid));
+            ChatRequest build = ChatRequest.builder()
+                    .messages(store.getMessages(uuid))
+                    .toolSpecifications(toolSpecifications)
+                    .build();
+            ChatResponse chatResponse2 = simpleChatModel.chat(build);
             AiMessage aiMessage2 = chatResponse2.aiMessage();
             store.getMessages(uuid).add(aiMessage2);
             System.out.println(aiMessage2.text());
+            System.out.println("token : "+JSON.toJSONString(chatResponse2.tokenUsage()));
         }
 
 
@@ -62,6 +86,5 @@ public class MemoryChat {
     public static void main(String[] args) {
         memoryChat();
     }
-
 
 }

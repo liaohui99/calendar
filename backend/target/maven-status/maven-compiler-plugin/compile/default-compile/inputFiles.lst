@@ -1,4 +1,3 @@
-E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\ai\config\MysqlChatMemoryStore.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\dao\DeviceTypeDao.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\entity\Location.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\service\impl\LocationServiceImpl.java
@@ -8,7 +7,6 @@ E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\entity\ChatM
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\dto\ApiResponse.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\entity\Device.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\dao\ReservationDao.java
-E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\ai\config\PersistentChatMemoryStore.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\utils\ImageUtils.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\controller\LocationController.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\service\DeviceService.java
@@ -21,15 +19,18 @@ E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\config\CorsC
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\service\impl\ReservationServiceImpl.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\ai\demo\SimpleChat.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\service\LocationService.java
+E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\ai\config\memory\MysqlChatMemoryStore.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\config\ApplicationConfig.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\entity\DeviceType.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\dao\ChatMemoryStoreDao.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\ai\demo\EncodingTest.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\CalendarChartApplication.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\controller\ReservationController.java
+E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\ai\config\memory\PersistentChatMemoryStore.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\service\ReservationService.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\dao\LocationDao.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\init\DataInitializer.java
+E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\ai\demo\MemoryChat.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\dao\DeviceDao.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\dto\ReservationRequest.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\ai\config\ChatModelConfig.java
