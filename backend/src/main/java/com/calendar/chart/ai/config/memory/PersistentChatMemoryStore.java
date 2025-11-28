@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.store.memory.chat.ChatMemoryStore;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -17,9 +18,11 @@ public class PersistentChatMemoryStore implements ChatMemoryStore {
         // TODO: 实现通过内存ID从持久化存储中获取所有消息。
         List<ChatMessage> chatMessages = memoryStore.get(memoryId);
         if (CollUtil.isEmpty(chatMessages)){
-            return Collections.emptyList();
+            ArrayList<ChatMessage> msgs = new ArrayList<>();
+            memoryStore.put(memoryId, msgs);
+            return msgs;
         }
-        return memoryStore.get(memoryId);
+        return chatMessages;
         // 可以使用ChatMessageDeserializer.messageFromJson(String)和
         // ChatMessageDeserializer.messagesFromJson(String)辅助方法
         // 轻松地从JSON反序列化聊天消息。
