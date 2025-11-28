@@ -76,7 +76,7 @@ public class ToolsChat {
             ChatResponse chatResponse2 = simpleChatModel.chat(build);
             AiMessage aiMessage2 = chatResponse2.aiMessage();
             store.getMessages(uuid).add(aiMessage2);
-            System.out.println(aiMessage2.text());
+            System.out.println("回答 : "+aiMessage2.text());
             System.out.println("token : "+JSON.toJSONString(chatResponse2.tokenUsage()));
         }
 
