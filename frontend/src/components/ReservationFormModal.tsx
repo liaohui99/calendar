@@ -173,6 +173,9 @@ const ReservationFormModal: React.FC<ReservationFormModalProps> = ({
       onCancel={handleModalClose}
       confirmLoading={loading}
       width={500}
+      // 解决React 18兼容性问题
+      autoFocus={false}
+      getContainer={() => document.body}
       // 使Modal内容区域高度自适应并可滚动
       bodyStyle={{
         maxHeight: 'calc(80vh - 100px)',

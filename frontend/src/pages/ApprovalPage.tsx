@@ -4,7 +4,7 @@ import { Table, Button, Select, Tag, Spin, Card, Modal } from '@douyinfe/semi-ui
 
 import { reservationApi } from '../services/api';
 import type { Reservation } from '../types';
-import { ReservationStatus } from '../types';
+import type { ReservationStatus } from '../types';
 // 为了代码可读性，创建状态枚举别名
 const StatusEnum = ReservationStatus;
 

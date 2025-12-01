@@ -4,10 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.store.memory.chat.ChatMemoryStore;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PersistentChatMemoryStore implements ChatMemoryStore {
@@ -18,7 +15,7 @@ public class PersistentChatMemoryStore implements ChatMemoryStore {
         // TODO: 实现通过内存ID从持久化存储中获取所有消息。
         List<ChatMessage> chatMessages = memoryStore.get(memoryId);
         if (CollUtil.isEmpty(chatMessages)){
-            ArrayList<ChatMessage> msgs = new ArrayList<>();
+            LinkedList<ChatMessage> msgs = new LinkedList<>();
             memoryStore.put(memoryId, msgs);
             return msgs;
         }

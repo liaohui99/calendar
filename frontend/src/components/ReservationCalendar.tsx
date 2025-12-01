@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { DatePicker, Select, Button, Modal, Card, Typography, Space, Row, Col, Input, Tag, Tooltip, TextArea } from '@douyinfe/semi-ui';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs, type { Dayjs } from 'dayjs';
 import { deviceApi, locationApi, typeApi, reservationApi } from '../services/api';
 import type { Device, LocationInfo, DeviceType, Reservation } from '../types';
 import GeneralReservationForm from './GeneralReservationForm';
@@ -19,7 +19,7 @@ const ReservationCalendar: React.FC = () => {
   const [selectedType, setSelectedType] = useState<string>('');
   const [showModal, setShowModal] = useState(false);
   const [selectedDevice, setSelectedDevice] = useState<Device | null>(null);
-  const [selectedTimeSlot, setSelectedTimeSlot] = useState<string>(''); // ??§Ö?????
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState<string>(''); // ??ï¿½ï¿½?????
   const [loading, setLoading] = useState(false);
   const [modalLoading, setModalLoading] = useState(false);
   
@@ -28,13 +28,13 @@ const ReservationCalendar: React.FC = () => {
     loadBaseData();
   }, []);
   
-  // ??????????????£????????õô????????
+  // ??????????????ï¿½ï¿½????????ï¿½ï¿½????????
   useEffect(() => {
     loadDevicesAndReservations();
   }, [date, selectedLocation, selectedType]);
   
   /**
-   * ?????????????????õô????
+   * ?????????????????ï¿½ï¿½????
    */
   const loadBaseData = async () => {
     try {
@@ -45,7 +45,7 @@ const ReservationCalendar: React.FC = () => {
       // ???????ApiResponse?????????
       setLocations((locationsRes.data && Array.isArray(locationsRes.data)) ? locationsRes.data : []);
       setDeviceTypes((typesRes.data && Array.isArray(typesRes.data)) ? typesRes.data : []);
-      // ?????????§Ö????????????
+      // ?????????ï¿½ï¿½????????????
       const locationsData = Array.isArray(locationsRes.data) ? locationsRes.data : (locationsRes.data?.data || []);
       const typesData = Array.isArray(typesRes.data) ? typesRes.data : (typesRes.data?.data || []);
       if (locationsData.length > 0) {
@@ -60,14 +60,14 @@ const ReservationCalendar: React.FC = () => {
   };
   
   /**
-   * ?????õô????????
+   * ?????ï¿½ï¿½????????
    */
   const loadDevicesAndReservations = async () => {
     setLoading(true);
     try {
       const dateStr = date.format('YYYY-MM-DD');
       
-      // ?????õô?§Ò?????????????§¹?????????
+      // ?????ï¿½ï¿½?ï¿½ï¿½?????????????ï¿½ï¿½?????????
       const params: { locationId?: number; typeId?: number } = {};
       if (selectedLocation && !isNaN(parseInt(selectedLocation))) {
         params.locationId = parseInt(selectedLocation);
@@ -92,7 +92,7 @@ const ReservationCalendar: React.FC = () => {
   };
   
   /**
-   * ????????§µ?5:00-22:00??
+   * ????????ï¿½ï¿½?5:00-22:00??
    */
   const generateTimeSlots = () => {
     const slots = [];
@@ -124,14 +124,14 @@ const ReservationCalendar: React.FC = () => {
   };
   
   /**
-   * ?????õô???
+   * ?????ï¿½ï¿½???
    */
   const handleDeviceSelect = (device: Device) => {
     setSelectedDevice(device);
   };
   
   /**
-   * ????????£
+   * ????????ï¿½ï¿½
    */
   const handleDateChange = (value: Dayjs | null) => {
     if (value) {
@@ -194,7 +194,7 @@ const ReservationCalendar: React.FC = () => {
       // ???GeneralReservationForm???
       setShowModal(true);
     } else {
-      console.warn('???????????õô');
+      console.warn('???????????ï¿½ï¿½');
     }
   };
   
@@ -259,7 +259,7 @@ const ReservationCalendar: React.FC = () => {
                 </Select>
               </Space>
               <Space align="center" wrap={false}>
-                <Text style={{ whiteSpace: 'nowrap' }}>?õô????:</Text>
+                <Text style={{ whiteSpace: 'nowrap' }}>?ï¿½ï¿½????:</Text>
                 <Select
                   value={selectedType}
                   onChange={(value: any) => setSelectedType(String(value))}
@@ -310,7 +310,7 @@ const ReservationCalendar: React.FC = () => {
           <table className="reservation-table">
             <thead>
               <tr>
-                <th style={{ width: 80 }}>?õô</th>
+                <th style={{ width: 80 }}>?ï¿½ï¿½</th>
                 {timeSlots.map(time => (
                   <th key={time} style={{ width: 60 }}>{time}</th>
                 ))}

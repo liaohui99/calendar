@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
-import { Typography } from '@douyinfe/semi-ui';
+import { Typography, Button } from '@douyinfe/semi-ui';
+import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import CalendarView from '../components/CalendarView';
 import FilterComponent from '../components/FilterComponent';
@@ -11,6 +12,7 @@ import GeneralReservationForm from '../components/GeneralReservationForm';
 const { Title } = Typography;
 
 const DeviceReservationPage: React.FC = () => {
+  const navigate = useNavigate();
   // 状态管理
   const [selectedLocationId, setSelectedLocationId] = useState<number | undefined>(undefined);
   const [selectedTypeId, setSelectedTypeId] = useState<number | undefined>(undefined);
@@ -41,6 +43,11 @@ const DeviceReservationPage: React.FC = () => {
   const handleNewReservationClick = useCallback(() => {
     setShowGeneralModal(true);
   }, []);
+
+  // 处理查看所有预约按钮点击
+  const handleViewAllReservations = useCallback(() => {
+    navigate('/reservations');
+  }, [navigate]);
 
   // 处理通用预约成功
   const handleGeneralReservationSuccess = useCallback(() => {
@@ -75,6 +82,7 @@ const DeviceReservationPage: React.FC = () => {
           boxShadow: '0 1px 4px rgba(0,21,41,0.08)',
           display: 'flex',
           alignItems: 'center',
+          justifyContent: 'space-between',
           position: 'sticky',
           top: 0,
           zIndex: 10
@@ -82,6 +90,9 @@ const DeviceReservationPage: React.FC = () => {
           <Title style={{ margin: 0, color: '#262626', fontSize: '18px' }}>
             设备预约
           </Title>
+          <Button onClick={handleViewAllReservations}>
+            查看所有预约
+          </Button>
         </div>
         <div className="page-content" style={{ 
           padding: '24px', 

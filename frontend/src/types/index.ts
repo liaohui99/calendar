@@ -67,12 +67,13 @@ export interface Reservation {
 
 // 预约表单数据类型
 export interface ReservationFormData {
-  deviceId: number;
   userName: string;
   userContact: string;
+  reason: string;
   startTime: string;
   endTime: string;
-  reason: string;
+  deviceId?: number;
+  status?: ReservationStatus; // 使用ReservationStatus类型，与Reservation接口保持一致
 }
 
 // 全局Window接口扩展

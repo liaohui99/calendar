@@ -191,6 +191,9 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
       footer={null}
       width={600}
       centered
+      // 解决React 18兼容性问题
+      autoFocus={false}
+      getContainer={() => document.body}
     >
       <div style={{ padding: '20px 0' }}>
         {/* 设备信息 */}

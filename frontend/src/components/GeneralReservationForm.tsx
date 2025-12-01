@@ -619,6 +619,9 @@ const GeneralReservationForm: React.FC<GeneralReservationFormProps> = ({
         title="设备预约"
         visible={visible}
         onCancel={handleClose}
+        // 解决React 18兼容性问题
+        autoFocus={false}
+        getContainer={() => document.body}
         footer={[
           <Button key="cancel" onClick={handleClose} disabled={loading}>
             取消
@@ -748,12 +751,6 @@ const GeneralReservationForm: React.FC<GeneralReservationFormProps> = ({
               type="dateTime"
               value={formData.startTime ? new Date(formData.startTime) : undefined}
               onChange={(value) => handleDateTimeChange('startTime', value)}
-              onSelect={(value: Date) => {
-                // 当用户选择日期时，确保正确设置开始时间
-                if (value instanceof Date) {
-                  handleDateTimeChange('startTime', value);
-                }
-              }}
               onOpenChange={(open) => {
                 // 当打开日期选择器时，如果没有设置开始时间则设置为下一个整点
                 if (open && !formData.startTime) {
@@ -778,12 +775,6 @@ const GeneralReservationForm: React.FC<GeneralReservationFormProps> = ({
               type="dateTime"
               value={formData.endTime ? new Date(formData.endTime) : undefined}
               onChange={(value) => handleDateTimeChange('endTime', value)}
-              onSelect={(value: Date) => {
-                // 当用户选择日期时，确保正确设置结束时间
-                if (value instanceof Date) {
-                  handleDateTimeChange('endTime', value);
-                }
-              }}
               onOpenChange={(open) => {
                 // 当打开日期选择器时，如果没有设置结束时间则根据开始时间计算
                 if (open && !formData.endTime) {

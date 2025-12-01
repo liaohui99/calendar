@@ -41,6 +41,9 @@ const SimplifiedReservationForm: React.FC<SimplifiedReservationFormProps> = ({
       visible={visible} 
       onOk={handleSubmit}
       onCancel={onClose}
+      // 解决React 18兼容性问题
+      autoFocus={false}
+      getContainer={() => document.body}
     >
       <Form
         layout="vertical"

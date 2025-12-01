@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Card, Typography, Empty, Spin, Tooltip, Tag } from '@douyinfe/semi-ui';
 import dayjs from 'dayjs';
-import type { Device, Reservation, ReservationStatus } from '../types';
+import type { Device, Reservation } from '../types';
+import type { ReservationStatus } from '../types';
 import { deviceApi, reservationApi } from '../services/api';
 
 interface CalendarViewProps {

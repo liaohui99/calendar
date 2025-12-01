@@ -12,7 +12,7 @@ import reactor.core.publisher.Flux;
  * @date 2025/12/1 14:25
  * @description: 日历助手
  */
-public interface CalendarChatAssistant {
+public interface ChatDemoAssistant {
 
     /**
      * 普通输出，不是流式的

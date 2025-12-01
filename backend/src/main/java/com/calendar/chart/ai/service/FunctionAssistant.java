@@ -1,11 +1,15 @@
-package com.calendar.chart.ai.config;
+package com.calendar.chart.ai.service;
 
 import dev.langchain4j.model.output.Response;
 import reactor.core.publisher.Flux;
 
 
 
-
+/**
+ * @Author Gabriel
+ * @Description 开票助手测试
+ * @Date  2025/12/1 14:24
+ **/
 public interface FunctionAssistant {
     //客户指令：出差住宿发票开票，
     // 开票信息:    公司名称xxx

@@ -848,7 +848,7 @@ const { Text } = <span class="cstat-no" title="statement not covered" >Typograph
 const { Option } = <span class="cstat-no" title="statement not covered" >Select;</span>
 &nbsp;
 const ReservationCalendar: React.FC = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >() =</span>&gt; {</span>
-  // 状态管理
+  // ??????
   const [date, setDate] = <span class="cstat-no" title="statement not covered" >useState&lt;Dayjs&gt;(dayjs());</span>
   const [devices, setDevices] = <span class="cstat-no" title="statement not covered" >useState&lt;Device[]&gt;([]);</span>
   const [locations, setLocations] = <span class="cstat-no" title="statement not covered" >useState&lt;LocationInfo[]&gt;([]);</span>
@@ -858,22 +858,22 @@ const ReservationCalendar: React.FC = <span class="cstat-no" title="statement no
   const [selectedType, setSelectedType] = <span class="cstat-no" title="statement not covered" >useState&lt;string&gt;('');</span>
   const [showModal, setShowModal] = <span class="cstat-no" title="statement not covered" >useState(false);</span>
   const [selectedDevice, setSelectedDevice] = <span class="cstat-no" title="statement not covered" >useState&lt;Device | null&gt;(null);</span>
-  const [selectedTimeSlot, setSelectedTimeSlot] = <span class="cstat-no" title="statement not covered" >useState&lt;string&gt;('');</span> // 选中的时间槽
+  const [selectedTimeSlot, setSelectedTimeSlot] = <span class="cstat-no" title="statement not covered" >useState&lt;string&gt;('');</span> // ??��?????
   const [loading, setLoading] = <span class="cstat-no" title="statement not covered" >useState(false);</span>
   const [modalLoading, setModalLoading] = <span class="cstat-no" title="statement not covered" >useState(false);</span>
   
-  // 加载基础数据
+  // ???????????
 <span class="cstat-no" title="statement not covered" >  useEffect(<span class="fstat-no" title="function not covered" >() =</span>&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    loadBaseData();</span>
   }, []);
   
-  // 当日期或筛选条件变化时，加载设备和预约数据
+  // ??????????????��????????��????????
 <span class="cstat-no" title="statement not covered" >  useEffect(<span class="fstat-no" title="function not covered" >() =</span>&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    loadDevicesAndReservations();</span>
   }, [date, selectedLocation, selectedType]);
   
   /**
-   * 加载基础数据：地点和设备类型
+   * ?????????????????��????
    */
   const loadBaseData = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >async () =</span>&gt;<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" > {</span></span></span>
 <span class="cstat-no" title="statement not covered" >    try {</span>
@@ -881,10 +881,10 @@ const ReservationCalendar: React.FC = <span class="cstat-no" title="statement no
         locationApi.getLocations(),
         typeApi.getTypes()
       ]);
-      // 正确处理ApiResponse类型的数据
+      // ???????ApiResponse?????????
 <span class="cstat-no" title="statement not covered" >      setLocations((locationsRes.data &amp;&amp; Array.isArray(locationsRes.data)) ? locationsRes.data : []);</span>
 <span class="cstat-no" title="statement not covered" >      setDeviceTypes((typesRes.data &amp;&amp; Array.isArray(typesRes.data)) ? typesRes.data : []);</span>
-      // 设置默认选中第一个地点和类型
+      // ?????????��????????????
       const locationsData = <span class="cstat-no" title="statement not covered" >Array.isArray(locationsRes.data) ? locationsRes.data : (locationsRes.data?.data || []);</span>
       const typesData = <span class="cstat-no" title="statement not covered" >Array.isArray(typesRes.data) ? typesRes.data : (typesRes.data?.data || []);</span>
 <span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (locationsData.length &gt; 0) {</span>
@@ -894,19 +894,19 @@ const ReservationCalendar: React.FC = <span class="cstat-no" title="statement no
 <span class="cstat-no" title="statement not covered" >        setSelectedType(typesData[0].id.toString());</span>
       }
     } catch (error) {
-<span class="cstat-no" title="statement not covered" >      console.error('加载基础数据失败');</span>
+<span class="cstat-no" title="statement not covered" >      console.error('??????????????');</span>
     }
   };
   
   /**
-   * 加载设备和预约数据
+   * ?????��????????
    */
   const loadDevicesAndReservations = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >async () =</span>&gt;<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" > {</span></span></span>
 <span class="cstat-no" title="statement not covered" >    setLoading(true);</span>
 <span class="cstat-no" title="statement not covered" >    try {</span>
       const dateStr = <span class="cstat-no" title="statement not covered" >date.format('YYYY-MM-DD');</span>
       
-      // 加载设备列表，确保只传递有效的数字参数
+      // ?????��?��?????????????��?????????
       const params: { locationId?: number; typeId?: number } = <span class="cstat-no" title="statement not covered" >{};</span>
 <span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (selectedLocation &amp;&amp; !isNaN(parseInt(selectedLocation))) {</span>
 <span class="cstat-no" title="statement not covered" >        params.locationId = parseInt(selectedLocation);</span>
@@ -915,23 +915,23 @@ const ReservationCalendar: React.FC = <span class="cstat-no" title="statement no
 <span class="cstat-no" title="statement not covered" >        params.typeId = parseInt(selectedType);</span>
       }
       const devicesRes = <span class="cstat-no" title="statement not covered" >await deviceApi.getDevices(params);</span>
-      // 正确处理API响应数据
+      // ???????API???????
       const devicesData = <span class="cstat-no" title="statement not covered" >Array.isArray(devicesRes.data) ? devicesRes.data : (devicesRes.data?.data || []);</span>
 <span class="cstat-no" title="statement not covered" >      setDevices(devicesData);</span>
       
-      // 加载当天预约
+      // ?????????
       const reservationsRes = <span class="cstat-no" title="statement not covered" >await reservationApi.getReservations({ date: dateStr });</span>
       const reservationsData = <span class="cstat-no" title="statement not covered" >Array.isArray(reservationsRes.data) ? reservationsRes.data : (reservationsRes.data?.data || []);</span>
 <span class="cstat-no" title="statement not covered" >      setReservations(reservationsData);</span>
     } catch (error) {
-<span class="cstat-no" title="statement not covered" >      console.error('加载数据失败');</span>
+<span class="cstat-no" title="statement not covered" >      console.error('???????????');</span>
     } finally {
 <span class="cstat-no" title="statement not covered" >      setLoading(false);</span>
     }
   };
   
   /**
-   * 生成时间列（5:00-22:00）
+   * ????????��?5:00-22:00??
    */
   const generateTimeSlots = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >() =</span>&gt; {</span>
     const slots = <span class="cstat-no" title="statement not covered" >[];</span>
@@ -942,7 +942,7 @@ const ReservationCalendar: React.FC = <span class="cstat-no" title="statement no
   };
   
   /**
-   * 检查时间段是否有预约
+   * ??????????????
    */
   const checkTimeSlot = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(d</span>eviceId: number, timeStr: string) =&gt; {</span>
     const currentTime = <span class="cstat-no" title="statement not covered" >dayjs(`${date.format('YYYY-MM-DD')} ${timeStr}`);</span>
@@ -952,7 +952,7 @@ const ReservationCalendar: React.FC = <span class="cstat-no" title="statement no
         const startTime = <span class="cstat-no" title="statement not covered" >dayjs(reservation.startTime);</span>
         const endTime = <span class="cstat-no" title="statement not covered" >dayjs(reservation.endTime);</span>
         
-        // 检查时间是否重叠
+        // ????????????
 <span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if (currentTime.isAfter(startTime) &amp;&amp; currentTime.isBefore(endTime)) {</span>
 <span class="cstat-no" title="statement not covered" >          return reservation;</span>
         }
@@ -963,14 +963,14 @@ const ReservationCalendar: React.FC = <span class="cstat-no" title="statement no
   };
   
   /**
-   * 处理设备选择
+   * ?????��???
    */
   const handleDeviceSelect = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(d</span>evice: Device) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    setSelectedDevice(device);</span>
   };
   
   /**
-   * 处理日期变化
+   * ????????��
    */
   const handleDateChange = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(v</span>alue: Dayjs | null) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (value) {</span>
@@ -979,61 +979,61 @@ const ReservationCalendar: React.FC = <span class="cstat-no" title="statement no
   };
   
   /**
-   * 刷新数据
+   * ???????
    */
   const handleRefresh = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >() =</span>&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    loadDevicesAndReservations();</span>
   };
   
   /**
-   * 处理预约提交
+   * ????????
    */
   const handleNewReservation = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >async () =</span>&gt;<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" > {</span></span></span>
 <span class="cstat-no" title="statement not covered" >    try {</span>
 <span class="cstat-no" title="statement not covered" >      setModalLoading(true);</span>
       
-      // 计算预约时间段
+      // ??????????
       const startHour = <span class="cstat-no" title="statement not covered" >selectedTimeSlot ? parseInt(selectedTimeSlot) : 8;</span>
       const endHour = <span class="cstat-no" title="statement not covered" >startHour + 1;</span>
       
-      // 提交预约信息
+      // ???????
 <span class="cstat-no" title="statement not covered" >      await reservationApi.createReservation({</span>
         deviceId: selectedDevice?.id || 0,
-        userName: '', // 简化实现，实际应从表单获取
-        userContact: '', // 简化实现，实际应从表单获取
+        userName: '', // ??????????????????
+        userContact: '', // ??????????????????
         startTime: `${date.format('YYYY-MM-DD')} ${startHour.toString().padStart(2, '0')}:00:00`,
         endTime: `${date.format('YYYY-MM-DD')} ${endHour.toString().padStart(2, '0')}:00:00`,
-        reason: '' // 简化实现，实际应从表单获取
+        reason: '' // ??????????????????
       });
       
 <span class="cstat-no" title="statement not covered" >      setShowModal(false);</span>
-      // 重置选择的时间槽
+      // ????????????
 <span class="cstat-no" title="statement not covered" >      setSelectedTimeSlot('');</span>
-<span class="cstat-no" title="statement not covered" >      loadDevicesAndReservations(); </span>// 重新加载数据
+<span class="cstat-no" title="statement not covered" >      loadDevicesAndReservations(); </span>// ???????????
     } catch (error) {
-<span class="cstat-no" title="statement not covered" >      console.error('预约失败:', error);</span>
+<span class="cstat-no" title="statement not covered" >      console.error('?????:', error);</span>
     } finally {
 <span class="cstat-no" title="statement not covered" >      setModalLoading(false);</span>
     }
   };
   
   /**
-   * 打开新建预约模态框 - 使用GeneralReservationForm组件
+   * ??????????? - ???GeneralReservationForm???
    */
   const openNewReservationModal = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >() =</span>&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    if (selectedDevice) {</span>
-      // 计算预约时间段
+      // ??????????
       const startHour = <span class="cstat-no" title="statement not covered" >selectedTimeSlot ? parseInt(selectedTimeSlot) : 8;</span>
       const endHour = <span class="cstat-no" title="statement not covered" >startHour + 1;</span>
       
-      // 格式化时间字符串
+      // ?????????????
       const startTime = <span class="cstat-no" title="statement not covered" >`${date.format('YYYY-MM-DD')} ${startHour.toString().padStart(2, '0')}:00:00`;</span>
       const endTime = <span class="cstat-no" title="statement not covered" >`${date.format('YYYY-MM-DD')} ${endHour.toString().padStart(2, '0')}:00:00`;</span>
       
-      // 使用GeneralReservationForm组件
+      // ???GeneralReservationForm???
 <span class="cstat-no" title="statement not covered" >      setShowModal(true);</span>
     } else {
-<span class="cstat-no" title="statement not covered" >      console.warn('请先选择一个设备');</span>
+<span class="cstat-no" title="statement not covered" >      console.warn('???????????��');</span>
     }
   };
   
@@ -1041,17 +1041,17 @@ const ReservationCalendar: React.FC = <span class="cstat-no" title="statement no
   
 <span class="cstat-no" title="statement not covered" >  return (</span>
     &lt;div style={{ width: '100%', padding: '16px' }}&gt;
-      {/* 筛选条件 */}
+      {/* ?????? */}
       &lt;Card style={{ marginBottom: '16px', borderRadius: '8px' }}&gt;
         &lt;Row gutter={[16, 16]} justify="space-between" align="middle"&gt;
           &lt;Col xs={24} md={10}&gt;
             &lt;Space align="center" wrap style={{ width: '100%' }}&gt;
-              &lt;Tag color="blue" style={{ borderRadius: '8px' }}&gt;📅&lt;/Tag&gt;
-              &lt;Text&gt;选择日期:&lt;/Text&gt;
+              &lt;Tag color="blue" style={{ borderRadius: '8px' }}&gt;?&lt;/Tag&gt;
+              &lt;Text&gt;???????:&lt;/Text&gt;
               &lt;DatePicker
                 value={date.toDate()}
                 onChange={<span class="fstat-no" title="function not covered" >(v</span>alue) =&gt; {
-                  // 处理可能的多种类型输入
+                  // ????????????????????
 <span class="cstat-no" title="statement not covered" >                  if (value instanceof Date) {</span>
 <span class="cstat-no" title="statement not covered" >                    handleDateChange(dayjs(value));</span>
                   } else <span class="cstat-no" title="statement not covered" >if (Array.isArray(value) &amp;&amp; value.length &gt; 0) {</span>
@@ -1064,27 +1064,27 @@ const ReservationCalendar: React.FC = <span class="cstat-no" title="statement no
                 }}
                 style={{ width: '100%', maxWidth: '180px' }}
               /&gt;
-              &lt;Text type="secondary"&gt;({date.format('M月D日')} {['周日', '周一', '周二', '周三', '周四', '周五', '周六'][date.day()]})&lt;/Text&gt;
+              &lt;Text type="secondary"&gt;({date.format('M??D??')} {['????', '???', '???', '????', '????', '????', '????'][date.day()]})&lt;/Text&gt;
               &lt;button
                 type="button"
                 onClick={<span class="fstat-no" title="function not covered" >() =</span>&gt; <span class="cstat-no" title="statement not covered" >setDate(date.subtract(1, 'day'))}</span>
                 style={{ marginRight: '8px' }}
               &gt;
-                前一天
+                ????
               &lt;/button&gt;
               &lt;button
                 type="button"
                 onClick={<span class="fstat-no" title="function not covered" >() =</span>&gt; <span class="cstat-no" title="statement not covered" >setDate(date.add(1, 'day'))}</span>
                 style={{ marginLeft: '8px' }}
               &gt;
-                后一天
+                ?????
               &lt;/button&gt;
             &lt;/Space&gt;
           &lt;/Col&gt;
           &lt;Col xs={24} md={14}&gt;
             &lt;Space align="center" wrap style={{ width: '100%' }}&gt;
               &lt;Space align="center" wrap={false}&gt;
-                &lt;Text style={{ whiteSpace: 'nowrap' }}&gt;地点:&lt;/Text&gt;
+                &lt;Text style={{ whiteSpace: 'nowrap' }}&gt;???:&lt;/Text&gt;
                 &lt;Select
                   value={selectedLocation}
                   onChange={<span class="fstat-no" title="function not covered" >(v</span>alue) =&gt; <span class="cstat-no" title="statement not covered" >setSelectedLocation(String(value))}</span>
@@ -1098,7 +1098,7 @@ const ReservationCalendar: React.FC = <span class="cstat-no" title="statement no
                 &lt;/Select&gt;
               &lt;/Space&gt;
               &lt;Space align="center" wrap={false}&gt;
-                &lt;Text style={{ whiteSpace: 'nowrap' }}&gt;设备类型:&lt;/Text&gt;
+                &lt;Text style={{ whiteSpace: 'nowrap' }}&gt;?��????:&lt;/Text&gt;
                 &lt;Select
                   value={selectedType}
                   onChange={<span class="fstat-no" title="function not covered" >(v</span>alue: any) =&gt; <span class="cstat-no" title="statement not covered" >setSelectedType(String(value))}</span>
@@ -1119,7 +1119,7 @@ const ReservationCalendar: React.FC = <span class="cstat-no" title="statement no
                   style={{ borderRadius: '8px', margin: '4px 0', textAlign: 'center' }}
                   iconOnly={false}
                 &gt;
-                  &lt;span&gt;刷新&lt;/span&gt;
+                  &lt;span&gt;???&lt;/span&gt;
                 &lt;/Button&gt;
               &lt;Button
                   size="small"
@@ -1130,14 +1130,14 @@ const ReservationCalendar: React.FC = <span class="cstat-no" title="statement no
                   style={{ borderRadius: '8px', margin: '4px 0', textAlign: 'center' }}
                   iconOnly={false}
                 &gt;
-                  &lt;span&gt;新建预约单&lt;/span&gt;
+                  &lt;span&gt;???????&lt;/span&gt;
                 &lt;/Button&gt;
             &lt;/Space&gt;
           &lt;/Col&gt;
         &lt;/Row&gt;
       &lt;/Card&gt;
       
-      {/* 日历网格 */}
+      {/* ???????? */}
       &lt;Card style={{ borderRadius: '8px', overflow: 'hidden' }}&gt;
         &lt;div className="calendar-grid" style={{ 
           borderRadius: '8px', 
@@ -1149,7 +1149,7 @@ const ReservationCalendar: React.FC = <span class="cstat-no" title="statement no
           &lt;table className="reservation-table"&gt;
             &lt;thead&gt;
               &lt;tr&gt;
-                &lt;th style={{ width: 80 }}&gt;设备&lt;/th&gt;
+                &lt;th style={{ width: 80 }}&gt;?��&lt;/th&gt;
                 {timeSlots.map(<span class="fstat-no" title="function not covered" >time </span>=&gt; (
 <span class="cstat-no" title="statement not covered" >                  &lt;th key={time} s</span>tyle={{ width: 60 }}&gt;{time}&lt;/th&gt;
                 ))}
@@ -1208,13 +1208,13 @@ const ReservationCalendar: React.FC = <span class="cstat-no" title="statement no
         &lt;/div&gt;
       &lt;/Card&gt;
       
-      {/* 新建预约模态框 */}
+      {/* ????????? */}
       &lt;GeneralReservationForm
         visible={showModal}
         onClose={<span class="fstat-no" title="function not covered" >() =</span>&gt; <span class="cstat-no" title="statement not covered" >setShowModal(false)}</span>
         onSuccess={<span class="fstat-no" title="function not covered" >() =</span>&gt; {
 <span class="cstat-no" title="statement not covered" >          setShowModal(false);</span>
-<span class="cstat-no" title="statement not covered" >          loadDevicesAndReservations(); </span>// 成功后刷新预约数据
+<span class="cstat-no" title="statement not covered" >          loadDevicesAndReservations(); </span>// ??????????????
         }}
         preSelectedDeviceId={selectedDevice?.id}
         preSelectedStartTime={selectedTimeSlot ? `${date.format('YYYY-MM-DD')} ${parseInt(selectedTimeSlot).toString().padStart(2, '0')}:00:00` : `${date.format('YYYY-MM-DD')} 08:00:00`}
@@ -1231,7 +1231,7 @@ const ReservationCalendar: React.FC = <span class="cstat-no" title="statement no
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-11-13T01:30:48.229Z
+                at 2025-12-01T03:36:18.389Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
