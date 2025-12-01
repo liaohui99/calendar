@@ -1,9 +1,16 @@
 package com.calendar.chart.ai.config;
 
 import dev.langchain4j.model.openai.OpenAiChatModel;
-import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-public class ChatModelConfig {
+
+/**
+ * @author Gabriel
+ * @date 2025/12/1 14:25
+ * @description: TODO
+ */
+@Configuration
+public class SpringChatModelConfig {
 
     //@Bean
     public OpenAiChatModel openAiChatModel() {
@@ -14,5 +21,8 @@ public class ChatModelConfig {
                 .build();
         return chatModel;
     }
+
+
+
     
 }
