@@ -7,10 +7,17 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
+      // 针对/api开头的请求进行代理
       '/api': {
         target: 'http://127.0.0.1:8080',
         changeOrigin: true,
-        rewrite: (path) => path // 保留/api前缀，因为后端API实际需要的是这个前缀
+        rewrite: (path) => path // 保留/api前缀
+      },
+      // 针对/ai开头的请求进行代理（如AI聊天接口）
+      '/ai': {
+        target: 'http://127.0.0.1:8080',
+        changeOrigin: true,
+        rewrite: (path) => path // 保留/ai前缀
       }
     }
   },
@@ -23,7 +30,7 @@ export default defineConfig({
         tabWorkItemPage: path.resolve(__dirname, 'src/features/tab_work_item/App.tsx')
       },
       output: {
-        charset: true, // ȷ������ļ�����charset���
+        // charset属性已被移除，使用默认的charset处理方式
         entryFileNames: chunkInfo => {
           // Ϊ��ͬ��������ɲ�ͬ���ļ���
           if (chunkInfo.name === 'reservationCalendarPage') {

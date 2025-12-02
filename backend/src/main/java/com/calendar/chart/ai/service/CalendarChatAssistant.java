@@ -3,7 +3,8 @@ package com.calendar.chart.ai.service;
 import dev.langchain4j.service.MemoryId;
 import dev.langchain4j.service.SystemMessage;
 import dev.langchain4j.service.UserMessage;
-import dev.langchain4j.service.V;
+import dev.langchain4j.service.spring.AiService;
+import dev.langchain4j.service.spring.AiServiceWiringMode;
 import reactor.core.publisher.Flux;
 
 /**
@@ -12,7 +13,13 @@ import reactor.core.publisher.Flux;
  * @date 2025/12/1 14:25
  * @description: 日历助手
  */
-
+@AiService(
+        wiringMode = AiServiceWiringMode.EXPLICIT,
+        chatMemory = "tokenWindowChatMemory",
+        chatModel = "chatModelSimple",
+        streamingChatModel="streamingChatModel",
+        chatMemoryProvider = "chatMemoryProvider"
+)
 public interface CalendarChatAssistant {
 
     /**

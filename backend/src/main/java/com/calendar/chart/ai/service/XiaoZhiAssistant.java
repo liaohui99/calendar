@@ -17,8 +17,6 @@ public interface XiaoZhiAssistant {
 */
 
 
-
-
     //@Component
     public static class AppointmentTools {
 
@@ -26,7 +24,7 @@ public interface XiaoZhiAssistant {
         //private AppointmentService appointmentService;
 
         @Tool(name = "预约挂号", value = "根据参数，先执行工具方法queryDepartment查询是否可预约，" +
-                "并直接给用户回答是否可预约，并让用户确认所有预约信息，用户确认后再进行预约。")
+                "并直接给用户回答是否可预约，并让用户确认所有预约信息，用户确认后再进行预约。返回值：字符串，包含预约结果信息")
         public String bookAppointment(String appointment) {
             //查找数据库中是否包含对应的预约记录
         /*Appointment appointmentDB = appointmentService.getOne(appointment);
@@ -41,10 +39,7 @@ public interface XiaoZhiAssistant {
             return "您在相同的科室和时间已有预约";
         }
 
-        @Tool(
-                name = "取消预约挂号",
-                value = "根据参数，查询预约是否存在；如果存在则删除预约记录并返回“取消预约成功”，否则返回“取消预约失败”"
-        )
+        @Tool(name = "取消预约挂号", value = "根据参数，查询预约是否存在；如果存在则删除预约记录并返回\"取消预约成功\"，否则返回\"取消预约失败\"。返回值：字符串，包含取消预约的结果信息")
         public String cancelAppointment(String appointment) {
             if (appointment == null) {
                 return "参数无效，无法取消预约";
@@ -60,8 +55,9 @@ public interface XiaoZhiAssistant {
 
         @Tool(
                 name = "查询是否有号源",
-                value = "根据科室名称、日期、时间段和医生名称（可选）查询是否有可预约号源，并返回结果"
+                value = "根据科室名称、日期、时间段和医生名称（可选）查询是否有可预约号源，并返回结果。返回值：布尔值，true表示有可用号源，false表示无可用号源"
         )
+
         public boolean queryDepartment(
                 @P(value = "科室名称") String name,
                 @P(value = "日期") String date,
@@ -92,11 +88,6 @@ public interface XiaoZhiAssistant {
             }
         }
     }
-
-
-
-
-
 
 
 }

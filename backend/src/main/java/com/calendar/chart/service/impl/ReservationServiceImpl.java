@@ -5,6 +5,8 @@ import com.calendar.chart.dao.ReservationDao;
 import com.calendar.chart.dto.ReservationRequest;
 import com.calendar.chart.entity.Reservation;
 import com.calendar.chart.service.ReservationService;
+import dev.langchain4j.agent.tool.P;
+import dev.langchain4j.agent.tool.Tool;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.Resource;
@@ -53,13 +55,26 @@ public class ReservationServiceImpl extends ServiceImpl<ReservationDao, Reservat
         }
     }
     
+    /**
+     * 根据日期查询预约记录
+     * @param date 查询日期，格式为yyyy-MM-dd
+     * @return 预约记录列表
+     */
     @Override
-    public List<Reservation> getReservationsByDate(String date) {
+    @Tool("根据日期查询预约记录，日期格式为yyyy-MM-dd。返回值：预约记录列表，每项包含id(预约ID)、deviceId(设备ID)、userName(预约人姓名)、userContact(联系方式)、startTime(开始时间)、endTime(结束时间)、reason(预约事由)、status(状态)等字段")
+    public List<Reservation> getReservationsByDate(@P("查询日期，格式为yyyy-MM-dd，必需参数") String date) {
         return reservationDao.selectByDate(date);
     }
     
+    /**
+     * 创建新的预约记录
+     * @param request 预约请求对象，包含设备ID、用户信息、预约时间等
+     * @return 创建的预约记录
+     * @throws Exception 设备ID无效、时间冲突或预约创建失败时抛出
+     */
     @Override
-      public Reservation createReservation(ReservationRequest request) throws Exception {
+    @Tool("创建新的预约记录，需要提供设备ID、用户信息、预约开始和结束时间。返回值：创建的预约记录对象，包含id(预约ID)、deviceId(设备ID)、userName(预约人姓名)、userContact(联系方式)、startTime(开始时间)、endTime(结束时间)、reason(预约事由)、status(状态)等字段")
+    public Reservation createReservation(@P("预约请求对象，包含以下必需字段：deviceId(设备ID，整数类型，必填)、userName(预约人姓名，字符串类型，必填)、userContact(预约人联系方式，字符串类型，必填)、startTime(预约开始时间，格式为yyyy-MM-dd HH:mm或ISO格式，必填)、endTime(预约结束时间，格式为yyyy-MM-dd HH:mm或ISO格式，必填)、reason(预约事由，字符串类型，必填)") ReservationRequest request) throws Exception {
         // 检查设备ID有效性
         if (request.getDeviceId() == null || request.getDeviceId() <= 0) {
             throw new Exception("设备ID无效");
@@ -95,8 +110,21 @@ public class ReservationServiceImpl extends ServiceImpl<ReservationDao, Reservat
         return reservation;
     }
     
+    /**
+     * 检查指定时间段是否存在预约冲突
+     * @param deviceId 设备ID
+     * @param startTime 开始时间，格式为yyyy-MM-dd HH:mm或ISO格式
+     * @param endTime 结束时间，格式为yyyy-MM-dd HH:mm或ISO格式
+     * @param excludeId 需要排除的预约ID（更新时使用）
+     * @return 是否存在冲突
+     */
     @Override
-    public boolean checkTimeConflict(Integer deviceId, String startTime, String endTime, Integer excludeId) {
+    @Tool("检查指定设备在特定时间段是否存在预约冲突。返回值：布尔值，true表示存在冲突，false表示不存在冲突")
+    public boolean checkTimeConflict(
+            @P("设备ID，必需参数") Integer deviceId,
+            @P("开始时间，格式为yyyy-MM-dd HH:mm或ISO格式，必需参数") String startTime,
+            @P("结束时间，格式为yyyy-MM-dd HH:mm或ISO格式，必需参数") String endTime,
+            @P(value = "需要排除的预约ID（更新时使用），可选参数", required = false) Integer excludeId) {
         try {
             Date start = parseDateTime(startTime);
             Date end = parseDateTime(endTime);
@@ -113,8 +141,17 @@ public class ReservationServiceImpl extends ServiceImpl<ReservationDao, Reservat
         }
     }
     
+    /**
+     * 根据设备ID和日期查询预约记录
+     * @param deviceId 设备ID
+     * @param date 查询日期，格式为yyyy-MM-dd
+     * @return 预约记录列表
+     */
     @Override
-    public List<Reservation> getReservationsByDeviceAndDate(Integer deviceId, String date) {
+    @Tool("根据设备ID和日期查询预约记录。返回值：预约记录列表，每项包含id(预约ID)、deviceId(设备ID)、userName(预约人姓名)、userContact(联系方式)、startTime(开始时间)、endTime(结束时间)、reason(预约事由)、status(状态)等字段")
+    public List<Reservation> getReservationsByDeviceAndDate(
+            @P("设备ID，必需参数") Integer deviceId,
+            @P("查询日期，格式为yyyy-MM-dd，必需参数") String date) {
         return reservationDao.selectByDeviceAndDate(deviceId, date);
     }
 }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { DatePicker, Select, Button, Modal, Card, Typography, Space, Row, Col, Input, Tag, Tooltip, TextArea } from '@douyinfe/semi-ui';
-import dayjs, type { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
+import type { Dayjs } from 'dayjs';
 import { deviceApi, locationApi, typeApi, reservationApi } from '../services/api';
 import type { Device, LocationInfo, DeviceType, Reservation } from '../types';
 import GeneralReservationForm from './GeneralReservationForm';

@@ -1,6 +1,8 @@
 package com.calendar.chart.ai.req;
 
-import dev.langchain4j.service.UserMessage;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+import lombok.NonNull;
 
 /**
  * @author Gabriel
@@ -8,8 +10,13 @@ import dev.langchain4j.service.UserMessage;
  * @date 2025/12/2 11:28
  * @description: TODO
  */
-public class PromtReq {
-    int memoryId, @UserMessage
-    String userMessage
+@Data
+public class PromptReq {
+
+    @NotNull(message = "memoryId不能为空")
+    int memoryId;
+
+    @NotNull(message = "userMessage不能为空")
+    String userMessage;
 
 }
