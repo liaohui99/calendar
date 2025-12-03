@@ -1,0 +1,47 @@
+:root {
+  /* 颜色变量 */
+  --chat-primary-color: #1890ff;
+  --chat-secondary-color: #52c41a;
+  --chat-background-color: #f0f2f5;
+  --chat-user-bubble-color: #1890ff;
+  --chat-ai-bubble-color: #f5f5f5;
+  --chat-text-color: #333333;
+  --chat-border-color: #d9d9d9;
+  --chat-error-color: #ff4d4f;
+  --chat-success-color: #52c41a;
+  --chat-warning-color: #faad14;
+  
+  /* 字体变量 */
+  --chat-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --chat-font-size: 14px;
+  --chat-font-size-small: 12px;
+  --chat-font-size-large: 16px;
+  --chat-font-weight-normal: 400;
+  --chat-font-weight-medium: 500;
+  --chat-font-weight-bold: 600;
+  
+  /* 间距变量 */
+  --chat-spacing-xs: 4px;
+  --chat-spacing-sm: 8px;
+  --chat-spacing-md: 16px;
+  --chat-spacing-lg: 24px;
+  --chat-spacing-xl: 32px;
+  
+  /* 圆角变量 */
+  --chat-border-radius-sm: 4px;
+  --chat-border-radius-md: 8px;
+  --chat-border-radius-lg: 16px;
+  --chat-border-radius-xl: 24px;
+  
+  /* 阴影变量 */
+  --chat-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --chat-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --chat-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  
+  /* 图片相关变量 */
+  --chat-image-border-radius: var(--chat-border-radius-md);
+  --chat-image-max-width: 280px;
+  --chat-image-max-height: 200px;
+  --chat-image-hover-scale: 1.02;
+  --chat-image-transition: transform 0.2s ease, box-shadow 0.2s ease;
+}

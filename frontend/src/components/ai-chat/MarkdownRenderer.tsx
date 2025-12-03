@@ -1,91 +1,135 @@
 // src/components/ai-chat/MarkdownRenderer.tsx
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
+import rehypeSanitize from 'rehype-sanitize';
 import remarkGfm from 'remark-gfm';
-import { Typography } from '@douyinfe/semi-ui';
-
-const { Paragraph } = Typography;
 
 interface MarkdownRendererProps {
   content: string;
 }
 
 /**
- * Markdown渲染器组件
- * 负责将Markdown格式文本转换为HTML并渲染
+ * Markdown渲染组件
+ * 用于安全地渲染Markdown内容，支持CommonMark语法和GFM扩展
  */
 const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
-  // 默认mock数据，用于组件预览和测试
-  const defaultContent = `# 你好，我是日历AI助手
-
-我可以帮你管理日程安排、创建和查询预约。
-
-## 我能做什么
-
-- 查询日历上的预约信息
-- 创建新的设备预约
-- 修改或取消现有的预约
-- 提供日历视图和时间建议
-
-## 使用示例
-
-你可以这样和我交流：
-- "查询明天的所有预约"
-- "帮我在后天下午2点预约会议室A"
-- "取消我今天下午3点的预约"`;
-
-  // 如果没有提供内容，使用默认mock数据
-  const displayContent = content || defaultContent;
-
   return (
     <div className="markdown-renderer">
       <ReactMarkdown
+        children={content}
         remarkPlugins={[remarkGfm]}
+        rehypePlugins={[rehypeSanitize]}
         components={{
-          p: ({ node, ...props }) => (
-            <Paragraph style={{ marginBottom: 12, marginBlockStart: 0, marginBlockEnd: 0 }} {...props} />
+          // 自定义样式以匹配Semi Design设计系统
+          p: ({ node, ...props }) => <p {...props} style={{ margin: '0.5em 0' }} />,
+          strong: ({ node, children, ...props }) => <span {...props} style={{...props.style, fontWeight: 'bold'}}>{children}</span>,
+          em: ({ node, children, ...props }) => <span {...props} style={{...props.style, fontStyle: 'italic'}}>{children}</span>,
+          // 为链接添加样式
+          a: ({ node, ...props }) => (
+            <a
+              {...props}
+              style={{
+                color: '#1890ff',
+                textDecoration: 'underline',
+                cursor: 'pointer'
+              }}
+            />
           ),
-          h1: ({ node, ...props }) => (
-            <Typography.Title heading={1} style={{ marginBottom: 16, marginTop: 8 }} {...props} />
-          ),
-          h2: ({ node, ...props }) => (
-            <Typography.Title heading={2} style={{ marginBottom: 12, marginTop: 8 }} {...props} />
-          ),
-          h3: ({ node, ...props }) => (
-            <Typography.Title heading={3} style={{ marginBottom: 10, marginTop: 8 }} {...props} />
-          ),
+          // 为列表添加样式
           ul: ({ node, ...props }) => (
-            <ul style={{ marginBottom: 12, marginTop: 0, paddingLeft: 20 }} {...props} />
+            <ul {...props} style={{ paddingLeft: '1.5em', margin: '0.5em 0' }} />
           ),
           ol: ({ node, ...props }) => (
-            <ol style={{ marginBottom: 12, marginTop: 0, paddingLeft: 20 }} {...props} />
+            <ol {...props} style={{ paddingLeft: '1.5em', margin: '0.5em 0' }} />
           ),
           li: ({ node, ...props }) => (
-            <li style={{ marginBottom: 4 }} {...props} />
+            <li {...props} style={{ marginBottom: '0.3em' }} />
           ),
-          code: ({ node, ...props }) => (
-            <code style={{ 
-              backgroundColor: '#f0f0f0', 
-              padding: '2px 4px', 
-              borderRadius: '3px',
-              fontFamily: 'monospace'
-            }} {...props} />
+          // 为代码块添加样式
+          code: ({ node, ...props }) => {
+            const className = props.className || '';
+            const match = /language-(\w+)/.exec(className);
+            const isInline = !className || !match;
+            return !isInline ? (
+              <pre
+                style={{
+                  backgroundColor: '#f5f5f5',
+                  padding: '12px',
+                  borderRadius: '4px',
+                  overflowX: 'auto',
+                  fontSize: '0.9em',
+                  margin: '0.8em 0'
+                }}
+              >
+                <code {...props} />
+              </pre>
+            ) : (
+              <code
+                {...props}
+                style={{
+                  backgroundColor: '#f5f5f5',
+                  padding: '0.2em 0.4em',
+                  borderRadius: '3px',
+                  fontSize: '0.9em'
+                }}
+              />
+            );
+          },
+          // 为标题添加样式
+          h1: ({ node, ...props }) => (
+            <h1 {...props} style={{ fontSize: '1.5em', margin: '0.8em 0' }} />
           ),
-          pre: ({ node, ...props }) => (
-            <pre style={{ 
-              backgroundColor: '#f5f5f5', 
-              padding: '12px', 
-              borderRadius: '6px',
-              overflow: 'auto',
-              fontFamily: 'monospace',
-              marginBottom: 12,
-              marginTop: 0
-            }} {...props} />
+          h2: ({ node, ...props }) => (
+            <h2 {...props} style={{ fontSize: '1.3em', margin: '0.7em 0' }} />
           ),
+          h3: ({ node, ...props }) => (
+            <h3 {...props} style={{ fontSize: '1.1em', margin: '0.6em 0' }} />
+          ),
+          // 为引用添加样式
+          blockquote: ({ node, ...props }) => (
+            <blockquote
+              {...props}
+              style={{
+                borderLeft: '4px solid #d9d9d9',
+                paddingLeft: '16px',
+                color: '#666',
+                margin: '0.8em 0'
+              }}
+            />
+          ),
+          // 为表格添加样式
+          table: ({ node, ...props }) => (
+            <table
+              {...props}
+              style={{
+                borderCollapse: 'collapse',
+                width: '100%',
+                margin: '0.8em 0'
+              }}
+            />
+          ),
+          th: ({ node, ...props }) => (
+            <th
+              {...props}
+              style={{
+                border: '1px solid #e8e8e8',
+                padding: '8px',
+                backgroundColor: '#fafafa',
+                textAlign: 'left'
+              }}
+            />
+          ),
+          td: ({ node, ...props }) => (
+            <td
+              {...props}
+              style={{
+                border: '1px solid #e8e8e8',
+                padding: '8px'
+              }}
+            />
+          )
         }}
-      >
-        {displayContent}
-      </ReactMarkdown>
+      />
     </div>
   );
 };

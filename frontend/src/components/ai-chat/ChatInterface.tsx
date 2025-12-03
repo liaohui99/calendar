@@ -1,150 +1,368 @@
 // src/components/ai-chat/ChatInterface.tsx
-import React, { useState, useEffect } from 'react';
-import { Spin, Typography } from '@douyinfe/semi-ui';
+import React, { useState, useRef, useEffect } from 'react';
+import { Input, Button, List, Avatar, Typography, Empty, IconButton } from '@douyinfe/semi-ui';
 import { sendChatMessage } from '../../services/aiChatService';
-import MessageList from './MessageList';
-import ChatInput from './ChatInput';
+import { IconArrowUpRight } from '@douyinfe/semi-icons';
+import MarkdownRenderer from './MarkdownRenderer';
 
-/**
- * 消息类型定义
- */
+// 样式常量
+const STYLES = {
+  messageList: {
+    flex: 1,
+    overflowY: 'auto',
+    paddingBottom: '100px' // 为固定输入框留出空间
+  },
+  inputContainer: {
+    position: 'fixed',
+    bottom: 0,
+    left: '50%',
+    transform: 'translateX(-50%)',
+    maxWidth: '70%',
+    width: '100%',
+    backgroundColor: '#ffffff',
+    padding: '16px',
+    boxShadow: '0 -2px 8px rgba(0, 0, 0, 0.1)',
+    zIndex: 100,
+    display: 'flex',
+    justifyContent: 'center' // 居中显示输入框和按钮
+  },
+  scrollButton: {
+    position: 'absolute',
+    bottom: '100%',
+    right: '16px',
+    marginBottom: '8px',
+    opacity: 0.8,
+    transition: 'opacity 0.3s'
+  },
+  textarea: {
+    width: '100%', // 占满容器宽度
+    marginRight: 8
+  }
+} as const;
+
+// 添加CSS样式标签到文档头
+const addResponsiveStyles = () => {
+  const existingStyle = document.getElementById('chat-interface-responsive-styles');
+  if (existingStyle) return;
+  
+  const style = document.createElement('style');
+  style.id = 'chat-interface-responsive-styles';
+  style.textContent = `
+    /* 中屏幕响应式适配 */
+    @media (max-width: 768px) {
+      .chat-input-container {
+        padding: 12px !important;
+        paddingBottom: env(safe-area-inset-bottom, 12px) !important;
+        maxWidth: 75% !important;
+      }
+      .message-list {
+        padding-bottom: 80px !important;
+      }
+      .scroll-to-bottom-button {
+        right: 12px !important;
+        marginBottom: 6px !important;
+      }
+    }
+    
+    /* 小屏幕响应式适配 */
+    @media (max-width: 480px) {
+      .chat-input-container {
+        padding: 8px !important;
+        paddingBottom: env(safe-area-inset-bottom, 24px) !important;
+        maxWidth: 85% !important;
+      }
+      .message-list {
+        padding-bottom: 90px !important;
+      }
+      .scroll-to-bottom-button {
+        right: 8px !important;
+        marginBottom: 4px !important;
+      }
+      .chat-input {
+        marginRight: 4px !important;
+      }
+    }
+    
+    /* 大屏幕响应式适配 */
+    @media (min-width: 768px) {
+      .chat-input {
+        max-height: none !important;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+};
+
+const { Text } = Typography;
+
 interface Message {
   id: string;
   content: string;
-  isUser: boolean;
-  timestamp: number;
-}
-import './ChatInterface.css';
-
-const { Title } = Typography;
-
-interface ChatInterfaceProps {
-  initialMessages?: Message[];
+  sender: 'user' | 'bot';
 }
 
 /**
- * AI对话界面主组件
- * 整合所有子组件，管理聊天状态和业务逻辑
+ * 聊天界面组件
+ * 提供用户与AI助手的交互界面，实现输入框固定定位和内容滚动功能
  */
-const ChatInterface: React.FC<ChatInterfaceProps> = ({ initialMessages = [] }) => {
-  // 状态管理
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-
-  // 组件挂载时，显示欢迎消息（如果没有初始消息）
+const ChatInterface: React.FC = () => {
+  // 添加响应式样式
   useEffect(() => {
-    if (initialMessages.length === 0) {
-      // 显示AI的欢迎消息
-      const welcomeMessage: Message = {
-        id: `welcome-${Date.now()}`,
-        content: `# 你好，我是日历AI助手
-
-我可以帮你管理日程安排、创建和查询预约。
-
-## 我能做什么
-
-- 查询日历上的预约信息
-- 创建新的设备预约
-- 修改或取消现有的预约
-- 提供日历视图和时间建议
-
-## 使用示例
-
-你可以这样和我交流：
-- "查询明天的所有预约"
-- "帮我在后天下午2点预约会议室A"
-- "取消我今天下午3点的预约"`,
-        isUser: false,
-        timestamp: Date.now(),
-      };
-      setMessages([welcomeMessage]);
+    addResponsiveStyles();
+  }, []);
+  
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: 'welcome',
+      content: '你好！我是日历图表助手，有什么可以帮到你的吗？',
+      sender: 'bot'
     }
-  }, [initialMessages]);
+  ]);
+  const [inputValue, setInputValue] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showScrollButton, setShowScrollButton] = useState<boolean>(false);
+  const inputContainerRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLInputElement>(null);
+  const messageListRef = useRef<HTMLDivElement>(null);
 
-  // 生成唯一ID
-  const generateId = (): string => {
-    return `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-  };
+  /**
+   * 处理发送消息
+   */
+  const handleSendMessage = async () => {
+    console.log('开始发送消息流程');
+    if (!inputValue.trim() || isLoading) {
+      console.log('消息为空或正在加载，不发送');
+      return;
+    }
 
-  // 处理发送消息
-  const handleSendMessage = async (text: string) => {
-    // 添加用户消息到列表
+    // 添加用户消息
+    console.log('准备添加用户消息到界面');
     const userMessage: Message = {
-      id: generateId(),
-      content: text,
-      isUser: true,
-      timestamp: Date.now(),
+      id: Date.now().toString(),
+      content: inputValue,
+      sender: 'user'
     };
-    setMessages((prevMessages) => [...prevMessages, userMessage]);
 
-    // 清除之前的错误
-    setError(null);
-    // 设置加载状态
+    setMessages(prevMessages => [...prevMessages, userMessage]);
+    setInputValue('');
     setIsLoading(true);
 
     try {
-      // 调用API服务发送消息
-      const response = await sendChatMessage({ message: text });
-
-      if (response.success && response.data) {
-        // 添加AI回复到列表
-        const aiMessage: Message = {
-          id: generateId(),
-          content: response.data.content,
-          isUser: false,
-          timestamp: Date.now(),
-        };
-        setMessages((prevMessages) => [...prevMessages, aiMessage]);
-      } else {
-        // 处理API错误
-        throw new Error(response.error || '未知错误');
-      }
-    } catch (err) {
-      console.error('发送消息失败:', err);
-      setError(err instanceof Error ? err.message : '发送消息失败，请重试');
+      console.log('调用聊天服务sendChatMessage');
+      // 调用聊天服务
+      const response = await sendChatMessage({ message: inputValue });
       
-      // 添加错误消息到列表
+      console.log('收到聊天服务响应:', response);
+      
+      // 添加AI回复，更健壮的响应处理
+      if (response && response.success && response.data && response.data.content) {
+        const botMessage: Message = {
+          id: Date.now().toString(),
+          content: response.data.content,
+          sender: 'bot'
+        };
+        setMessages(prevMessages => [...prevMessages, botMessage]);
+      } else {
+        console.error('服务返回不完整或失败:', response);
+        const errorMessage: Message = {
+          id: Date.now().toString(),
+          content: response && response.error ? `处理失败: ${response.error}` : '抱歉，我无法处理您的请求。',
+          sender: 'bot'
+        };
+        setMessages(prevMessages => [...prevMessages, errorMessage]);
+      }
+    } catch (error) {
+      console.error('发送消息失败:', error);
+      
+      // 添加错误消息，区分不同类型的错误
+      let errorContent = '抱歉，我遇到了一些问题，请稍后再试。';
+      if (error instanceof Error) {
+        if (error.name === 'AbortError') {
+          errorContent = '请求超时，请稍后重试';
+        } else if (error.message.includes('Network')) {
+          errorContent = '网络连接失败，请检查您的网络';
+        } else {
+          errorContent = `处理异常: ${error.message}`;
+        }
+      }
+      
       const errorMessage: Message = {
-        id: generateId(),
-        content: '抱歉，我暂时无法回复。请稍后再试。',
-        isUser: false,
-        timestamp: Date.now(),
+        id: Date.now().toString(),
+        content: errorContent,
+        sender: 'bot'
       };
-      setMessages((prevMessages) => [...prevMessages, errorMessage]);
+      setMessages(prevMessages => [...prevMessages, errorMessage]);
     } finally {
-      // 无论成功失败，都要重置加载状态
+      console.log('消息发送流程结束');
       setIsLoading(false);
     }
   };
 
+  /**
+   * 处理回车键发送消息
+   */
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSendMessage();
+    }
+  };
+
+  /**
+   * 检测输入框内容是否溢出
+   */
+  const checkContentOverflow = () => {
+    if (!textareaRef.current) return;
+    
+    const textarea = textareaRef.current;
+    const shouldShowScrollButton = textarea.scrollHeight > textarea.clientHeight;
+    
+    if (shouldShowScrollButton !== showScrollButton) {
+      setShowScrollButton(shouldShowScrollButton);
+    }
+  };
+
+  /**
+   * 将输入框内容滚动到底部
+   */
+  const scrollToBottom = () => {
+    if (!textareaRef.current) return;
+    
+    const textarea = textareaRef.current;
+    textarea.scrollTop = textarea.scrollHeight;
+  };
+
+  /**
+   * 处理滚动按钮点击
+   */
+  const handleScrollButtonClick = () => {
+    scrollToBottom();
+  };
+
+  // 监听输入框内容变化和组件挂载/卸载
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+    
+    textarea.addEventListener('input', checkContentOverflow);
+    textarea.addEventListener('scroll', checkContentOverflow);
+    
+    // 初始检查
+    checkContentOverflow();
+    
+    return () => {
+      textarea.removeEventListener('input', checkContentOverflow);
+      textarea.removeEventListener('scroll', checkContentOverflow);
+    };
+  }, []);
+
   return (
-    <div className="chat-interface">
-      {/* 聊天标题 */}
-      <div className="chat-header">
-        <Title heading={4} style={{ margin: 0 }}>AI 对话助手</Title>
+    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <div 
+          ref={messageListRef}
+          className="message-list"
+          style={STYLES.messageList}
+        >
+        {messages.length === 0 ? (
+          <Empty description="暂无消息" />
+        ) : (
+          <List>
+            {messages.map((item) => (
+              <List.Item key={item.id}>
+                <div
+                  style={{
+                    padding: '8px 0',
+                    display: 'flex',
+                    justifyContent: item.sender === 'user' ? 'flex-end' : 'flex-start',
+                    alignItems: 'flex-start',
+                    width: '100%'
+                  }}
+                >
+                  {/* AI消息：头像在左，文本在右 */}
+                  {item.sender === 'bot' && (
+                    <Avatar
+                      size="small"
+                      style={{
+                        margin: '0 8px 0 0',
+                      }}
+                    >
+                      A
+                    </Avatar>
+                  )}
+                  <div
+                    style={{
+                      maxWidth: '70%',
+                      padding: '8px 12px',
+                      borderRadius: '12px',
+                      backgroundColor: item.sender === 'user' ? '#e6f7ff' : '#f0f0f0',
+                      textAlign: item.sender === 'user' ? 'right' : 'left',
+                      alignSelf: 'flex-start'
+                    }}
+                  >
+                    {item.sender === 'bot' ? (
+                      <MarkdownRenderer content={item.content} />
+                    ) : (
+                      <Text>{item.content}</Text>
+                    )}
+                  </div>
+                  {/* 用户消息：头像在右，文本在左 */}
+                  {item.sender === 'user' && (
+                    <Avatar
+                      size="small"
+                      style={{
+                        margin: '0 0 0 8px',
+                      }}
+                    >
+                      U
+                    </Avatar>
+                  )}
+                </div>
+              </List.Item>
+            ))}
+          </List>
+        )}
+        {isLoading && (
+          <div style={{ padding: '8px 16px', textAlign: 'center' }}>
+            <Text type="secondary">AI助手正在思考...</Text>
+          </div>
+        )}
       </div>
-
-      {/* 消息列表区域 */}
-      <MessageList messages={messages} />
-
-      {/* 加载指示器 */}
-      {isLoading && (
-        <div className="loading-indicator">
-          <Spin size="small" />
-          <span style={{ marginLeft: 8 }}>AI正在思考...</span>
-        </div>
-      )}
-
-      {/* 错误提示 */}
-      {error && (
-        <div className="error-message">
-          <Typography.Text type="danger">{error}</Typography.Text>
-        </div>
-      )}
-
-      {/* 输入区域 */}
-      <ChatInput onSend={handleSendMessage} disabled={isLoading} />
+      <div 
+          ref={inputContainerRef}
+          className="chat-input-container"
+          style={STYLES.inputContainer}
+        >
+        {showScrollButton && (
+          <IconButton
+            type="primary"
+            size="small"
+            icon={<IconArrowUpRight />}
+            onClick={handleScrollButtonClick}
+            style={STYLES.scrollButton}
+            onMouseEnter={(e) => {
+              if (e.currentTarget) {
+                e.currentTarget.style.opacity = '1';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (e.currentTarget) {
+                e.currentTarget.style.opacity = '0.8';
+              }
+            }}
+            data-testid="scroll-to-bottom-button"
+          />
+        )}
+        <Input
+            value={inputValue}
+            onChange={(value) => setInputValue(value)}
+            onKeyPress={handleKeyPress}
+            placeholder="输入您的问题..."
+            disabled={isLoading}
+            className="chat-input"
+              style={STYLES.textarea}
+              ref={textareaRef}
+          />
+        <Button onClick={handleSendMessage} disabled={isLoading}>发送</Button>
+      </div>
     </div>
   );
 };
