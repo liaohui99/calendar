@@ -26,7 +26,7 @@ public class DateUtils {
      * @Description 获取当前系统时间和日期
      * @Date 2025/12/3 14:42
      **/
-    @Tool(name = "获取当前系统时间和日期",value = "获取当前系统时间和日期")
+    @Tool(name = "getCurrentDateTime",value = "获取当前系统时间和日期")
     public String getCurrentDateTime() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return LocalDateTime.now().format(formatter);

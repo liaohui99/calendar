@@ -3,7 +3,7 @@ package com.calendar.chart.ai.demo;
 import com.calendar.chart.ai.config.memory.PersistentChatMemoryStore;
 import dev.langchain4j.memory.ChatMemory;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
-import dev.langchain4j.model.chat.StreamingChatLanguageModel;
+import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.model.chat.response.StreamingChatResponseHandler;
 import dev.langchain4j.model.openai.OpenAiChatModel;
@@ -37,7 +37,7 @@ public class SimpleChat {
     }
 
     public static void streamChat() {
-        StreamingChatLanguageModel model = OpenAiStreamingChatModel.builder()
+        StreamingChatModel model = OpenAiStreamingChatModel.builder()
                 .baseUrl("http://langchain4j.dev/demo/openai/v1")
                 .apiKey("demo")
                 .modelName("gpt-4o-mini")

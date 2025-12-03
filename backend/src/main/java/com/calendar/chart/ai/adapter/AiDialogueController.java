@@ -3,7 +3,7 @@ package com.calendar.chart.ai.adapter;
 import com.calendar.chart.ai.req.PromptReq;
 import com.calendar.chart.ai.service.CalendarChatAssistant;
 import com.calendar.chart.dto.ApiResponse;
-import dev.langchain4j.model.chat.StreamingChatLanguageModel;
+import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.model.chat.response.StreamingChatResponseHandler;
 import dev.langchain4j.model.openai.OpenAiChatModel;
@@ -25,7 +25,7 @@ public class AiDialogueController {
     private /* final */ OpenAiChatModel openAiChatModel;
 
     //直接使用 low-level LLM API
-    private final StreamingChatLanguageModel streamingChatLanguageModel;
+    private final StreamingChatModel streamingChatLanguageModel;
     private final CalendarChatAssistant calendarChatAssistant;
 
     /**

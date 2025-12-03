@@ -1,6 +1,6 @@
 package com.calendar.chart.ai.demo;
 
-import dev.langchain4j.model.chat.StreamingChatLanguageModel;
+import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.model.openai.OpenAiStreamingChatModel;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.TokenStream;
@@ -14,7 +14,7 @@ import dev.langchain4j.service.TokenStream;
 public class TokenStreamDemo {
 
     public static void main(String[] args) {
-        StreamingChatLanguageModel streamingModel = OpenAiStreamingChatModel.builder()
+        StreamingChatModel streamingModel = OpenAiStreamingChatModel.builder()
                 .apiKey("你的API密钥")
                 .modelName("gpt-3.5-turbo")
                 .build();

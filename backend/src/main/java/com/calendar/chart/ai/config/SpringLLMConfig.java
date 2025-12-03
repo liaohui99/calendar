@@ -2,21 +2,25 @@ package com.calendar.chart.ai.config;
 
 import com.calendar.chart.ai.service.ChatDemoAssistant;
 import com.calendar.chart.config.ApplicationConfig;
+import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.memory.ChatMemory;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.memory.chat.TokenWindowChatMemory;
-import dev.langchain4j.model.chat.ChatLanguageModel;
-import dev.langchain4j.model.chat.StreamingChatLanguageModel;
+import dev.langchain4j.model.TokenCountEstimator;
+import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.model.openai.OpenAiStreamingChatModel;
-import dev.langchain4j.model.openai.OpenAiTokenizer;
+import dev.langchain4j.model.openai.OpenAiTokenCountEstimator;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.store.memory.chat.ChatMemoryStore;
 import dev.langchain4j.store.memory.chat.InMemoryChatMemoryStore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 
 /**
@@ -38,7 +42,7 @@ public class SpringLLMConfig {
      * @Date 2025/12/1 14:30
      **/
     @Bean
-    public StreamingChatLanguageModel streamingChatModel() {
+    public StreamingChatModel streamingChatModel() {
         return OpenAiStreamingChatModel.builder()
                 /*.baseUrl("http://langchain4j.dev/demo/openai/v1")
                 .apiKey("demo")
@@ -52,7 +56,7 @@ public class SpringLLMConfig {
 
 
     //@Bean
-    public ChatDemoAssistant chatAssistant(StreamingChatLanguageModel streamingChatModel) {
+    public ChatDemoAssistant chatAssistant(StreamingChatModel streamingChatModel) {
         return AiServices.create(ChatDemoAssistant.class, streamingChatModel);
     }
 
@@ -64,7 +68,7 @@ public class SpringLLMConfig {
      * @Date 2025/12/1 14:31
      **/
     @Bean
-    public ChatLanguageModel chatModelSimple() {
+    public ChatModel chatModelSimple() {
         return OpenAiChatModel.builder()
 /*                .baseUrl("http://langchain4j.dev/demo/openai/v1")
                 .apiKey("demo")
@@ -94,11 +98,34 @@ public class SpringLLMConfig {
      * @Date  2025/12/1 14:47
      * @return dev.langchain4j.store.memory.chat.ChatMemoryStore
      **/
-    @Bean
+//    @Bean
+//    public ChatMemory tokenWindowChatMemory() {
+//        return TokenWindowChatMemory.withMaxTokens(10000, new OpenAiTokenCountEstimator(applicationConfig.getLangchain4jThinkingModelName()));
+//        //return new PersistentChatMemoryStore();
+//    }
+
+
+/*    @Bean
     public ChatMemory tokenWindowChatMemory() {
-        return TokenWindowChatMemory.withMaxTokens(10000, new OpenAiTokenizer(applicationConfig.getLangchain4jThinkingModelName()));
-        //return new PersistentChatMemoryStore();
-    }
+        // 使用自定义的令牌计数估算器
+        return TokenWindowChatMemory.withMaxTokens(10000,
+                new TokenCountEstimator() {
+                    @Override
+                    public int estimateTokenCount(String text) {
+                        // 简单的字符长度估算或使用其他库
+                        return text.length() / 4; // 粗略估算
+                    }
+
+                    @Override
+                    public int estimateTokenCount(List<ChatMessage> messages) {
+                        // 实现消息列表的令牌估算逻辑
+                        return messages.stream()
+                                .mapToInt(msg -> estimateTokenCount(msg.toString()))
+                                .sum();
+                    }
+                });
+    }*/
+
 
     @Bean
     public ChatMemoryStore chatMemoryStore() {

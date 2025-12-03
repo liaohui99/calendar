@@ -11,7 +11,8 @@ import dev.langchain4j.data.message.ToolExecutionResultMessage;
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
-import dev.langchain4j.model.chat.StreamingChatLanguageModel;
+import dev.langchain4j.model.chat.StreamingChatModel;
+import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.request.json.JsonObjectSchema;
 import dev.langchain4j.model.chat.response.ChatResponse;
@@ -39,7 +40,7 @@ public class ToolsChat {
             .modelName("gpt-4o-mini")
             .build();
 
-    public static StreamingChatLanguageModel streamModel = OpenAiStreamingChatModel.builder()
+    public static StreamingChatModel streamModel = OpenAiStreamingChatModel.builder()
             .baseUrl("http://langchain4j.dev/demo/openai/v1")
             .apiKey("demo")
             .modelName("gpt-4o-mini")
@@ -134,8 +135,8 @@ public class ToolsChat {
         };
 
         FunctionAssistant functionAssistant = AiServices.builder(FunctionAssistant.class)
-                .chatLanguageModel(simpleChatModel)
-                .streamingChatLanguageModel(streamModel)
+                .chatModel(simpleChatModel)
+                .streamingChatModel(streamModel)
                 .tools(Map.of(toolSpecification, toolExecutor)) // Tools (Function Calling)
                 .chatMemoryProvider(chatMemoryProvider)
                 .systemMessageProvider(chatId -> "你是一个智能设备管理助手")

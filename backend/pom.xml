@@ -26,7 +26,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
         <fastjson.version>1.2.78</fastjson.version>
-        <langchain4j.version>1.0.0-beta3</langchain4j.version>
+        <langchain4j.version>1.9.1</langchain4j.version>
+        <langchain4j-spring.version>1.9.1-beta17</langchain4j-spring.version>
     </properties>
 
     <dependencies>
@@ -124,7 +125,7 @@
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-spring-boot-starter</artifactId>
-            <version>${langchain4j.version}</version>
+            <version>${langchain4j-spring.version}</version>
         </dependency>
         <!-- langchain4j核心依赖，包含@Tool和@P注解 -->
         <dependency>
@@ -140,7 +141,7 @@
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-reactor</artifactId>
-            <version>${langchain4j.version}</version>
+            <version>${langchain4j-spring.version}</version>
         </dependency>
 
 
