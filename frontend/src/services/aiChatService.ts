@@ -71,8 +71,8 @@ export const sendChatMessage = async (request: { message: string }): Promise<Cha
       
       // 设置fetch超时
       const controller = new AbortController();
-      // 确保超时设置合理，避免请求过早被终止
-      const timeoutId = setTimeout(() => controller.abort(), 10000);
+      // 将超时时间设置为1分钟
+      const timeoutId = setTimeout(() => controller.abort(), 60000);
       
       const response = await fetch('/ai/calendar/chat', {
         method: 'POST',
@@ -103,43 +103,27 @@ export const sendChatMessage = async (request: { message: string }): Promise<Cha
         console.log('API调用成功，准备返回响应数据');
         return responseData;
       } else {
-        console.warn(`API响应失败: ${response.status}，将回退到模拟数据`);
-        // API调用失败，继续执行模拟数据响应逻辑
-      }
-    } catch (apiError) {
-      console.warn('API调用异常，将回退到模拟数据:', apiError);
-      // API调用异常，继续执行模拟数据响应逻辑
-    }
-    
-    // API调用失败或不可用，使用模拟数据响应
-    console.log('使用模拟数据响应');
-    await new Promise(resolve => setTimeout(resolve, 500)); // 模拟网络延迟
-    
-    // 尝试匹配预定义的回复
-    const lowercaseMessage = request.message.toLowerCase();
-    for (const [key, response] of Object.entries(mockResponses)) {
-      if (lowercaseMessage.includes(key)) {
-        console.log('匹配到预设回复，关键词:', key);
+        console.warn(`API响应失败: ${response.status}，将返回错误信息`);
+        // API调用失败，直接返回错误信息
         return {
-          success: true,
+          success: false,
           data: {
-            content: response
+            content: '',
           },
-          error: null
+          error: `请求失败: 状态码 ${response.status}`
         };
       }
+    } catch (apiError) {
+      console.warn('API调用异常，将返回错误信息:', apiError);
+      // API调用异常，直接返回错误信息
+      return {
+        success: false,
+        data: {
+          content: '',
+        },
+        error: apiError instanceof Error ? apiError.message : '网络请求异常'
+      };
     }
-    
-    // 如果没有匹配到，返回默认回复
-    const defaultResponse = getDefaultResponse();
-    console.log('使用默认回复');
-    return {
-      success: true,
-      data: {
-        content: defaultResponse
-      },
-      error: null
-    };
   } catch (error) {
     console.error('聊天消息处理失败:', error);
     // 返回错误响应格式
@@ -156,8 +140,8 @@ export const sendChatMessage = async (request: { message: string }): Promise<Cha
 // 备用函数：直接调用后端API（当后端服务可用时使用）
 export const sendChatMessageToBackend = async (request: { message: string }): Promise<ChatResponse> => {
   const controller = new AbortController();
-  // 增加超时时间到10秒，减少超时导致的ERR_ABORTED错误
-  const timeoutId = setTimeout(() => controller.abort(), 10000);
+  // 将超时时间设置为1分钟
+  const timeoutId = setTimeout(() => controller.abort(), 60000);
   
   try {
     console.log('调用AI聊天API:', request);

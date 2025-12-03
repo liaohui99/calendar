@@ -6,15 +6,16 @@ import remarkGfm from 'remark-gfm';
 
 interface MarkdownRendererProps {
   content: string;
+  style?: React.CSSProperties; // 新增style属性支持
 }
 
 /**
  * Markdown渲染组件
  * 用于安全地渲染Markdown内容，支持CommonMark语法和GFM扩展
  */
-const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
+const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, style }) => {
   return (
-    <div className="markdown-renderer">
+    <div className="markdown-renderer" style={style}>
       <ReactMarkdown
         children={content}
         remarkPlugins={[remarkGfm]}

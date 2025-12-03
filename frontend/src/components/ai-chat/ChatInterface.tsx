@@ -99,6 +99,7 @@ interface Message {
   id: string;
   content: string;
   sender: 'user' | 'bot';
+  isError?: boolean; // 标识是否为错误消息
 }
 
 /**
@@ -159,7 +160,8 @@ const ChatInterface: React.FC = () => {
         const botMessage: Message = {
           id: Date.now().toString(),
           content: response.data.content,
-          sender: 'bot'
+          sender: 'bot',
+          isError: false
         };
         setMessages(prevMessages => [...prevMessages, botMessage]);
       } else {
@@ -167,7 +169,8 @@ const ChatInterface: React.FC = () => {
         const errorMessage: Message = {
           id: Date.now().toString(),
           content: response && response.error ? `处理失败: ${response.error}` : '抱歉，我无法处理您的请求。',
-          sender: 'bot'
+          sender: 'bot',
+          isError: true // 标记为错误消息
         };
         setMessages(prevMessages => [...prevMessages, errorMessage]);
       }
@@ -189,7 +192,8 @@ const ChatInterface: React.FC = () => {
       const errorMessage: Message = {
         id: Date.now().toString(),
         content: errorContent,
-        sender: 'bot'
+        sender: 'bot',
+        isError: true // 标记为错误消息
       };
       setMessages(prevMessages => [...prevMessages, errorMessage]);
     } finally {
@@ -283,6 +287,8 @@ const ChatInterface: React.FC = () => {
                       size="small"
                       style={{
                         margin: '0 8px 0 0',
+                        backgroundColor: 'rgba(24, 144, 255, 0.8)', // 淡蓝色背景，添加80%透明度，参考市面AI工具设计
+                        color: '#ffffff' // 白色文字，提高对比度
                       }}
                     >
                       A
@@ -299,9 +305,14 @@ const ChatInterface: React.FC = () => {
                     }}
                   >
                     {item.sender === 'bot' ? (
-                      <MarkdownRenderer content={item.content} />
+                      <MarkdownRenderer 
+                        content={item.content} 
+                        style={item.isError ? { color: '#ff4d4f' } : undefined}
+                      />
                     ) : (
-                      <Text>{item.content}</Text>
+                      <Text style={item.isError ? { color: '#ff4d4f' } : undefined}>
+                        {item.content}
+                      </Text>
                     )}
                   </div>
                   {/* 用户消息：头像在右，文本在左 */}
