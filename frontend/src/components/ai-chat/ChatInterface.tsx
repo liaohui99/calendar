@@ -106,7 +106,11 @@ interface Message {
  * 聊天界面组件
  * 提供用户与AI助手的交互界面，实现输入框固定定位和内容滚动功能
  */
-const ChatInterface: React.FC = () => {
+interface ChatInterfaceProps {
+  memoryId: number;
+}
+
+const ChatInterface: React.FC<ChatInterfaceProps> = ({ memoryId }) => {
   // 添加响应式样式
   useEffect(() => {
     addResponsiveStyles();
@@ -151,7 +155,7 @@ const ChatInterface: React.FC = () => {
     try {
       console.log('调用聊天服务sendChatMessage');
       // 调用聊天服务
-      const response = await sendChatMessage({ message: inputValue });
+      const response = await sendChatMessage({ message: inputValue, memoryId });
       
       console.log('收到聊天服务响应:', response);
       
@@ -258,6 +262,18 @@ const ChatInterface: React.FC = () => {
       textarea.removeEventListener('scroll', checkContentOverflow);
     };
   }, []);
+
+  // 监听memoryId变化，重置聊天记录
+  useEffect(() => {
+    // memoryId变化时，重置聊天记录
+    setMessages([
+      {
+        id: 'welcome',
+        content: '你好！我是日历图表助手，有什么可以帮到你的吗？',
+        sender: 'bot'
+      }
+    ]);
+  }, [memoryId]);
 
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>

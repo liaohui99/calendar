@@ -1,7 +1,7 @@
 package com.calendar.chart.ai.config;
 
-import com.calendar.chart.ai.config.memory.PersistentChatMemoryStore;
 import com.calendar.chart.ai.service.ChatDemoAssistant;
+import com.calendar.chart.config.ApplicationConfig;
 import dev.langchain4j.memory.ChatMemory;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
@@ -14,6 +14,7 @@ import dev.langchain4j.model.openai.OpenAiTokenizer;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.store.memory.chat.ChatMemoryStore;
 import dev.langchain4j.store.memory.chat.InMemoryChatMemoryStore;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -24,7 +25,10 @@ import org.springframework.context.annotation.Configuration;
  * @description: TODO
  */
 @Configuration
+@RequiredArgsConstructor
 public class SpringLLMConfig {
+
+    private final ApplicationConfig applicationConfig;
 
 
     /**
@@ -36,9 +40,13 @@ public class SpringLLMConfig {
     @Bean
     public StreamingChatLanguageModel streamingChatModel() {
         return OpenAiStreamingChatModel.builder()
-                .baseUrl("http://langchain4j.dev/demo/openai/v1")
+                /*.baseUrl("http://langchain4j.dev/demo/openai/v1")
                 .apiKey("demo")
-                .modelName("gpt-4o-mini")
+                .modelName("gpt-4o-mini")*/
+                .baseUrl(applicationConfig.getLangchain4jBaseUrl())
+                .apiKey(applicationConfig.getLangchain4jApiKey())
+                //.modelName(applicationConfig.getLangchain4jModelName())
+                .modelName(applicationConfig.getLangchain4jThinkingModelName())
                 .build();
     }
 
@@ -58,9 +66,13 @@ public class SpringLLMConfig {
     @Bean
     public ChatLanguageModel chatModelSimple() {
         return OpenAiChatModel.builder()
-                .baseUrl("http://langchain4j.dev/demo/openai/v1")
+/*                .baseUrl("http://langchain4j.dev/demo/openai/v1")
                 .apiKey("demo")
-                .modelName("gpt-4o-mini")
+                .modelName("gpt-4o-mini")*/
+                .baseUrl(applicationConfig.getLangchain4jBaseUrl())
+                .apiKey(applicationConfig.getLangchain4jApiKey())
+                //.modelName(applicationConfig.getLangchain4jModelName())
+                .modelName(applicationConfig.getLangchain4jThinkingModelName())
                 .build();
     }
 
@@ -73,7 +85,7 @@ public class SpringLLMConfig {
      **/
     @Bean
     public ChatMemory windowChatMemory() {
-        return MessageWindowChatMemory.withMaxMessages(10);
+        return MessageWindowChatMemory.withMaxMessages(20);
     }
 
     /**
@@ -84,7 +96,7 @@ public class SpringLLMConfig {
      **/
     @Bean
     public ChatMemory tokenWindowChatMemory() {
-        return TokenWindowChatMemory.withMaxTokens(1000, new OpenAiTokenizer("gpt-4o-mini"));
+        return TokenWindowChatMemory.withMaxTokens(10000, new OpenAiTokenizer(applicationConfig.getLangchain4jThinkingModelName()));
         //return new PersistentChatMemoryStore();
     }
 
@@ -104,7 +116,7 @@ public class SpringLLMConfig {
     public ChatMemoryProvider chatMemoryProvider(ChatMemoryStore chatMemoryStore) {
         return userId -> MessageWindowChatMemory.builder()
                 .id(userId)
-                .maxMessages(10)
+                .maxMessages(200)
                 .chatMemoryStore(chatMemoryStore)
                 .build();
     }

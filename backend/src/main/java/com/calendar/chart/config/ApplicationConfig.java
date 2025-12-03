@@ -101,6 +101,9 @@ public class ApplicationConfig {
     @Value("${langchain4j.open-ai.chat-model.model-name:gpt-4o-mini}")
     private String langchain4jModelName;
 
+    @Value("${langchain4j.open-ai.chat-model.thinking-model-name:gpt-4o-mini}")
+    private String langchain4jThinkingModelName;
+
     @Value("${langchain4j.open-ai.chat-model.base-url:http://langchain4j.dev/demo/openai/v1}")
     private String langchain4jBaseUrl;
 

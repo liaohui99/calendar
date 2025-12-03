@@ -54,9 +54,10 @@ langchain4j:
     open-ai:
         chat-model:
           # langchain4j测试模型
-          api-key: demo
-          model-name: gpt-4o-mini
-          base-url: http://langchain4j.dev/demo/openai/v1
+          api-key: ${LONGCAT_API_KEY}
+          model-name: LongCat-Flash-Chat
+          thinking-model-name: LongCat-Flash-Thinking
+          base-url: https://api.longcat.chat/openai
           # 请求和响应日志
           log-requests: true
           log-responses: true

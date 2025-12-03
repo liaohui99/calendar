@@ -16,12 +16,17 @@
     "@douyinfe/semi-ui": "^2.27.0",
     "axios": "^1.7.2",
     "dayjs": "^1.11.11",
+    "highlight.js": "^11.11.1",
+    "markdown-it": "^14.1.0",
+    "markdown-it-highlightjs": "^4.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-markdown": "^10.1.0",
+    "react-markdown-it": "^1.0.2",
     "react-router-dom": "^6.24.0",
     "rehype-sanitize": "^6.0.0",
-    "remark-gfm": "^4.0.1"
+    "remark-gfm": "^4.0.1",
+    "vditor": "^3.11.2"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.28.5",

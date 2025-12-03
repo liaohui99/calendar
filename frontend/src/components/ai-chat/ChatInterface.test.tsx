@@ -5,7 +5,7 @@ import '@testing-library/jest-dom';
 
 // 直接模拟整个ChatInterface组件，测试对齐功能
 jest.mock('./ChatInterface', () => {
-  return function MockChatInterface() {
+  return function MockChatInterface({ memoryId }: { memoryId: number }) {
     return (
       <div>
         {/* AI消息 - 左对齐 */}
@@ -32,6 +32,8 @@ jest.mock('./ChatInterface', () => {
           <input placeholder="输入您的问题..." className="chat-input" />
           <button>发送</button>
         </div>
+        {/* 用于测试的memoryId显示 */}
+        <div data-testid="memory-id" style={{ display: 'none' }}>{memoryId}</div>
       </div>
     );
   };
@@ -42,15 +44,18 @@ import ChatInterface from './ChatInterface';
 
 describe('ChatInterface组件测试', () => {
   test('应正确渲染组件', () => {
-    render(<ChatInterface />);
+    const testMemoryId = 123456789;
+    render(<ChatInterface memoryId={testMemoryId} />);
     expect(screen.getByText('你好！我是日历图表助手，有什么可以帮到你的吗？')).toBeInTheDocument();
     expect(screen.getByText('我想查询设备预约信息')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('输入您的问题...')).toBeInTheDocument();
     expect(screen.getByText('发送')).toBeInTheDocument();
+    // 检查memoryId是否被正确传递
+    expect(screen.getByTestId('memory-id')).toHaveTextContent(testMemoryId.toString());
   });
 
   test('应显示左对齐的AI消息', () => {
-    render(<ChatInterface />);
+    render(<ChatInterface memoryId={123456789} />);
     const aiMessage = screen.getByText('你好！我是日历图表助手，有什么可以帮到你的吗？');
     const aiMessageContainer = aiMessage.closest('.message-container');
     const aiMessageBubble = aiMessage.closest('.message-bubble');
@@ -64,7 +69,7 @@ describe('ChatInterface组件测试', () => {
   });
 
   test('应显示右对齐的用户消息', () => {
-    render(<ChatInterface />);
+    render(<ChatInterface memoryId={123456789} />);
     const userMessage = screen.getByText('我想查询设备预约信息');
     const userMessageContainer = userMessage.closest('.message-container');
     const userMessageBubble = userMessage.closest('.message-bubble');

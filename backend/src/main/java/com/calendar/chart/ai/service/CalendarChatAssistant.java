@@ -15,10 +15,11 @@ import reactor.core.publisher.Flux;
  */
 @AiService(
         wiringMode = AiServiceWiringMode.EXPLICIT,
-        chatMemory = "tokenWindowChatMemory",
+        chatMemory = "windowChatMemory",
         chatModel = "chatModelSimple",
         streamingChatModel="streamingChatModel",
-        chatMemoryProvider = "chatMemoryProvider"
+        chatMemoryProvider = "chatMemoryProvider",
+        tools = {"dateUtils","deviceService","deviceTypeService","locationService","reservationService"}
 )
 public interface CalendarChatAssistant {
 
@@ -30,7 +31,7 @@ public interface CalendarChatAssistant {
     //@UserMessage("我是一名篮球运动员{{message}}")        //用户提示词
     @SystemMessage(fromResource = "prompt.txt")     //系统提示词
     //@UserMessage("我是一名篮球运动员{{message}}")        //用户提示词
-    String chat(@MemoryId int memoryId, @UserMessage String userMessage);
+    String chat(@MemoryId long memoryId, @UserMessage String userMessage);
 
     /**
      * 流式输出，是流式的
@@ -39,5 +40,5 @@ public interface CalendarChatAssistant {
      */
     @SystemMessage(fromResource = "prompt.txt")     //系统提示词
     //@UserMessage("我是一名篮球运动员{{message}}")        //用户提示词  使用@UserMessage注解进行用户提示测，用户提示词在每次用户提问时，都会进行携带
-    Flux<String> chatFlux(@MemoryId int memoryId, @UserMessage String userMessage);
+    Flux<String> chatFlux(@MemoryId long memoryId, @UserMessage String userMessage);
 }

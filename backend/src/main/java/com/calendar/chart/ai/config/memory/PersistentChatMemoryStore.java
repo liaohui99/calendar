@@ -3,10 +3,13 @@ package com.calendar.chart.ai.config.memory;
 import cn.hutool.core.collection.CollUtil;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.store.memory.chat.ChatMemoryStore;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Component("persistentChatMemoryStore")
 public class PersistentChatMemoryStore implements ChatMemoryStore {
     private final Map<Object, List<ChatMessage>> memoryStore = new ConcurrentHashMap<>();
 

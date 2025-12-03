@@ -5,6 +5,7 @@
  */
 export interface ChatRequest {
   message: string;
+  memoryId: number;
 }
 
 /**
@@ -52,7 +53,7 @@ const getDefaultResponse = (): string => {
  * @param request 聊天请求参数
  * @returns 聊天响应数据
  */
-export const sendChatMessage = async (request: { message: string }): Promise<ChatResponse> => {
+export const sendChatMessage = async (request: ChatRequest): Promise<ChatResponse> => {
   try {
     console.log('开始处理聊天消息:', request);
     console.log('消息内容长度:', request.message.length);
@@ -63,7 +64,7 @@ export const sendChatMessage = async (request: { message: string }): Promise<Cha
       console.log('尝试调用后端AI聊天API');
       // 构造符合后端接口要求的请求参数
       const backendRequest: BackendChatRequest = {
-        memoryId: 1, // 使用默认memoryId
+        memoryId: request.memoryId, // 使用传入的memoryId
         userMessage: request.message
       };
       
@@ -138,7 +139,7 @@ export const sendChatMessage = async (request: { message: string }): Promise<Cha
 };
 
 // 备用函数：直接调用后端API（当后端服务可用时使用）
-export const sendChatMessageToBackend = async (request: { message: string }): Promise<ChatResponse> => {
+export const sendChatMessageToBackend = async (request: ChatRequest): Promise<ChatResponse> => {
   const controller = new AbortController();
   // 将超时时间设置为1分钟
   const timeoutId = setTimeout(() => controller.abort(), 60000);
@@ -147,7 +148,7 @@ export const sendChatMessageToBackend = async (request: { message: string }): Pr
     console.log('调用AI聊天API:', request);
     // 构造符合后端接口要求的请求参数
     const backendRequest: BackendChatRequest = {
-      memoryId: 1, // 使用默认memoryId
+      memoryId: request.memoryId, // 使用传入的memoryId
       userMessage: request.message
     };
     

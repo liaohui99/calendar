@@ -13,7 +13,7 @@ import lombok.Data;
 public class PromptReq {
 
     @NotNull(message = "memoryId不能为空")
-    Integer memoryId;
+    Long memoryId;
 
     @NotNull(message = "userMessage不能为空")
     String userMessage;

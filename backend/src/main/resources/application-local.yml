@@ -1,55 +1,71 @@
 # 本地环境配置 - 完全使用H2数据库
 spring:
-  datasource:
-    type: com.alibaba.druid.pool.DruidDataSource
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:calendar_db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    username: sa
-    password: password
-    druid:
-      initial-size: 5
-      min-idle: 5
-      max-active: 20
-      max-wait: 60000
-      test-while-idle: true
-      validation-query: SELECT 1
-      time-between-eviction-runs-millis: 60000
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
-      settings:
-        web-allow-others: true
-  # 禁用SQL脚本自动执行
-  sql:
-    init:
-      enabled: false
-  # 配置JPA自动创建表
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-    show-sql: true
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
-        format_sql: true
-  # 配置CORS支持
-  mvc:
-    cors:
-      enabled: true
-      mapping: '/**'
-      allowed-origins: '*'
-      allowed-methods: GET,POST,PUT,DELETE,OPTIONS
-      allowed-headers: '*'
-  logging:
-    level:
-      root: INFO
-      org.springframework.jdbc: DEBUG
-      org.hibernate.SQL: DEBUG
-      com.example: DEBUG
+    datasource:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: org.h2.Driver
+        url: jdbc:h2:mem:calendar_db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+        username: sa
+        password: password
+        druid:
+            initial-size: 5
+            min-idle: 5
+            max-active: 20
+            max-wait: 60000
+            test-while-idle: true
+            validation-query: SELECT 1
+            time-between-eviction-runs-millis: 60000
+    h2:
+        console:
+            enabled: true
+            path: /h2-console
+            settings:
+                web-allow-others: true
+    # 禁用SQL脚本自动执行
+    sql:
+        init:
+            enabled: false
+    # 配置JPA自动创建表
+    jpa:
+        hibernate:
+            ddl-auto: create-drop
+        show-sql: true
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.H2Dialect
+                format_sql: true
+    # 配置CORS支持
+    mvc:
+        cors:
+            enabled: true
+            mapping: '/**'
+            allowed-origins: '*'
+            allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+            allowed-headers: '*'
+    logging:
+        level:
+            root: INFO
+            org.springframework.jdbc: DEBUG
+            org.hibernate.SQL: DEBUG
+            com.example: DEBUG
 mybatis-plus:
-  mapper-locations: classpath:mapper/*.xml
-  type-aliases-package: com.calendar.chart.entity
-  configuration:
-    map-underscore-to-camel-case: true
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    mapper-locations: classpath:mapper/*.xml
+    type-aliases-package: com.calendar.chart.entity
+    configuration:
+        map-underscore-to-camel-case: true
+        log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+logging:
+    level:
+        root: INFO
+        dev.langchain4j: DEBUG
+        org.springframework: DEBUG
+langchain4j:
+    open-ai:
+        chat-model:
+            # langchain4j测试模型
+            api-key: ${LONGCAT_API_KEY}
+            model-name: LongCat-Flash-Chat
+            thinking-model-name: LongCat-Flash-Thinking
+            base-url: https://api.longcat.chat/openai
+            # 请求和响应日志
+            log-requests: true
+            log-responses: true
