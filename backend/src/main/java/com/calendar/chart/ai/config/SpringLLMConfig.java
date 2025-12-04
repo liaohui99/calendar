@@ -51,6 +51,7 @@ public class SpringLLMConfig {
                 .apiKey(applicationConfig.getLangchain4jApiKey())
                 //.modelName(applicationConfig.getLangchain4jModelName())
                 .modelName(applicationConfig.getLangchain4jThinkingModelName())
+                .returnThinking(Boolean.TRUE)
                 .build();
     }
 

@@ -69,3 +69,4 @@ langchain4j:
             # 请求和响应日志
             log-requests: true
             log-responses: true
+            log-tool-executions: true  # 关键：记录工具执行
