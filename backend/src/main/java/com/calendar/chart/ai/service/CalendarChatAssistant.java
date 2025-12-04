@@ -15,7 +15,6 @@ import reactor.core.publisher.Flux;
  */
 @AiService(
         wiringMode = AiServiceWiringMode.EXPLICIT,
-        chatMemory = "windowChatMemory",
         chatModel = "chatModelSimple",
         streamingChatModel="streamingChatModel",
         chatMemoryProvider = "chatMemoryProvider",

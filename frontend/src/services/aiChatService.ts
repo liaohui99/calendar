@@ -185,3 +185,73 @@ export const sendChatMessageToBackend = async (request: ChatRequest): Promise<Ch
     throw error;
   }
 };
+
+/**
+ * 发送聊天消息到AI接口（流式响应）
+ * 调用后端的流式API接口
+ * @param request 聊天请求参数
+ * @param onPartialResponse 接收部分响应的回调函数
+ * @returns Promise<ChatResponse> 聊天响应数据
+ */
+export const sendChatMessageStream = async (request: ChatRequest, onPartialResponse: (content: string) => void): Promise<ChatResponse> => {
+  const controller = new AbortController();
+  // 将超时时间设置为1分钟
+  const timeoutId = setTimeout(() => controller.abort(), 60000);
+  
+  try {
+    console.log('调用AI聊天流式API:', request);
+    // 构造符合后端接口要求的请求参数
+    const backendRequest: BackendChatRequest = {
+      memoryId: request.memoryId,
+      userMessage: request.message
+    };
+    
+    const response = await fetch('/ai/calendar/chat/flux', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(backendRequest),
+      credentials: 'include',
+      signal: controller.signal
+    });
+    
+    clearTimeout(timeoutId);
+    
+    if (!response.ok) {
+      throw new Error(`API响应失败: ${response.status}`);
+    }
+    
+    if (!response.body) {
+      throw new Error('API响应没有body');
+    }
+    
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let fullResponse = '';
+    
+    // 循环读取流数据
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      
+      const chunk = decoder.decode(value, { stream: true });
+      fullResponse += chunk;
+      onPartialResponse(chunk);
+    }
+    
+    await reader.releaseLock();
+    
+    return {
+      success: true,
+      data: {
+        content: fullResponse || '收到你的消息！'
+      },
+      error: null
+    };
+  } catch (error) {
+    clearTimeout(timeoutId);
+    console.error('流式API调用失败:', error);
+    throw error;
+  }
+};

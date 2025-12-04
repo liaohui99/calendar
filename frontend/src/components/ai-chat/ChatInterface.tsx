@@ -1,7 +1,7 @@
 // src/components/ai-chat/ChatInterface.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import { Input, Button, List, Avatar, Typography, Empty, IconButton } from '@douyinfe/semi-ui';
-import { sendChatMessage } from '../../services/aiChatService';
+import { sendChatMessage, sendChatMessageStream } from '../../services/aiChatService';
 import { IconArrowUpRight } from '@douyinfe/semi-icons';
 import MarkdownRenderer from './MarkdownRenderer';
 
@@ -140,43 +140,84 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ memoryId }) => {
       return;
     }
 
+    // 生成唯一的用户消息ID（使用时间戳+随机数）
+    const userMessageId = `user-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
     // 添加用户消息
-    console.log('准备添加用户消息到界面');
+    console.log('准备添加用户消息到界面，消息ID:', userMessageId);
     const userMessage: Message = {
-      id: Date.now().toString(),
+      id: userMessageId,
       content: inputValue,
       sender: 'user'
     };
 
-    setMessages(prevMessages => [...prevMessages, userMessage]);
+    setMessages(prevMessages => {
+      const newMessages = [...prevMessages, userMessage];
+      console.log('添加用户消息后，消息列表:', newMessages);
+      return newMessages;
+    });
     setInputValue('');
     setIsLoading(true);
 
+    // 生成唯一的AI消息ID（使用时间戳+随机数）
+    const botMessageId = `bot-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    // 创建初始的AI回复消息
+    console.log('准备添加AI初始消息，消息ID:', botMessageId);
+    const initialBotMessage: Message = {
+      id: botMessageId,
+      content: '',
+      sender: 'bot',
+      isError: false
+    };
+    setMessages(prevMessages => {
+      const newMessages = [...prevMessages, initialBotMessage];
+      console.log('添加AI初始消息后，消息列表:', newMessages);
+      return newMessages;
+    });
+
     try {
-      console.log('调用聊天服务sendChatMessage');
-      // 调用聊天服务
-      const response = await sendChatMessage({ message: inputValue, memoryId });
+      console.log('调用聊天服务sendChatMessageStream');
       
-      console.log('收到聊天服务响应:', response);
+      // 定义部分响应处理函数
+      const handlePartialResponse = (chunk: string) => {
+        console.log('收到流式响应chunk:', chunk);
+        setMessages(prevMessages => {
+          const updatedMessages = [...prevMessages];
+          const botMessageIndex = updatedMessages.findIndex(msg => msg.id === botMessageId);
+          console.log('查找AI消息，ID:', botMessageId, '索引:', botMessageIndex);
+          if (botMessageIndex !== -1) {
+            // 创建新的消息对象，确保React能检测到变化
+            updatedMessages[botMessageIndex] = {
+              ...updatedMessages[botMessageIndex],
+              content: updatedMessages[botMessageIndex].content + chunk
+            };
+            console.log('更新AI消息内容后:', updatedMessages[botMessageIndex]);
+          } else {
+            console.error('未找到AI消息，ID:', botMessageId);
+          }
+          return updatedMessages;
+        });
+      };
       
-      // 添加AI回复，更健壮的响应处理
-      if (response && response.success && response.data && response.data.content) {
-        const botMessage: Message = {
-          id: Date.now().toString(),
-          content: response.data.content,
-          sender: 'bot',
-          isError: false
-        };
-        setMessages(prevMessages => [...prevMessages, botMessage]);
-      } else {
-        console.error('服务返回不完整或失败:', response);
-        const errorMessage: Message = {
-          id: Date.now().toString(),
-          content: response && response.error ? `处理失败: ${response.error}` : '抱歉，我无法处理您的请求。',
-          sender: 'bot',
-          isError: true // 标记为错误消息
-        };
-        setMessages(prevMessages => [...prevMessages, errorMessage]);
+      // 调用聊天服务（流式）
+      const response = await sendChatMessageStream({ message: inputValue, memoryId }, handlePartialResponse);
+      
+      console.log('收到聊天服务完整响应:', response);
+      
+      // 流式响应已经通过handlePartialResponse实时更新了消息内容，这里只需要确保最终内容正确
+      if (response && !response.success) {
+        console.error('服务返回失败:', response);
+        setMessages(prevMessages => {
+          const updatedMessages = [...prevMessages];
+          const botMessageIndex = updatedMessages.findIndex(msg => msg.id === botMessageId);
+          if (botMessageIndex !== -1) {
+            updatedMessages[botMessageIndex] = {
+              ...updatedMessages[botMessageIndex],
+              content: response.error ? `处理失败: ${response.error}` : '抱歉，我无法处理您的请求。',
+              isError: true
+            };
+          }
+          return updatedMessages;
+        });
       }
     } catch (error) {
       console.error('发送消息失败:', error);
@@ -193,13 +234,19 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ memoryId }) => {
         }
       }
       
-      const errorMessage: Message = {
-        id: Date.now().toString(),
-        content: errorContent,
-        sender: 'bot',
-        isError: true // 标记为错误消息
-      };
-      setMessages(prevMessages => [...prevMessages, errorMessage]);
+      // 更新AI消息为错误信息
+      setMessages(prevMessages => {
+        const updatedMessages = [...prevMessages];
+        const botMessageIndex = updatedMessages.findIndex(msg => msg.id === botMessageId);
+        if (botMessageIndex !== -1) {
+          updatedMessages[botMessageIndex] = {
+            ...updatedMessages[botMessageIndex],
+            content: errorContent,
+            isError: true
+          };
+        }
+        return updatedMessages;
+      });
     } finally {
       console.log('消息发送流程结束');
       setIsLoading(false);

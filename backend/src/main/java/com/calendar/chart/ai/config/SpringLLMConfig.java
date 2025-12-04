@@ -81,16 +81,11 @@ public class SpringLLMConfig {
     }
 
 
-    /**
-     * @Author Gabriel
-     * @Description 创建自定义持久化类对象
-     * @Date  2025/12/1 14:47
-     * @return dev.langchain4j.store.memory.chat.ChatMemoryStore
-     **/
-    @Bean
-    public ChatMemory windowChatMemory() {
-        return MessageWindowChatMemory.withMaxMessages(20);
-    }
+    // 注释掉 windowChatMemory Bean，因为在 @AiService 注解中同时指定了 chatMemory 和 chatMemoryProvider 时，chatMemoryProvider 会被忽略
+    // @Bean
+    // public ChatMemory windowChatMemory() {
+    //     return MessageWindowChatMemory.withMaxMessages(20);
+    // }
 
     /**
      * @Author Gabriel
