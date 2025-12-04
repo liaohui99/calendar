@@ -13,25 +13,87 @@
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.2.0</version>
         <relativePath/>
-        <!-- lookup parent from repository -->
     </parent>
 
     <properties>
         <java.version>17</java.version>
         <spring-cloud.version>2023.0.0</spring-cloud.version>
-        <mybatis-plus.version>3.5.3.1</mybatis-plus.version>
+        <mybatis-plus.version>3.5.5</mybatis-plus.version><!-- ✅ 统一版本 -->
         <mybatis-spring.version>3.0.3</mybatis-spring.version>
         <lombok.version>1.18.30</lombok.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
         <fastjson.version>1.2.78</fastjson.version>
-        <langchain4j.version>1.9.1</langchain4j.version>
-        <langchain4j-spring.version>1.9.1-beta17</langchain4j-spring.version>
+        <langchain4j.version>1.9.1</langchain4j.version><!-- ✅ 修复为可用版本 -->
+        <langchain4j-spring.version>1.9.1-beta17</langchain4j-spring.version><!-- ✅ 修复为可用版本 -->
     </properties>
 
+    <!-- ✅ 必须定义 repositories -->
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+            <releases><enabled>true</enabled></releases>
+            <snapshots><enabled>false</enabled></snapshots>
+        </repository>
+        <repository>
+            <id>aliyun</id>
+            <url>https://maven.aliyun.com/nexus/content/groups/public</url>
+            <releases><enabled>true</enabled></releases>
+            <snapshots><enabled>false</enabled></snapshots>
+        </repository>
+    </repositories>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- ✅ Spring Cloud BOM -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- ✅ LangChain4j BOM 统一管理所有版本 -->
+            <dependency>
+                <groupId>dev.langchain4j</groupId>
+                <artifactId>langchain4j-bom</artifactId>
+                <version>${langchain4j.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- ✅ 强制覆盖，确保所有模块版本一致 -->
+            <dependency>
+                <groupId>dev.langchain4j</groupId>
+                <artifactId>langchain4j-spring-boot-starter</artifactId>
+                <version>${langchain4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dev.langchain4j</groupId>
+                <artifactId>langchain4j-open-ai</artifactId>
+                <version>${langchain4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dev.langchain4j</groupId>
+                <artifactId>langchain4j-core</artifactId>
+                <version>${langchain4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dev.langchain4j</groupId>
+                <artifactId>langchain4j-reactor</artifactId>
+                <version>${langchain4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dev.langchain4j</groupId>
+                <artifactId>langchain4j-http-client-jdk</artifactId>
+                <version>${langchain4j.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
-        <!-- Spring Boot �������� -->
+        <!-- Spring Boot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -46,54 +108,38 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- ���ݿ���� -->
+        <!-- 数据库 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
-
-        <!-- 修改为新的依赖 -->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
             <version>8.0.33</version>
         </dependency>
-        <!-- H2���ݿ� -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
+            <scope>runtime</scope><!-- ✅ 修复作用域 -->
         </dependency>
-        <!-- Spring Data JPA -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
-        <!-- Druid����Դ -->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid-spring-boot-starter</artifactId>
             <version>1.2.15</version>
         </dependency>
 
-        <!-- MyBatis-Plus���� -->
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>${mybatis-plus.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>mybatis-spring</artifactId>
-                    <groupId>org.mybatis</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
+        <!-- MyBatis-Plus -->
+        <!-- ✅ 只保留一个 starter -->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
-            <version>3.5.5</version>
+            <version>${mybatis-plus.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis-spring</artifactId>
@@ -108,35 +154,32 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- Hutool������� -->
+        <!-- Hutool -->
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
             <version>5.8.25</version>
         </dependency>
 
-        <!-- CORS֧�� -->
+        <!-- WebFlux -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
 
-        <!-- langchain4j - ʹ��Java 8���ݰ汾 -->
+        <!-- ✅ LangChain4j - 删除所有 version 标签 -->
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-spring-boot-starter</artifactId>
             <version>${langchain4j-spring.version}</version>
         </dependency>
-        <!-- langchain4j核心依赖，包含@Tool和@P注解 -->
-        <dependency>
-            <groupId>dev.langchain4j</groupId>
-            <artifactId>langchain4j</artifactId>
-            <version>${langchain4j.version}</version>
-        </dependency>
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-open-ai</artifactId>
-            <version>${langchain4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-core</artifactId>
         </dependency>
         <dependency>
             <groupId>dev.langchain4j</groupId>
@@ -144,17 +187,14 @@
             <version>${langchain4j-spring.version}</version>
         </dependency>
 
-
+        <!-- FastJSON -->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>${fastjson.version}</version>
         </dependency>
-
     </dependencies>
 
-
-    <!-- 移除了langchain4j-bom导入，使用直接版本管理 -->
     <build>
         <plugins>
             <plugin>
@@ -174,16 +214,8 @@
                     <maxmem>512m</maxmem>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.0.0</version>
-                <configuration>
-                    <executable>E:\JDK\jdk-17.0.7\bin\java</executable>
-                    <commandlineArgs>-Xms128m -Xmx512m -Dfile.encoding=UTF-8 -classpath %classpath ${exec.mainClass}
-                    </commandlineArgs>
-                </configuration>
-            </plugin>
+
+            <!-- 移除 exec-maven-plugin，使用 spring-boot:run -->
         </plugins>
     </build>
 </project>

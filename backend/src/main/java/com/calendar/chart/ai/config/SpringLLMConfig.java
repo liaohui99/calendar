@@ -140,11 +140,11 @@ public class SpringLLMConfig {
      * @return dev.langchain4j.memory.chat.ChatMemoryProvider
      **/
     @Bean
-    public ChatMemoryProvider chatMemoryProvider(ChatMemoryStore chatMemoryStore) {
+    public ChatMemoryProvider chatMemoryProvider(ChatMemoryStore persistentChatMemoryStore) {
         return userId -> MessageWindowChatMemory.builder()
                 .id(userId)
                 .maxMessages(200)
-                .chatMemoryStore(chatMemoryStore)
+                .chatMemoryStore(persistentChatMemoryStore)
                 .build();
     }
 

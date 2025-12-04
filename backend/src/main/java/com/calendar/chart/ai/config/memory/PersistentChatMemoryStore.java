@@ -1,15 +1,20 @@
 package com.calendar.chart.ai.config.memory;
 
 import cn.hutool.core.collection.CollUtil;
+import com.alibaba.fastjson.JSON;
+import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.store.memory.chat.ChatMemoryStore;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Component("persistentChatMemoryStore")
+@Slf4j
 public class PersistentChatMemoryStore implements ChatMemoryStore {
     private final Map<Object, List<ChatMessage>> memoryStore = new ConcurrentHashMap<>();
 
@@ -31,8 +36,26 @@ public class PersistentChatMemoryStore implements ChatMemoryStore {
     @Override
     public void updateMessages(Object memoryId, List<ChatMessage> messages) {
         // TODO: 实现通过内存ID更新持久化存储中的所有消息。
-        // 轻松地序列化ChatMessage。
-        memoryStore.put(memoryId, messages);
+        // 在存储前清理消息，确保AiMessage的text不为null
+        List<ChatMessage> sanitizedMessages = messages.stream()
+                .map(msg -> {
+                    if (msg instanceof AiMessage) {
+                        AiMessage aiMsg = (AiMessage) msg;
+                        if (aiMsg.text() == null) {
+                            log.warn("AiMessage text is null, replace with empty string");
+                            log.warn("AiMessage: {}", aiMsg);
+                            // 重新构建AiMessage，用空字符串替代null
+                            return AiMessage.builder()
+                                    .text("") // 关键：强制设置空字符串
+                                    .toolExecutionRequests(aiMsg.toolExecutionRequests())
+                                    .attributes(aiMsg.attributes())
+                                    .build();
+                        }
+                    }
+                    return msg;
+                })
+                .collect(Collectors.toList());
+        memoryStore.put(memoryId, sanitizedMessages);
         // 可以使用ChatMessageSerializer.messageToJson(ChatMessage)和
         // ChatMessageSerializer.messagesToJson(List<ChatMessage>)辅助方法
         // 轻松地将聊天消息序列化为JSON。
