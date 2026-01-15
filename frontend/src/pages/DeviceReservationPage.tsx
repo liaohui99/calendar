@@ -75,29 +75,60 @@ const DeviceReservationPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="page-layout" style={{ minHeight: '100vh' }}>
-      <div style={{ 
-          backgroundColor: '#fff', 
-          padding: '0 16px 0 24px', 
-          boxShadow: '0 1px 4px rgba(0,21,41,0.08)',
+    <div className="page-layout" style={{ 
+      minHeight: '100vh',
+      backgroundColor: 'var(--bg-secondary)',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+    }}>
+      <header style={{ 
+          backgroundColor: 'var(--bg-primary)', 
+          padding: '16px 24px', 
+          boxShadow: 'var(--shadow-sm)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           position: 'sticky',
           top: 0,
-          zIndex: 10
+          zIndex: 100,
+          borderBottom: '1px solid var(--border-primary)'
         }}>
-          <Title style={{ margin: 0, color: '#262626', fontSize: '18px' }}>
-            设备预约
+          <Title style={{ 
+            margin: 0, 
+            color: 'var(--text-primary)', 
+            fontSize: '20px',
+            fontWeight: 700
+          }}>
+            设备预约系统
           </Title>
-          <Button onClick={handleViewAllReservations}>
-            查看所有预约
-          </Button>
-        </div>
-        <div className="page-content" style={{ 
-          padding: '24px', 
-          backgroundColor: '#f0f2f5',
-          minHeight: 'calc(100vh - 64px)',
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            {/* AI助手按钮 */}
+            <Button 
+              icon="chat" 
+              onClick={() => navigate('/chat')} 
+              size="small"
+              type="secondary"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '4px'
+              }}
+            >
+              AI助手
+            </Button>
+            <Button 
+              onClick={handleViewAllReservations}
+              type="primary"
+              size="small"
+            >
+              查看所有预约
+            </Button>
+          </div>
+        </header>
+        <main className="page-content" style={{ 
+          padding: '32px 24px', 
+          backgroundColor: 'var(--bg-secondary)',
+          minHeight: 'calc(100vh - 80px)',
           maxWidth: '1400px',
           margin: '0 auto',
           width: '100%' 
@@ -131,7 +162,7 @@ const DeviceReservationPage: React.FC = () => {
             onClose={() => setShowGeneralModal(false)}
             onSuccess={handleGeneralReservationSuccess}
           />
-        </div>
+        </main>
     </div>
   );
 };

@@ -1,5 +1,8 @@
+com\calendar\chart\controller\ReservationController$StatusUpdateRequest.class
 com\calendar\chart\service\LocationService.class
 com\calendar\chart\ai\service\XiaoZhiAssistant.class
+com\calendar\chart\ai\config\AiServiceRegisteredEventListener.class
+com\calendar\chart\utils\DateUtils.class
 com\calendar\chart\CalendarChartApplication.class
 com\calendar\chart\controller\DeviceController.class
 com\calendar\chart\ai\demo\ToolsChat.class
@@ -25,6 +28,8 @@ com\calendar\chart\ai\config\SpringLLMConfig.class
 com\calendar\chart\dao\ReservationDao.class
 com\calendar\chart\dto\ReservationRequest.class
 com\calendar\chart\ai\demo\RAGTest.class
+com\calendar\chart\ai\config\ApiKeyQuotaAspect.class
+com\calendar\chart\ai\config\LongCatToolCallAdapter.class
 com\calendar\chart\service\impl\LocationServiceImpl.class
 com\calendar\chart\ai\config\memory\MysqlChatMemoryStore.class
 com\calendar\chart\service\DeviceService.class

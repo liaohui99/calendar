@@ -4,7 +4,7 @@
 
 -- 创建设备类型表 (H2兼容版本)
 CREATE TABLE IF NOT EXISTS device_type (
-    id INT IDENTITY PRIMARY KEY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(50) NOT NULL COMMENT '类型名称',
     description VARCHAR(200) COMMENT '类型描述',
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS device_type (
 
 -- 创建地点表 (H2兼容版本)
 CREATE TABLE IF NOT EXISTS location (
-    id INT IDENTITY PRIMARY KEY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(50) NOT NULL COMMENT '地点名称',
     description VARCHAR(200) COMMENT '地点描述',
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS location (
 
 -- 创建设备表 (H2兼容版本)
 CREATE TABLE IF NOT EXISTS device (
-    id INT IDENTITY PRIMARY KEY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(50) NOT NULL COMMENT '设备名称',
     code VARCHAR(50) NOT NULL COMMENT '设备编号',
     type_id INT COMMENT '设备类型ID',
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS device (
 
 -- 创建预约记录表 (H2兼容版本)
 CREATE TABLE IF NOT EXISTS reservation (
-    id INT IDENTITY PRIMARY KEY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     device_id INT NOT NULL COMMENT '设备ID',
     user_name VARCHAR(50) NOT NULL COMMENT '预约人姓名',
     user_contact VARCHAR(100) NOT NULL COMMENT '预约人联系方式',

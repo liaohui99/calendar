@@ -55,7 +55,8 @@ describe('DeviceReservationPage', () => {
         <DeviceReservationPage />
       </BrowserRouter>
     );
-    expect(screen.getByTestId('page-title')).toHaveTextContent('设备预约');
+
+    expect(screen.getByText('设备预约系统')).toBeInTheDocument();
   });
 
   test('显示"查看所有预约"按钮', () => {

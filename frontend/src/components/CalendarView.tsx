@@ -289,7 +289,7 @@ const renderTimeSlot = (deviceId: number, slot: { startTime: string; endTime: st
     return (
       <Card>
         <div style={{ textAlign: 'center', padding: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Spin size="large" tip="加载中..." />
+          <Spin size="large" tip="加载中..." />
         </div>
       </Card>
     );

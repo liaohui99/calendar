@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Select, Card, DatePicker, Button, Row, Col } from '@douyinfe/semi-ui';
+import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import type { DeviceType, LocationInfo } from '../types';
 import { typeApi, locationApi } from '../services/api';
@@ -10,6 +11,7 @@ interface FilterComponentProps {
 }
 
 const FilterComponent: React.FC<FilterComponentProps> = ({ onFilterChange, onNewReservationClick }) => {
+  const navigate = useNavigate();
   const [locations, setLocations] = useState<LocationInfo[]>([]);
   const [types, setTypes] = useState<DeviceType[]>([]);
   const [selectedLocationId, setSelectedLocationId] = useState<number | undefined>(undefined);
@@ -107,89 +109,134 @@ const FilterComponent: React.FC<FilterComponentProps> = ({ onFilterChange, onNew
   };
 
   return (
-    <Card style={{ marginBottom: '20px' }}>
-      <div style={{ padding: '16px' }}>
-        <Row align="middle" justify="space-between" style={{ marginBottom: '16px' }}>
-          <Col>
-            <div style={{ fontSize: '18px', fontWeight: 'bold', margin: 0, textAlign: 'center' }}>设备预约</div>
-          </Col>
-        </Row>
+    <Card
+      className="filter-section-card"
+      style={{
+        marginBottom: '24px',
+        borderRadius: 'var(--radius-xl)',
+        boxShadow: 'none',
+        border: 'none',
+        backgroundColor: 'var(--bg-primary)'
+      }}
+    >
+      <div style={{ padding: '24px' }}>
+          <div style={{
+            fontSize: '24px',
+            fontWeight: 700,
+            margin: 0,
+            marginBottom: '24px',
+            textAlign: 'left',
+            color: 'var(--text-primary)',
+            letterSpacing: '-0.5px'
+          }}>设备预约</div>
 
-        <Row gutter={16} align="middle">
-          {/* 日期选择区域 */}
-          <Col>
-            <Button
-              icon="left"
-              onClick={goToPreviousDay}
-              size="small"
-              style={{ textAlign: 'center' }}
-            >
-              前一天
-            </Button>
-            <DatePicker
-              value={selectedDate ? new Date(selectedDate) : undefined}
-              onChange={handleDateChange}
-              style={{ width: '180px' }}
-              format="yyyy-MM-dd"
-              size="small"
-              getPopupContainer={() => document.body}
-            />
-            <Button
-              icon="right"
-              onClick={goToNextDay}
-              size="small"
-              style={{ textAlign: 'center' }}
-            >
-              后一天
-            </Button>
-            <span>{`(${getWeekday(selectedDate)})`}</span>
-          </Col>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', width: '100%' }}>
+            {/* 日期选择和筛选区域合并在同一行 */}
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              gap: '16px', 
+              flexWrap: 'wrap' 
+            }}>
+              {/* 左侧：日期选择 + 地点和类型选择 */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+                {/* 日期选择区域 */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                  <Button
+                    icon="left"
+                    onClick={goToPreviousDay}
+                    size="small"
+                    type="secondary"
+                  >
+                    前一天
+                  </Button>
+                
+                  <DatePicker
+                    value={selectedDate ? new Date(selectedDate) : undefined}
+                    onChange={handleDateChange}
+                    style={{ width: '160px' }}
+                    format="yyyy-MM-dd"
+                    size="small"
+                    getPopupContainer={() => document.body}
+                  />
+                
+                  <span style={{
+                    fontWeight: 600,
+                    color: 'var(--text-primary)',
+                    fontSize: '13px',
+                    minWidth: '40px'
+                  }}>{`(${getWeekday(selectedDate)})`}</span>
+                
+                  <Button
+                    icon="right"
+                    onClick={goToNextDay}
+                    size="small"
+                    type="secondary"
+                  >
+                    后一天
+                  </Button>
+                </div>
+                
+                {/* 地点和类型选择 */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+                  {/* 地点选择 */}
+                  <Select
+                    placeholder="选择地点"
+                    style={{ width: '160px' }}
+                    value={selectedLocationId}
+                    onChange={handleLocationChange}
+                    loading={loading}
+                    size="small"
+                  >
+                  {locations.map((location) => (
+                    <Select.Option key={location.id} value={location.id}>
+                      {location.name}
+                    </Select.Option>
+                  ))}
+                  </Select>
+                
+                  {/* 设备类型选择 */}
+                  <Select
+                    placeholder="选择类型"
+                    style={{ width: '160px' }}
+                    value={selectedTypeId}
+                    onChange={handleTypeChange}
+                    loading={loading}
+                    size="small"
+                  >
+                  {types.map((type) => (
+                    <Select.Option key={type.id} value={type.id}>
+                      {type.name}
+                    </Select.Option>
+                  ))}
+                  </Select>
+                </div>
+              </div>
+            </div>
 
-          {/* 筛选选择区域 */}
-          <Col style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', width: '100%' }}>
-            {/* 地点选择 */}
-              <Select
-                placeholder="选择地点"
-                style={{ width: '150px' }}
-                value={selectedLocationId}
-                onChange={handleLocationChange}
-                loading={loading}
+            {/* 操作按钮区域 */}
+            <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+              {/* 刷新按钮 */}
+              <Button 
+                icon="reload" 
+                onClick={handleRefresh} 
                 size="small"
+                type="secondary"
               >
-              {locations.map((location) => (
-                <Select.Option key={location.id} value={location.id}>
-                  {location.name}
-                </Select.Option>
-              ))}
-              </Select>
-            
-            {/* 设备类型选择 */}
-              <Select
-                placeholder="选择类型"
-                style={{ width: '150px' }}
-                value={selectedTypeId}
-                onChange={handleTypeChange}
-                loading={loading}
+                刷新
+              </Button>
+              
+              {/* 新建预约单按钮 - 突出显示 */}
+              <Button 
+                type="primary" 
                 size="small"
+                onClick={onNewReservationClick}
               >
-              {types.map((type) => (
-                <Select.Option key={type.id} value={type.id}>
-                  {type.name}
-                </Select.Option>
-              ))}
-              </Select>
-
-            {/* 刷新按钮 */}
-            <Button icon="reload" onClick={handleRefresh} size="small" style={{ textAlign: 'center' }}>
-              刷新
-            </Button>
-            
-            {/* 新建预约单按钮 */}
-            <Button type="primary" size="small" style={{ textAlign: 'center' }} onClick={onNewReservationClick}>
-              新建预约单
-            </Button>
-          </Col>
-        </Row>
+                新建预约单
+              </Button>
+            </div>
+          </div>
       </div>
     </Card>
   );

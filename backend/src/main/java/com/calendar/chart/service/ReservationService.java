@@ -44,4 +44,20 @@ public interface ReservationService extends IService<Reservation> {
      * @return 预约记录列表
      */
     List<Reservation> getReservationsByDeviceAndDate(Integer deviceId, String date);
+    
+    /**
+     * 取消/删除预约
+     * @param id 预约ID
+     * @return 是否取消成功
+     */
+    boolean cancelReservation(Integer id);
+    
+    /**
+     * 更新预约状态
+     * @param id 预约ID
+     * @param status 新状态
+     * @param reason 状态变更原因（可选）
+     * @return 更新后的预约记录
+     */
+    Reservation updateReservationStatus(Integer id, Integer status, String reason);
 }

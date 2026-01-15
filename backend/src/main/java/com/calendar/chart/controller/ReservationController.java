@@ -75,4 +75,78 @@ public class ReservationController {
         List<Reservation> reservations = reservationService.getReservationsByDeviceAndDate(deviceId, date);
         return ApiResponse.success(reservations);
     }
+    
+    /**
+     * 取消/删除预约
+     * @param id 预约ID
+     * @return 操作结果
+     */
+    @DeleteMapping("/{id}")
+    public ApiResponse<Void> cancelReservation(@PathVariable Integer id) {
+        try {
+            boolean success = reservationService.cancelReservation(id);
+            if (success) {
+                return ApiResponse.success(null);
+            } else {
+                return ApiResponse.error(500, "取消预约失败");
+            }
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.error(400, e.getMessage());
+        } catch (Exception e) {
+            return ApiResponse.error(500, "取消预约失败: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * 更新预约状态
+     * @param id 预约ID
+     * @param request 状态更新请求
+     * @return 更新后的预约记录
+     */
+    @PutMapping("/{id}/status")
+    public ApiResponse<Reservation> updateReservationStatus(
+            @PathVariable Integer id,
+            @RequestBody StatusUpdateRequest request) {
+        try {
+            // 参数验证
+            if (request.getStatus() == null || request.getStatus() < 0 || request.getStatus() > 2) {
+                return ApiResponse.error(400, "无效的预约状态");
+            }
+            
+            Reservation reservation = reservationService.updateReservationStatus(
+                id, 
+                request.getStatus(), 
+                request.getReason()
+            );
+            return ApiResponse.success(reservation);
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.error(400, e.getMessage());
+        } catch (Exception e) {
+            return ApiResponse.error(500, "更新预约状态失败: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * 状态更新请求内部类
+     */
+    public static class StatusUpdateRequest {
+        private Integer status;
+        private String reason;
+        
+        public Integer getStatus() {
+            return status;
+        }
+        
+        public void setStatus(Integer status) {
+            this.status = status;
+        }
+        
+        public String getReason() {
+            return reason;
+        }
+        
+        public void setReason(String reason) {
+            this.reason = reason;
+        }
+    }
 }

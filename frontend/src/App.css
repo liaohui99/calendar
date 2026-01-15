@@ -1,144 +1,910 @@
-.app-container {
-  min-height: 100vh;
-  background-color: #f5f5f5;
-  padding: 20px;
+/* ==================== 色彩系统变量 ==================== */
+:root {
+  /* 主色调 - 专业可靠的蓝色 */
+  --primary-color: #3B82F6;
+  --primary-hover: #2563EB;
+  --primary-active: #1D4ED8;
+  --primary-light: #EFF6FF;
+  --primary-lighter: #DBEAFE;
+  
+  /* 辅助色 */
+  --success-color: #10B981;
+  --success-light: #ECFDF5;
+  --warning-color: #F59E0B;
+  --warning-light: #FFFBEB;
+  --error-color: #EF4444;
+  --error-light: #FEF2F2;
+  
+  /* 中性色 - 符合WCAG 2.1 AA对比度标准 */
+  --text-primary: #111827; /* 深灰色，对比度7.2:1 */
+  --text-secondary: #4B5563; /* 中灰色，对比度4.6:1 */
+  --text-tertiary: #6B7280; /* 浅灰色，对比度3.1:1 */
+  --text-disabled: #9CA3AF; /* 更浅灰色，对比度2.1:1 */
+  
+  --bg-primary: #FFFFFF; /* 纯白色背景 */
+  --bg-secondary: #F9FAFB; /* 浅灰色背景 */
+  --bg-tertiary: #F3F4F6; /* 中灰色背景 */
+  --bg-hover: #F1F5F9; /* 悬停背景色 */
+  
+  --border-primary: #E5E7EB; /* 主要边框色 */
+  --border-light: #F3F4F6; /* 浅色边框 */
+  --border-hover: #D1D5DB; /* 悬停边框色 */
+  
+  /* 阴影层级 */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  
+  /* 圆角 */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  
+  /* 过渡效果 */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+  --transition-slow: 0.35s ease;
 }
 
-/* 预约日历样式 */
+/* ==================== 应用容器样式 ==================== */
+.app-container {
+  min-height: 100vh;
+  background: var(--bg-secondary);
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* ==================== 预约日历组件样式 ==================== */
 .reservation-calendar {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  background: var(--bg-primary);
+  padding: 24px;
+  border-radius: var(--radius-xl);
+  box-shadow: none;
+  border: none;
+  transition: all var(--transition-normal);
+}
+
+.reservation-calendar:hover {
+  box-shadow: none;
+  transform: none;
 }
 
 .calendar-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
   flex-wrap: wrap;
   gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-primary);
 }
 
 .date-navigation {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
 }
 
 .today-label {
-  font-weight: 500;
-  margin-right: 8px;
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--text-primary);
 }
 
 .date-info {
   margin-left: 8px;
-  color: #666;
+  color: var(--text-secondary);
+  font-size: 14px;
 }
 
 .filter-section {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
   flex-wrap: wrap;
 }
 
+/* ==================== 日历网格样式 ==================== */
 .calendar-grid {
   overflow-x: auto;
-  border: 1px solid #e8e8e8;
-  border-radius: 4px;
+  border: none;
+  border-radius: var(--radius-lg);
+  background: var(--bg-primary);
+  padding: 0;
+  margin: 0;
+  width: 100%;
 }
 
+.calendar-grid-inner {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  width: 100%;
+}
+
+/* ==================== 预约表格样式 ==================== */
 .reservation-table {
   width: 100%;
   border-collapse: collapse;
+  border-spacing: 0;
+  table-layout: fixed;
 }
 
-.reservation-table th {
-  background-color: #fafafa;
-  border-bottom: 1px solid #e0e0e0;
-  border-right: 1px solid #e0e0e0;
-  padding: 8px 4px;
+/* 确保表头和内容单元格样式一致 */
+.reservation-table thead th,
+.reservation-table tbody td {
+  width: 100px;
+  min-width: 100px;
+  max-width: 100px;
   text-align: center;
-  font-weight: 500;
-  font-size: 14px;
+  padding: 12px 8px;
+  border-right: 1px solid var(--border-primary);
+  box-sizing: border-box;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
+
+/* 设备名称列特殊样式 - 仅应用于设备预约页面 */
+.calendar-section-card .reservation-table thead th:first-child,
+.calendar-section-card .reservation-table tbody td:first-child {
+  width: 140px;
+  min-width: 140px;
+  max-width: 140px;
+  text-align: left;
+  padding-left: 12px;
+  background-color: var(--bg-secondary);
+  font-weight: 600;
+}
+
+/* 预约列表页面表格样式 */
+.reservation-table thead th,
+.reservation-table tbody td {
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+
+.reservation-table thead th {
+  background: var(--bg-secondary);
+  border-bottom: 2px solid var(--border-primary);
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 13px;
   position: sticky;
   top: 0;
-  z-index: 1;
+  z-index: 10;
 }
 
-.reservation-table td {
-  border-bottom: 1px solid #e0e0e0;
-  border-right: 1px solid #e0e0e0;
-  padding: 8px 4px;
-  text-align: center;
-  font-size: 12px;
-  height: 32px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  position: relative;
+.reservation-table tbody td {
+  border-bottom: 1px solid var(--border-light);
+  height: 48px;
+  transition: all var(--transition-fast);
+  font-size: 14px;
 }
 
-.reservation-table tr:hover td:first-child {
-  background-color: #f5f5f5;
+.reservation-table thead th:last-child,
+.reservation-table tbody td:last-child {
+  border-right: none;
 }
 
-.reservation-table tr:last-child td {
+.reservation-table tbody tr:hover td {
+  background-color: var(--bg-hover) !important;
+}
+
+/* 圆角样式 */
+.reservation-table thead th:first-child {
+  border-radius: var(--radius-lg) 0 0 0;
+}
+
+.reservation-table thead th:last-child {
+  border-radius: 0 var(--radius-lg) 0 0;
+}
+
+.reservation-table tbody tr:last-child td:first-child {
+  border-radius: 0 0 0 var(--radius-lg);
+}
+
+.reservation-table tbody tr:last-child td:last-child {
+  border-radius: 0 0 var(--radius-lg) 0;
+}
+
+.reservation-table tbody tr:last-child td {
   border-bottom: none;
 }
 
-.reservation-table th:last-child {
-  border-right: none;
+/* ==================== 页面标题栏样式 ==================== */
+.page-title-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 32px;
+  background: var(--bg-primary);
+  border-radius: var(--radius-xl);
+  margin-bottom: 24px;
+  box-shadow: none;
+  border: none;
+  transition: all var(--transition-normal);
 }
 
-.reservation-table td:last-child {
-  border-right: none;
+.page-title-bar:hover {
+  box-shadow: none;
 }
 
-/* 页面布局样式 */
-.page-layout {
-  min-height: 100vh;
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  letter-spacing: -0.5px;
 }
 
-.page-content {
-  padding: 20px;
-  background-color: #f0f2f5;
+/* ==================== 列表页面样式 ==================== */
+.reservation-list-container {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-.page-container {
-  min-height: 100vh;
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 24px 32px;
+  background: var(--bg-primary);
+  border-radius: var(--radius-xl);
+  box-shadow: none;
+  border: none;
 }
 
-/* 表格样式优化 */
-.semi-table-row:hover {
-  background-color: #f9f9f9;
+.page-header:hover {
+  box-shadow: none;
 }
 
-/* 预约时间段样式 */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-actions h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.back-button {
+  border-radius: var(--radius-md) !important;
+  transition: all var(--transition-fast) !important;
+}
+
+/* ==================== 表格容器样式 ==================== */
+.table-container {
+  background: var(--bg-primary);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: none;
+  border: none;
+  transition: all var(--transition-normal);
+}
+
+.table-container:hover {
+  box-shadow: none;
+}
+
+/* ==================== 预约时间段样式 ==================== */
 .reserved-cell {
-  background-color: #ff4d4f20;
-  color: #ff4d4f;
+  background: linear-gradient(135deg, var(--error-light) 0%, #FEE2E2 100%) !important;
+  color: var(--error-color);
   cursor: not-allowed;
+  border-radius: var(--radius-sm);
+  margin: 2px;
+  font-weight: 500;
+  transition: all var(--transition-fast);
 }
 
 .available-cell {
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all var(--transition-fast);
+  border-radius: var(--radius-sm);
+  margin: 2px;
+  background-color: var(--bg-primary) !important;
 }
 
 .available-cell:hover {
-  background-color: #1890ff20;
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-lighter) 100%) !important;
+  transform: scale(1.05);
+  box-shadow: var(--shadow-sm);
 }
 
-/* 响应式调整 */
+.available-cell:active {
+  transform: scale(1.02);
+}
+
+.device-cell {
+  font-weight: 500;
+  color: var(--text-primary);
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius-md);
+}
+
+/* ==================== 筛选区域卡片样式 ==================== */
+.filter-section-card {
+  background: var(--bg-primary);
+  border-radius: var(--radius-xl) !important;
+  box-shadow: none;
+  border: none;
+  margin-bottom: 24px;
+  overflow: hidden;
+  transition: all var(--transition-normal);
+}
+
+.filter-section-card:hover {
+  box-shadow: none;
+}
+
+.filter-section-card .semi-card-body {
+  padding: 24px 32px;
+}
+
+/* ==================== 日历区域卡片样式 ==================== */
+.calendar-section-card {
+  background: var(--bg-primary);
+  border-radius: var(--radius-xl) !important;
+  box-shadow: none;
+  border: none;
+  overflow: hidden;
+  transition: all var(--transition-normal);
+}
+
+.calendar-section-card:hover {
+  box-shadow: none;
+}
+
+.calendar-section-card .semi-card-body {
+  padding: 24px 32px;
+}
+
+/* ==================== 错误消息样式 ==================== */
+.error-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 32px;
+  background: linear-gradient(135deg, var(--error-light) 0%, #FEE2E2 100%);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--error-color);
+  color: var(--error-color);
+}
+
+/* ==================== 模态框样式增强 ==================== */
+.custom-modal-content {
+  padding: 8px 0;
+}
+
+.form-container {
+  padding: 16px 0;
+}
+
+.form-item {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.error-text {
+  color: var(--error-color);
+  font-size: 12px;
+  margin-left: 8px;
+}
+
+/* ==================== 统一按钮样式系统 ==================== */
+/* 基础按钮样式 - 确保文本居中对齐 */
+.semi-button {
+  border-radius: var(--radius-sm) !important;
+  transition: all var(--transition-fast) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  font-size: 12px !important;
+  padding: 4px 12px !important;
+  min-width: 60px !important;
+  height: 28px !important;
+  line-height: 1 !important;
+  box-sizing: border-box !important;
+  font-weight: 500 !important;
+}
+
+/* 主按钮样式 */
+.semi-button-primary {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  color: white !important;
+}
+
+.semi-button-primary:hover {
+  background-color: var(--primary-hover) !important;
+  border-color: var(--primary-hover) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+.semi-button-primary:active {
+  background-color: var(--primary-active) !important;
+  border-color: var(--primary-active) !important;
+  transform: translateY(0) !important;
+  box-shadow: none !important;
+}
+
+/* 危险按钮样式 */
+.semi-button-danger {
+  background-color: var(--error-color) !important;
+  border-color: var(--error-color) !important;
+  color: white !important;
+}
+
+.semi-button-danger:hover {
+  background-color: #DC2626 !important;
+  border-color: #DC2626 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+.semi-button-danger:active {
+  background-color: #B91C1C !important;
+  border-color: #B91C1C !important;
+  transform: translateY(0) !important;
+  box-shadow: none !important;
+}
+
+/* 默认按钮样式 */
+.semi-button-default {
+  background-color: var(--bg-primary) !important;
+  border-color: var(--border-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+.semi-button-default:hover {
+  background-color: var(--bg-hover) !important;
+  border-color: var(--border-hover) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+.semi-button-default:active {
+  background-color: var(--bg-secondary) !important;
+  border-color: var(--border-primary) !important;
+  transform: translateY(0) !important;
+  box-shadow: none !important;
+}
+
+/* 禁用状态按钮样式 */
+.semi-button-disabled,
+.semi-button[disabled] {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.semi-button-disabled:hover,
+.semi-button[disabled]:hover {
+  transform: none !important;
+  box-shadow: none !important;
+  background-color: var(--bg-secondary) !important;
+  border-color: var(--border-primary) !important;
+  color: var(--text-disabled) !important;
+}
+
+/* 小尺寸按钮样式 */
+.semi-button-small {
+  font-size: 11px !important;
+  padding: 3px 10px !important;
+  min-width: 50px !important;
+  height: 24px !important;
+}
+
+/* 中等尺寸按钮样式（默认） */
+.semi-button-medium,
+.semi-button-middle {
+  font-size: 12px !important;
+  padding: 4px 12px !important;
+  min-width: 60px !important;
+  height: 28px !important;
+}
+
+/* 大尺寸按钮样式 */
+.semi-button-large {
+  font-size: 13px !important;
+  padding: 6px 16px !important;
+  min-width: 80px !important;
+  height: 32px !important;
+}
+
+/* 图标按钮样式优化 */
+.semi-button-icon-only {
+  padding: 4px !important;
+  min-width: 28px !important;
+  width: 28px !important;
+  height: 28px !important;
+}
+
+/* 确保所有半组件按钮文本居中 */
+.semi-button-content {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  width: 100% !important;
+  height: 100% !important;
+  text-align: center !important;
+}
+
+/* 确保按钮内文本绝对居中 */
+.semi-button span,
+.semi-button .semi-button-content {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* 确保按钮图标和文本对齐 */
+.semi-button .semi-icon {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* 刷新按钮特殊处理 */
+.semi-button[icon="reload"] {
+  min-width: 50px !important;
+  padding: 4px 8px !important;
+}
+
+/* 新建预约单按钮特殊处理 */
+.semi-button[type="primary"] {
+  min-width: 90px !important;
+  padding: 4px 12px !important;
+}
+
+/* 按钮组样式 */
+.button-group {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* 响应式按钮布局 */
 @media (max-width: 768px) {
-  .app-container {
-    padding: 10px;
+  .button-group {
+    flex-wrap: wrap;
+    justify-content: stretch;
   }
   
-  .page-container {
-    padding: 10px !important;
+  .button-group .semi-button {
+    flex: 1;
+    min-width: 120px !important;
+  }
+}
+
+/* ==================== 表单元素样式增强 ==================== */
+.semi-select, .semi-input, .semi-datepicker {
+  border-radius: var(--radius-md) !important;
+  transition: all var(--transition-fast) !important;
+}
+
+.semi-select:hover, .semi-input:hover, .semi-datepicker:hover {
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 3px var(--primary-light) !important;
+}
+
+.semi-select-focus, .semi-input-focus, .semi-datepicker-focus {
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 3px var(--primary-light) !important;
+}
+
+/* ==================== 响应式布局优化 ==================== */
+@media (max-width: 1400px) {
+  .reservation-list-container, .page-content {
+    max-width: 1200px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .reservation-calendar {
+    padding: 20px;
+  }
+
+  .page-title-bar,
+  .filter-section-card .semi-card-body,
+  .calendar-section-card .semi-card-body,
+  .page-header {
+    padding: 20px 24px;
+  }
+
+  .page-title {
+    font-size: 24px;
+  }
+  
+  .header-actions h2 {
+    font-size: 20px;
+  }
+  
+  .reservation-table thead th,
+  .reservation-table tbody td {
+    padding: 12px 8px;
+    font-size: 13px;
+  }
+  
+  .reservation-table thead th:first-child,
+  .reservation-table tbody td:first-child {
+    padding-left: 12px;
+  }
+}
+
+@media (max-width: 992px) {
+  .calendar-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .filter-section {
+    width: 100%;
+    justify-content: stretch;
+  }
+  
+  .filter-section > * {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .reservation-table thead th {
+    padding: 10px 6px;
+    font-size: 12px;
+  }
+
+  .reservation-table tbody td {
+    padding: 10px 6px;
+    font-size: 12px;
+    height: 44px;
+  }
+  
+  .page-title-bar,
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .reservation-list-container {
+    padding: 16px;
+  }
+
+  .list-page-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 16px;
+  }
+
+  .header-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .page-title-bar,
+  .filter-section-card .semi-card-body,
+  .calendar-section-card .semi-card-body,
+  .page-header {
+    padding: 16px 20px;
+  }
+
+  .reservation-calendar {
+    padding: 16px;
+    border-radius: var(--radius-lg);
+  }
+  
+  .page-title {
+    font-size: 20px;
+  }
+  
+  .header-actions h2 {
+    font-size: 18px;
+  }
+  
+  .filter-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filter-section > * {
+    min-width: auto;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .reservation-list-container {
+    padding: 12px;
+  }
+
+  .page-header {
+    padding: 12px 16px;
+  }
+
+  .header-actions h2 {
+    font-size: 18px;
+  }
+
+  .reservation-calendar {
+    padding: 12px;
+    border-radius: var(--radius-md);
+  }
+
+  .reservation-table {
+    font-size: 11px;
+  }
+
+  .reservation-table thead th {
+    padding: 8px 4px;
+    font-size: 11px;
+  }
+
+  .reservation-table tbody td {
+    padding: 8px 4px;
+    height: 38px;
+  }
+  
+  .page-title-bar,
+  .filter-section-card .semi-card-body,
+  .calendar-section-card .semi-card-body {
+    padding: 12px 16px;
+  }
+  
+  .page-title {
+    font-size: 18px;
+  }
+  
+  .date-navigation {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+}
+
+/* ==================== 暗色模式支持 ==================== */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* 主色调 - 保持一致 */
+    --primary-color: #3B82F6;
+    --primary-hover: #60A5FA;
+    --primary-active: #2563EB;
+    --primary-light: #1E3A8A;
+    --primary-lighter: #374151;
+    
+    /* 辅助色 */
+    --success-color: #34D399;
+    --success-light: #065F46;
+    --warning-color: #FBBF24;
+    --warning-light: #92400E;
+    --error-color: #F87171;
+    --error-light: #991B1B;
+    
+    /* 中性色 - 深色模式 */
+    --text-primary: #F9FAFB;
+    --text-secondary: #E5E7EB;
+    --text-tertiary: #D1D5DB;
+    --text-disabled: #9CA3AF;
+    
+    --bg-primary: #1F2937;
+    --bg-secondary: #111827;
+    --bg-tertiary: #0F172A;
+    --bg-hover: #374151;
+    
+    --border-primary: #374151;
+    --border-light: #1F2937;
+    --border-hover: #4B5563;
+  }
+  
+  /* 调整表格样式以适应暗色模式 */
+  .reservation-table tbody td:first-child {
+    background-color: var(--bg-tertiary);
+  }
+  
+  .device-cell {
+    background-color: var(--bg-tertiary);
+  }
+  
+  /* 调整滚动条样式 */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-sm);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-primary);
+    border-radius: var(--radius-sm);
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--border-hover);
+  }
+}
+
+/* ==================== 全局滚动条样式 ==================== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-primary);
+  border-radius: var(--radius-sm);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-hover);
+}
+
+/* ==================== 动画效果 ==================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reservation-calendar,
+.filter-section-card,
+.calendar-section-card,
+.table-container,
+.page-title-bar,
+.page-header {
+  animation: fadeIn var(--transition-normal) ease-out;
+}
+
+/* ==================== 高对比度模式支持 ==================== */
+@media (prefers-contrast: high) {
+  :root {
+    --border-primary: #000000;
+    --text-primary: #000000;
+    --bg-primary: #ffffff;
+  }
+  
+  .reservation-table thead th,
+  .reservation-table tbody td {
+    border-width: 2px;
   }
 }

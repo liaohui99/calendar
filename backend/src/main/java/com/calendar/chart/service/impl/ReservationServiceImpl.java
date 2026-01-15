@@ -154,4 +154,66 @@ public class ReservationServiceImpl extends ServiceImpl<ReservationDao, Reservat
             @P("查询日期，格式为yyyy-MM-dd，必需参数") String date) {
         return reservationDao.selectByDeviceAndDate(deviceId, date);
     }
+    
+    /**
+     * 取消/删除预约
+     * @param id 预约ID
+     * @return 是否取消成功
+     */
+    @Override
+    public boolean cancelReservation(@P("预约ID") Integer id) {
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("无效的预约ID");
+        }
+        
+        Reservation reservation = getById(id);
+        if (reservation == null) {
+            throw new IllegalArgumentException("预约记录不存在");
+        }
+        
+        // 软删除：将状态改为已取消
+        reservation.setStatus(2); // 2: 已取消
+        reservation.setUpdateTime(new Date());
+        
+        return updateById(reservation);
+    }
+    
+    /**
+     * 更新预约状态
+     * @param id 预约ID
+     * @param status 新状态（0: 待确认, 1: 已确认, 2: 已取消）
+     * @param reason 状态变更原因（可选）
+     * @return 更新后的预约记录
+     */
+    @Override
+    public Reservation updateReservationStatus(
+            @P("预约ID") Integer id,
+            @P("新状态") Integer status,
+            @P(value = "状态变更原因", required = false) String reason) {
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("无效的预约ID");
+        }
+        
+        if (status == null || status < 0 || status > 2) {
+            throw new IllegalArgumentException("无效的预约状态");
+        }
+        
+        Reservation reservation = getById(id);
+        if (reservation == null) {
+            throw new IllegalArgumentException("预约记录不存在");
+        }
+        
+        // 更新状态
+        reservation.setStatus(status);
+        reservation.setUpdateTime(new Date());
+        
+        // 如果提供了原因，则更新原因字段
+        if (reason != null && !reason.trim().isEmpty()) {
+            reservation.setReason(reason);
+        }
+        
+        updateById(reservation);
+        
+        return getById(id);
+    }
 }

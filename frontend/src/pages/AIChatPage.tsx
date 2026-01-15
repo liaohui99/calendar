@@ -1,6 +1,7 @@
 // src/pages/AIChatPage.tsx
 import React, { useState } from 'react';
 import { Layout, Button } from '@douyinfe/semi-ui';
+import { useNavigate } from 'react-router-dom';
 import ChatInterface from '../components/ai-chat/ChatInterface';
 
 const { Header, Content, Footer } = Layout;
@@ -10,6 +11,8 @@ const { Header, Content, Footer } = Layout;
  * 作为AI对话功能的主页面，集成聊天界面组件
  */
 const AIChatPage: React.FC = () => {
+  const navigate = useNavigate();
+  
   /**
    * 生成基于UUID和时间戳的整数memoryId
    * @returns 整数类型的memoryId
@@ -43,31 +46,64 @@ const AIChatPage: React.FC = () => {
   };
 
   return (
-    <Layout className="chat-page">
-      <Header>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h1 style={{ color: 'white', margin: 0 }}>日历AI助手</h1>
+    <div className="page-layout" style={{ 
+      minHeight: '100vh',
+      backgroundColor: 'var(--bg-secondary)',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+    }}>
+      <header style={{ 
+        backgroundColor: 'var(--bg-primary)', 
+        padding: '16px 24px', 
+        boxShadow: 'var(--shadow-sm)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        position: 'sticky',
+        top: 0,
+        zIndex: 100,
+        borderBottom: '1px solid var(--border-primary)'
+      }}>
+        <h1 style={{ 
+          margin: 0, 
+          color: 'var(--text-primary)', 
+          fontSize: '20px',
+          fontWeight: 700
+        }}>
+          日历AI助手
+        </h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          {/* 返回按钮 */}
+          <Button 
+            icon="left" 
+            onClick={() => navigate('/')} 
+            size="small"
+            type="secondary"
+          >
+            返回预约系统
+          </Button>
           <Button 
             type="primary" 
-            theme="solid" 
             onClick={handleNewSession}
             size="small"
           >
             新会话
           </Button>
         </div>
-      </Header>
+      </header>
       
-      <Content style={{ padding: 24, minHeight: 280 }}>
-        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+      <main style={{ 
+        padding: '20px 24px 100px', 
+        backgroundColor: 'var(--bg-secondary)',
+        minHeight: 'calc(100vh - 80px)',
+        maxWidth: '1400px',
+        margin: '0 auto',
+        width: '100%'
+      }}>
+        <div style={{ margin: '0 auto' }}>
           <ChatInterface memoryId={memoryId} />
         </div>
-      </Content>
-      
-      <Footer style={{ textAlign: 'center' }}>
-        日历AI助手 ©2023 - 提供智能日历相关咨询服务
-      </Footer>
-    </Layout>
+      </main>
+    </div>
   );
 };
 

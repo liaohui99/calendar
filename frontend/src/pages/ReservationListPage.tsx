@@ -49,39 +49,40 @@ const ReservationListPage: React.FC = () => {
    * @param order 排序方向
    */
   const fetchReservations = async (
-    page: number = currentPage,
-    size: number = pageSize,
-    field: string = sortField,
-    order: 'asc' | 'desc' = sortOrder
+    page?: number,
+    size?: number,
+    field?: string,
+    order?: 'asc' | 'desc'
   ) => {
+    const currentPageNum = page ?? currentPage;
+    const currentSize = size ?? pageSize;
+    const sortFieldValue = field ?? sortField;
+    const sortOrderValue = order ?? sortOrder;
+    
     setLoading(true);
     setError(null);
     try {
-      // 必须提供date参数，后端API要求它是必填的
-      // 使用当天日期作为默认值
       const today = dayjs().format('YYYY-MM-DD');
       const response = await reservationApi.getReservations({
         date: today
       });
-        // 前端处理分页和排序
         let filteredData = response.data.data;
-        if (sortField && order) {
+        if (sortFieldValue && sortOrderValue) {
           filteredData = [...filteredData].sort((a, b) => {
-            const valueA = a[sortField as keyof Reservation];
-            const valueB = b[sortField as keyof Reservation];
-            if (valueA > valueB) return order === 'asc' ? 1 : -1;
-            if (valueA < valueB) return order === 'asc' ? -1 : 1;
+            const valueA = a[sortFieldValue as keyof Reservation];
+            const valueB = b[sortFieldValue as keyof Reservation];
+            if (valueA > valueB) return sortOrderValue === 'asc' ? 1 : -1;
+            if (valueA < valueB) return sortOrderValue === 'asc' ? -1 : 1;
             return 0;
           });
         }
-        const startIndex = (page - 1) * size;
-        const endIndex = startIndex + size;
+        const startIndex = (currentPageNum - 1) * currentSize;
+        const endIndex = startIndex + currentSize;
         setReservations(filteredData.slice(startIndex, endIndex));
         setTotal(filteredData.length);
     } catch (err) {
       console.error('获取预约数据失败:', err);
       setError('获取预约数据失败，请稍后重试');
-      console.error('加载数据失败，请点击重试');
     } finally {
       setLoading(false);
     }
@@ -110,10 +111,22 @@ const ReservationListPage: React.FC = () => {
    * @param field 排序字段
    * @param order 排序方向
    */
-  const handleSortChange = (field: string, order: 'asc' | 'desc') => {
-    setSortField(field);
-    setSortOrder(order);
-    fetchReservations(currentPage, pageSize, field, order);
+  const handleSortChange = (field: string | { field: string; order: 'asc' | 'desc' }, order?: 'asc' | 'desc') => {
+    let sortField: string;
+    let sortOrder: 'asc' | 'desc';
+    
+    // 处理Semi UI可能的事件参数格式
+    if (typeof field === 'object' && field !== null) {
+      sortField = field.field;
+      sortOrder = field.order;
+    } else {
+      sortField = field as string;
+      sortOrder = order || 'asc';
+    }
+    
+    setSortField(sortField);
+    setSortOrder(sortOrder);
+    fetchReservations(currentPage, pageSize, sortField, sortOrder);
   };
 
   /**
@@ -274,28 +287,38 @@ const ReservationListPage: React.FC = () => {
       title: '预约ID',
       dataIndex: 'id',
       key: 'id',
+      width: 80,
+      align: 'center',
     },
     {
       title: '预约设备',
       dataIndex: 'device',
       key: 'deviceName',
       render: (device: any) => device?.name || '-',
+      width: 120,
+      align: 'center',
     },
     {
       title: '预约地点',
       dataIndex: 'device',
       key: 'locationName',
       render: (device: any) => device?.locationName || '-',
+      width: 120,
+      align: 'center',
     },
     {
       title: '预约人',
       dataIndex: 'userName',
       key: 'userName',
+      width: 100,
+      align: 'center',
     },
     {
       title: '联系电话',
       dataIndex: 'userContact',
       key: 'userContact',
+      width: 150,
+      align: 'center',
     },
     {
       title: '开始时间',
@@ -303,6 +326,8 @@ const ReservationListPage: React.FC = () => {
       key: 'startTime',
       sorter: true,
       render: (text: string) => formatDate(text),
+      width: 150,
+      align: 'center',
     },
     {
       title: '结束时间',
@@ -310,17 +335,36 @@ const ReservationListPage: React.FC = () => {
       key: 'endTime',
       sorter: true,
       render: (text: string) => formatDate(text),
+      width: 150,
+      align: 'center',
     },
     {
       title: '预约事由',
       dataIndex: 'reason',
       key: 'reason',
+      width: 150,
+      ellipsis: true,
+      tip: (_, record) => record.reason,
+      align: 'center',
     },
     {
       title: '预约状态',
       dataIndex: 'status',
       key: 'status',
-      render: (status: number) => statusMap[status] || status,
+      width: 100,
+      align: 'center',
+      render: (status: number) => (
+        <span style={{
+          padding: '4px 8px',
+          borderRadius: 'var(--radius-sm)',
+          backgroundColor: status === 1 ? 'var(--success-light)' : status === 0 ? 'var(--warning-light)' : 'var(--error-light)',
+          color: status === 1 ? 'var(--success-color)' : status === 0 ? 'var(--warning-color)' : 'var(--error-color)',
+          fontSize: '12px',
+          fontWeight: 500
+        }}>
+          {statusMap[status] || status}
+        </span>
+      ),
     },
     {
       title: '创建时间',
@@ -328,17 +372,26 @@ const ReservationListPage: React.FC = () => {
       key: 'createdAt',
       sorter: true,
       render: (text: string) => formatDate(text),
+      width: 150,
+      align: 'center',
     },
     {
       title: '操作',
       key: 'action',
+      width: 140,
+      align: 'center',
       render: (_, record: Reservation) => (
-        <>
+        <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', alignItems: 'center' }}>
           <Button 
             type="primary" 
             size="small" 
             onClick={() => handleEdit(record.id)}
-            style={{ marginRight: 8 }}
+            style={{
+              padding: '3px 10px',
+              fontSize: '11px',
+              height: '24px',
+              minWidth: '50px'
+            }}
           >
             编辑
           </Button>
@@ -346,60 +399,150 @@ const ReservationListPage: React.FC = () => {
             type="danger" 
             size="small" 
             onClick={() => handleDelete(record.id)}
+            style={{
+              padding: '3px 10px',
+              fontSize: '11px',
+              height: '24px',
+              minWidth: '50px'
+            }}
           >
             删除
           </Button>
-        </>
+        </div>
       ),
     },
   ];
 
   return (
-    <div className="reservation-list-container">
-      <div className="page-header">
-        <Button 
-          onClick={handleBack}
-          style={{ marginRight: 16 }}
-        >
-          返回
-        </Button>
-        <h2 className="semi-typography semi-typography-title">所有预约记录</h2>
+    <div className="reservation-calendar" style={{ 
+      minHeight: '100vh',
+      backgroundColor: 'var(--bg-secondary)',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+      padding: '0'
+    }}>
+      <div style={{ 
+        backgroundColor: 'var(--bg-primary)', 
+        padding: '16px 24px', 
+        boxShadow: 'none',
+        border: 'none',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        position: 'sticky',
+        top: 0,
+        zIndex: 100,
+        marginBottom: '0',
+        gap: '16px',
+        borderBottom: '1px solid var(--border-primary)'
+      }}>
+        <h1 style={{ 
+          margin: 0, 
+          color: 'var(--text-primary)',
+          fontSize: '18px',
+          fontWeight: 600,
+          textAlign: 'center',
+          flex: 1
+        }}>设备预约系统</h1>
+        <div style={{ marginLeft: 'auto' }}>
+          <Button 
+            onClick={() => navigate('/')}
+            size="small"
+            type="primary"
+          >
+            返回预约日历
+          </Button>
+        </div>
       </div>
 
       {error && (
-        <div className="error-message">
-          <span>{error}</span>
-          <Button onClick={() => fetchReservations()} size="small">
+        <div className="error-message" style={{ 
+          backgroundColor: 'var(--error-light)',
+          border: '1px solid var(--error-color)',
+          borderRadius: 'var(--radius-md)',
+          padding: '12px 16px',
+          margin: '16px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '12px'
+        }}>
+          <span style={{ color: 'var(--error-color)', fontWeight: 500 }}>{error}</span>
+          <Button onClick={() => fetchReservations()} size="small" type="primary">
             重试
           </Button>
         </div>
       )}
 
-      <Spin spinning={loading}>
-        {loading ? (
-          <div style={{ textAlign: 'center', padding: '40px 0' }}>
-            <span>加载预约数据中...</span>
-          </div>
-        ) : (
-          <div className="table-container">
-            <Table
-              columns={columns}
-              dataSource={reservations}
-              rowKey="id"
-              // 移除不支持的onSort属性，通过columns中的sorter自行处理排序
-              pagination={false}
-              style={{ marginBottom: 16 }}
-            />
-            <Pagination
-              currentPage={currentPage}
-              pageSize={pageSize}
-              total={total}
-              onChange={handlePaginationChange}
-              style={{ textAlign: 'right' }}
-            />
-          </div>
-        )}
-      </Spin>
+      <div style={{ padding: '24px' }}>
+        <div style={{ 
+          fontSize: '20px', 
+          fontWeight: 700, 
+          marginBottom: '24px', 
+          marginTop: 0, 
+          textAlign: 'center',
+          color: 'var(--text-primary)',
+          letterSpacing: '-0.5px'
+        }}>
+          所有预约记录
+        </div>
+
+        <Spin spinning={loading}>
+          {loading ? (
+            <div style={{ 
+              textAlign: 'center', 
+              padding: '60px 20px',
+              backgroundColor: 'var(--bg-primary)',
+              borderRadius: 'var(--radius-lg)',
+              border: '1px solid var(--border-primary)'
+            }}>
+              <Spin size="large" tip="加载预约数据中..." />
+            </div>
+          ) : (
+            <div className="calendar-grid" style={{ 
+              overflowX: 'auto',
+              padding: '0 0 24px 0',
+              width: '100%'
+            }}>
+              <Table
+                columns={columns}
+                dataSource={reservations}
+                rowKey="id"
+                onSort={handleSortChange}
+                pagination={false}
+                size="middle"
+                style={{
+                  minHeight: '400px',
+                  borderRadius: 'var(--radius-lg)',
+                  overflow: 'hidden',
+                  boxShadow: 'none',
+                  width: '100%',
+                  borderCollapse: 'collapse'
+                }}
+                className="reservation-table"
+              />
+              <div style={{ 
+                textAlign: 'center',
+                padding: '16px 0 0 0',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: '12px'
+              }}>
+                <Pagination
+                  currentPage={currentPage}
+                  pageSize={pageSize}
+                  total={total}
+                  onChange={handlePaginationChange}
+                  size="small"
+                  style={{
+                    margin: 0
+                  }}
+                />
+              </div>
+            </div>
+          )}
+        </Spin>
+      </div>
       
       {/* 编辑模态框 */}
       <Modal
@@ -408,19 +551,21 @@ const ReservationListPage: React.FC = () => {
         onOk={handleEditSubmit}
         onCancel={() => setEditModalVisible(false)}
         footer={[
-          <Button key="cancel" onClick={() => setEditModalVisible(false)}>取消</Button>,
-          <Button key="submit" type="primary" onClick={handleEditSubmit}>保存</Button>
+          <Button key="cancel" onClick={() => setEditModalVisible(false)} size="small">取消</Button>,
+          <Button key="submit" type="primary" onClick={handleEditSubmit} size="small">保存</Button>
         ]}
         getContainer={() => document.body} // 显式指定渲染容器以解决React 18兼容性问题
         autoFocus={false}
+        style={{ borderRadius: 'var(--radius-lg)' }}
       >
         <Form layout="vertical" data-testid="edit-form">
           <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>预约状态</label>
+            <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '13px', color: 'var(--text-primary)' }}>预约状态</label>
             <Select 
-              placeholder="请选择状态" 
               value={(editFormData as any).status}
               onChange={(value) => handleFormChange({ status: value })}
+              size="small"
+              style={{ width: '100%' }}
             >
               <Select.Option value={0}>待确认</Select.Option>
               <Select.Option value={1}>已确认</Select.Option>
@@ -428,10 +573,12 @@ const ReservationListPage: React.FC = () => {
             </Select>
           </div>
           <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>预约原因</label>
+            <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '13px', color: 'var(--text-primary)' }}>预约原因</label>
             <Input 
               value={(editFormData as any).reason || ''}
               onChange={(value) => handleFormChange({ reason: value })}
+              size="small"
+              style={{ width: '100%' }}
             />
           </div>
         </Form>
@@ -444,13 +591,16 @@ const ReservationListPage: React.FC = () => {
         onOk={handleConfirmDelete}
         onCancel={handleCancelDelete}
         footer={[
-          <Button key="cancel" onClick={handleCancelDelete}>取消</Button>,
-          <Button key="delete" type="primary" danger onClick={handleConfirmDelete}>确认删除</Button>
+          <Button key="cancel" onClick={handleCancelDelete} size="small">取消</Button>,
+          <Button key="delete" type="primary" danger onClick={handleConfirmDelete} size="small">
+            确认删除
+          </Button>
         ]}
         getContainer={() => document.body} // 显式指定渲染容器以解决React 18兼容性问题
         autoFocus={false}
+        style={{ borderRadius: 'var(--radius-lg)' }}
       >
-        <p>确定要删除这个预约吗？此操作不可撤销。</p>
+        <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: '1.6' }}>确定要删除这个预约吗？此操作不可撤销。</p>
       </Modal>
     </div>
   );
