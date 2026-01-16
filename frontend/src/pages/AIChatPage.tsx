@@ -1,10 +1,29 @@
 // src/pages/AIChatPage.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Layout, Button } from '@douyinfe/semi-ui';
 import { useNavigate } from 'react-router-dom';
 import ChatInterface from '../components/ai-chat/ChatInterface';
 
-const { Header, Content, Footer } = Layout;
+const STORAGE_KEY = 'calendar-chat-memory-id';
+
+/**
+ * 生成基于UUID和时间戳的整数memoryId
+ * @returns 整数类型的memoryId
+ */
+const generateMemoryId = (): number => {
+  const uuid = crypto.randomUUID();
+  const timestamp = Math.floor(Date.now() / 1000);
+  
+  let hash = 0;
+  for (let i = 0; i < uuid.length; i++) {
+    const char = uuid.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+  
+  const absHash = Math.abs(hash);
+  return timestamp * 1000000000 + absHash % 1000000000;
+};
 
 /**
  * AI聊天页面组件
@@ -13,37 +32,34 @@ const { Header, Content, Footer } = Layout;
 const AIChatPage: React.FC = () => {
   const navigate = useNavigate();
   
-  /**
-   * 生成基于UUID和时间戳的整数memoryId
-   * @returns 整数类型的memoryId
-   */
-  const generateMemoryId = (): number => {
-    // 生成UUID
-    const uuid = crypto.randomUUID();
-    // 获取当前时间戳（秒）
-    const timestamp = Math.floor(Date.now() / 1000);
-    
-    // 将UUID转换为哈希值
-    let hash = 0;
-    for (let i = 0; i < uuid.length; i++) {
-      const char = uuid.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash; // Convert to 32bit integer
+  // 从localStorage读取或生成memoryId
+  const [memoryId, setMemoryId] = useState<number>(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const parsed = parseInt(saved, 10);
+      if (!isNaN(parsed)) {
+        return parsed;
+      }
     }
-    
-    // 取哈希值的绝对值，并与时间戳结合
-    const absHash = Math.abs(hash);
-    // 使用时间戳作为高位，哈希值作为低位，确保唯一性
-    return timestamp * 1000000000 + absHash % 1000000000;
-  };
-
-  // 管理memoryId状态
-  const [memoryId, setMemoryId] = useState<number>(() => generateMemoryId());
+    return generateMemoryId();
+  });
+  
+  // 持久化memoryId到localStorage
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, memoryId.toString());
+  }, [memoryId]);
 
   // 处理新会话按钮点击
-  const handleNewSession = () => {
-    setMemoryId(generateMemoryId());
-  };
+  const handleNewSession = useCallback(() => {
+    // 清除当前会话的消息
+    const oldStorageKey = `calendar-chat-messages-${memoryId}`;
+    localStorage.removeItem(oldStorageKey);
+    
+    // 生成新的memoryId
+    const newMemoryId = generateMemoryId();
+    setMemoryId(newMemoryId);
+    localStorage.setItem(STORAGE_KEY, newMemoryId.toString());
+  }, [memoryId]);
 
   return (
     <div className="page-layout" style={{ 
@@ -97,9 +113,10 @@ const AIChatPage: React.FC = () => {
         minHeight: 'calc(100vh - 80px)',
         maxWidth: '1400px',
         margin: '0 auto',
-        width: '100%'
+        width: '100%',
+        boxSizing: 'border-box'
       }}>
-        <div style={{ margin: '0 auto' }}>
+        <div style={{ margin: '0 auto', height: 'calc(100vh - 160px)' }}>
           <ChatInterface memoryId={memoryId} />
         </div>
       </main>
