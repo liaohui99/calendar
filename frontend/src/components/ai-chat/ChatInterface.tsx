@@ -113,12 +113,12 @@ const STYLES = {
   scrollButton: {
     position: 'fixed',
     bottom: '150px',
-    right: 'calc(50% - 540px)',
-    zIndex: 100,
-    transition: 'bottom 0.2s ease-in-out' // 添加平滑过渡动画
+    right: '40px',
+    zIndex: 1000,
+    transition: 'all 0.4s ease-in-out' // 调整过渡动画时长为0.4秒，使用ease-in-out缓动函数
   },
   scrollButtonWrapper: {
-    width: '38px',
+    width: '36px',
     height: '36px',
     borderRadius: '50%',
     backgroundColor: '#FFFFFF',
@@ -127,7 +127,7 @@ const STYLES = {
     alignItems: 'center',
     justifyContent: 'center',
     cursor: 'pointer',
-    transition: 'all 0.2s ease',
+    transition: 'all 0.4s ease-in-out', // 调整过渡动画时长为0.4秒，使用ease-in-out缓动函数
     border: 'none',
     outline: 'none'
   },
@@ -236,16 +236,15 @@ const addResponsiveStyles = () => {
         width: 36px !important;
         height: 36px !important;
       }
-      /* 小屏幕滚动按钮调整 */
-      .scroll-button {
-        right: 20px !important;
-      }
     }
     /* 中屏幕响应式适配 */
     @media (max-width: 768px) {
-      /* 中屏幕滚动按钮调整 */
-      .scroll-button {
-        right: 20px !important;
+      /* 中屏幕发送按钮调整 */
+      .chat-input-container button {
+        right: 16px !important;
+        bottom: 16px !important;
+        width: 36px !important;
+        height: 36px !important;
       }
     }
   `;
@@ -330,12 +329,14 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ memoryId }) => {
   
   const [inputValue, setInputValue] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [showScrollButton, setShowScrollButton] = useState<boolean>(false);
   const [autoScrollEnabled, setAutoScrollEnabled] = useState<boolean>(true);
   const [scrollButtonHovered, setScrollButtonHovered] = useState<boolean>(false);
   const [scrollButtonPressed, setScrollButtonPressed] = useState<boolean>(false);
   const [textareaFocused, setTextareaFocused] = useState<boolean>(false);
-  const [scrollButtonPosition, setScrollButtonPosition] = useState<{ bottom: string }>({ bottom: '150px' });
+  const [scrollButtonPosition, setScrollButtonPosition] = useState<{ bottom: string; right: string }>({ 
+    bottom: '150px',
+    right: '40px'
+  });
   const inputContainerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messageListRef = useRef<HTMLDivElement>(null);
@@ -344,34 +345,100 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ memoryId }) => {
 
   /**
    * 计算滚动到底部按钮的位置
-   * 根据输入框高度动态调整
+   * 与发送按钮保持垂直对齐，位于输入框外部，并根据屏幕尺寸自适应
    */
   const calculateScrollButtonPosition = useCallback(() => {
     const inputContainer = inputContainerRef.current;
     if (!inputContainer) return;
 
     try {
-      // 获取输入框容器的位置和尺寸
-      const containerRect = inputContainer.getBoundingClientRect();
+      // 查找输入框元素
+      const textarea = inputContainer.querySelector('textarea');
       
-      // 计算按钮的bottom值：输入框容器顶部距离视口底部的距离 + 20px偏移量
-      // 确保按钮完全显示在输入框上方
-      let bottomPosition = window.innerHeight - containerRect.top + 20;
+      // 查找发送按钮元素
+      const sendButton = inputContainer.querySelector('.send-button') || 
+                        inputContainer.querySelector('[alt="发送"]') || 
+                        inputContainer.querySelector('button');
       
-      // 边界检测：确保按钮不会超出视口底部
-      const buttonHeight = 40; // 按钮高度约为40px
-      const viewportPadding = 20; // 视口内边距
-      bottomPosition = Math.min(bottomPosition, window.innerHeight - buttonHeight - viewportPadding);
-      
-      // 确保按钮不会超出视口顶部（至少保持20px的间距）
-      bottomPosition = Math.max(bottomPosition, buttonHeight + viewportPadding);
-      
-      // 更新按钮位置
-      setScrollButtonPosition({ bottom: `${bottomPosition}px` });
+      if (sendButton && textarea) {
+        // 获取发送按钮的位置和尺寸
+        const sendButtonRect = sendButton.getBoundingClientRect();
+        
+        // 获取输入框的位置和尺寸
+        const textareaRect = textarea.getBoundingClientRect();
+        
+        // 滚动按钮高度固定为36px，与发送按钮一致
+        const buttonHeight = 36;
+        
+        // 计算滚动按钮的垂直位置，与发送按钮保持中心对齐
+        const centerAlign = sendButtonRect.top + sendButtonRect.height / 2 - buttonHeight / 2;
+        
+        // 将相对于视口的top值转换为相对于视口底部的bottom值
+        let bottomPosition = window.innerHeight - centerAlign;
+        
+        // 确保滚动按钮位于输入框外部区域
+        // 输入框顶部距离视口底部的距离
+        const textareaBottomDistance = window.innerHeight - textareaRect.top;
+        // 滚动按钮底部距离视口底部的距离应该大于输入框底部距离视口底部的距离
+        const minBottomPosition = textareaBottomDistance + 20; // 保持20px的间距
+        
+        // 取两者中的较大值，确保按钮在输入框外部
+        bottomPosition = Math.max(bottomPosition, minBottomPosition);
+        
+        // 边界检测：确保按钮不会超出视口底部
+        const viewportPadding = 20; // 视口内边距
+        bottomPosition = Math.min(bottomPosition, window.innerHeight - buttonHeight - viewportPadding);
+        
+        // 确保按钮不会超出视口顶部（至少保持20px的间距）
+        bottomPosition = Math.max(bottomPosition, buttonHeight + viewportPadding);
+        
+        // 计算按钮的right值，直接使用发送按钮相对于视口的right值
+        const sendButtonRightFromViewport = window.innerWidth - sendButtonRect.right;
+        const rightPosition = sendButtonRightFromViewport;
+        
+        // 更新按钮位置
+        setScrollButtonPosition({ 
+          bottom: `${bottomPosition}px`,
+          right: `${rightPosition}px`
+        });
+      } else {
+        // 如果找不到发送按钮或输入框，使用默认逻辑
+        // 获取输入框容器的位置和尺寸
+        const containerRect = inputContainer.getBoundingClientRect();
+        
+        // 滚动按钮高度固定为36px
+        const buttonHeight = 36;
+        
+        // 计算按钮的bottom值：输入框容器顶部距离视口底部的距离 + 20px偏移量
+        let bottomPosition = window.innerHeight - containerRect.top + 20;
+        
+        // 边界检测：确保按钮不会超出视口底部
+        const viewportPadding = 20; // 视口内边距
+        bottomPosition = Math.min(bottomPosition, window.innerHeight - buttonHeight - viewportPadding);
+        
+        // 确保按钮不会超出视口顶部（至少保持20px的间距）
+        bottomPosition = Math.max(bottomPosition, buttonHeight + viewportPadding);
+        
+        // 计算按钮的right值，与发送按钮保持水平对齐，并根据屏幕尺寸自适应
+        let rightOffset = 36; // 默认大屏幕：20px（padding）+ 16px（发送按钮right）
+        if (window.innerWidth <= 480) {
+          rightOffset = 32; // 小屏幕：20px（padding）+ 12px（发送按钮right）
+        }
+        const rightPosition = window.innerWidth - containerRect.right + rightOffset;
+        
+        // 更新按钮位置
+        setScrollButtonPosition({ 
+          bottom: `${bottomPosition}px`,
+          right: `${rightPosition}px`
+        });
+      }
     } catch (error) {
       console.error('计算滚动按钮位置失败:', error);
       // 错误时恢复默认位置
-      setScrollButtonPosition({ bottom: '150px' });
+      setScrollButtonPosition({ 
+        bottom: '150px',
+        right: '40px'
+      });
     }
   }, []);
 
@@ -540,21 +607,34 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ memoryId }) => {
     
     // 当达到最大高度时显示滚动条，否则隐藏
     textarea.style.overflowY = newHeight >= maxHeight ? 'auto' : 'hidden';
+    
+    // 调整文本框高度后，重新计算滚动按钮位置和高度
+    debouncedCalculatePosition();
   };
 
   /**
-   * 检测输入框内容是否溢出
+   * 检测消息列表是否需要显示滚动按钮
    */
   const checkContentOverflow = useCallback(() => {
-    if (!textareaRef.current) return;
+    if (!messageListRef.current) return;
     
-    const textarea = textareaRef.current;
-    const shouldShowScrollButton = textarea.scrollHeight > textarea.clientHeight;
+    const messageList = messageListRef.current;
+    const { scrollTop, scrollHeight, clientHeight } = messageList;
+    const threshold = 50;
+    const isAtBottom = scrollHeight - scrollTop - clientHeight < threshold;
     
-    if (shouldShowScrollButton !== showScrollButton) {
-      setShowScrollButton(shouldShowScrollButton);
+    // 只有当消息列表内容足够滚动时，才根据滚动位置设置状态
+    if (scrollHeight > clientHeight) {
+      if (isAtBottom) {
+        setAutoScrollEnabled(true);
+      } else {
+        setAutoScrollEnabled(false);
+      }
+    } else {
+      // 如果内容不足以滚动，设置为自动滚动状态
+      setAutoScrollEnabled(true);
     }
-  }, [showScrollButton]);
+  }, []);
 
   /**
    * 处理滚动按钮点击
@@ -594,55 +674,26 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ memoryId }) => {
     }
   }, [messages, isLoading, autoScrollEnabled]);
 
-  // 监听输入框内容变化和组件挂载/卸载
+  // 监听消息列表滚动事件，更新自动滚动状态
   useEffect(() => {
-    const textarea = textareaRef.current;
-    if (!textarea) return;
+    const messageList = messageListRef.current;
+    if (!messageList) return;
     
-    // 初始调整高度
-    adjustTextareaHeight();
+    // 监听消息列表滚动事件
+    messageList.addEventListener('scroll', checkContentOverflow);
     
-    textarea.addEventListener('input', checkContentOverflow);
-    textarea.addEventListener('scroll', checkContentOverflow);
-    
-    // 初始检查
-    checkContentOverflow();
+    // 初始检查一次位置
+    setTimeout(checkContentOverflow, 100);
     
     return () => {
-      textarea.removeEventListener('input', checkContentOverflow);
-      textarea.removeEventListener('scroll', checkContentOverflow);
+      messageList.removeEventListener('scroll', checkContentOverflow);
     };
-  }, []);
+  }, [checkContentOverflow]);
   
   // 监听输入值变化，调整高度
   useEffect(() => {
     adjustTextareaHeight();
   }, [inputValue]);
-
-  // 设置消息列表滚动监听
-  useEffect(() => {
-    const messageList = messageListRef.current;
-    if (!messageList) return;
-    
-    const handleScroll = () => {
-      if (!messageListRef.current) return;
-      const { scrollTop, scrollHeight, clientHeight } = messageListRef.current;
-      const threshold = 50;
-      const isAtBottom = scrollHeight - scrollTop - clientHeight < threshold;
-      
-      if (isAtBottom) {
-        setAutoScrollEnabled(true);
-      } else {
-        setAutoScrollEnabled(false);
-      }
-    };
-    
-    messageList.addEventListener('scroll', handleScroll);
-    
-    return () => {
-      messageList.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
 
   // 监听输入框高度变化，调整滚动按钮位置
   useEffect(() => {
@@ -804,42 +855,44 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ memoryId }) => {
             </div>
           </div>
         )}
-        {/* 滚动到底部按钮 - 当自动追踪关闭时显示 */}
-        {!autoScrollEnabled && messages.length > 1 && (
-          <div style={{
-            ...STYLES.scrollButton,
-            ...scrollButtonPosition
-          }}>
-            <button
-              onClick={handleScrollButtonClick}
-              onMouseEnter={() => setScrollButtonHovered(true)}
-              onMouseLeave={() => {
-                setScrollButtonHovered(false);
-                setScrollButtonPressed(false);
-              }}
-              onMouseDown={() => setScrollButtonPressed(true)}
-              onMouseUp={() => setScrollButtonPressed(false)}
-              aria-label="回到最新消息"
-              style={{
-                ...STYLES.scrollButtonWrapper,
-                transform: scrollButtonPressed ? 'scale(0.95)' : scrollButtonHovered ? 'scale(1.05)' : 'scale(1)',
-                backgroundColor: '#FFFFFF',
-                boxShadow: scrollButtonPressed
-                  ? '2px 4px 4px rgba(0, 0, 0, 0.12)'
-                  : scrollButtonHovered
-                    ? '2px 4px 8px rgba(0, 0, 0, 0.2)'
-                    : '2px 4px 6px rgba(0, 0, 0, 0.15)'
-              }}
-            >
-              <span style={STYLES.scrollButtonIcon}>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" stroke-linecap="round" stroke-width="2" width="18" height="18">
-                  <path d="M12 4v16m-6-6l6 6l6-6"/>
-                </svg>
-              </span>
-            </button>
-          </div>
-        )}
       </div>
+      
+      {/* 滚动到底部按钮 - 当消息列表不在底部时显示 */}
+      {!autoScrollEnabled && messages.length > 1 && (
+        <div 
+          className="scroll-button"
+          style={{ ...STYLES.scrollButton, bottom: scrollButtonPosition.bottom, right: scrollButtonPosition.right }}
+        >
+          <button
+            onClick={handleScrollButtonClick}
+            onMouseEnter={() => setScrollButtonHovered(true)}
+            onMouseLeave={() => {
+              setScrollButtonHovered(false);
+              setScrollButtonPressed(false);
+            }}
+            onMouseDown={() => setScrollButtonPressed(true)}
+            onMouseUp={() => setScrollButtonPressed(false)}
+            aria-label="回到最新消息"
+            style={{
+              ...STYLES.scrollButtonWrapper,
+              transform: scrollButtonPressed ? 'scale(0.95)' : scrollButtonHovered ? 'scale(1.05)' : 'scale(1)',
+              backgroundColor: '#FFFFFF',
+              boxShadow: scrollButtonPressed
+                ? '2px 4px 4px rgba(0, 0, 0, 0.12)'
+                : scrollButtonHovered
+                  ? '2px 4px 8px rgba(0, 0, 0, 0.2)'
+                  : '2px 4px 6px rgba(0, 0, 0, 0.15)'
+            }}
+          >
+            <span style={STYLES.scrollButtonIcon}>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" stroke-linecap="round" stroke-width="2" width="18" height="18">
+                <path d="M12 4v16m-6-6l6 6l6-6"/>
+              </svg>
+            </span>
+          </button>
+        </div>
+      )}
+      
       <div 
             ref={inputContainerRef}
             className="chat-input-container"
@@ -878,38 +931,39 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ memoryId }) => {
               />
               
               {/* 发送按钮 - 箭头图标，位于输入框内右下角 */}
-              <div
-                onClick={handleSendMessage}
-                style={{
-                  position: 'absolute',
-                  right: '16px', // 调整右边距，使其位于输入框内右下角
-                  bottom: '16px', // 调整底边距，使其位于输入框内右下角
-                  borderRadius: '50%',
-                  width: '36px', // 保持合适的按钮尺寸
-                  height: '36px', // 保持合适的按钮尺寸
-                  minWidth: '36px',
-                  minHeight: '36px',
-                  maxWidth: '36px',
-                  maxHeight: '36px',
-                  padding: '0',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: '#ffffff', // 与输入框背景色一致
-                  border: '1px solid #e5e7eb', // 与输入框边框颜色一致
-                  boxShadow: '0 2px 6px rgba(0, 0, 0, 0.15)', // 适当增强阴影，提升层次感
-                  transition: 'all 0.2s ease',
-                  overflow: 'hidden',
-                  cursor: (!inputValue.trim() || isLoading) ? 'not-allowed' : 'pointer',
-                  opacity: (!inputValue.trim() || isLoading) ? 0.6 : 1,
-                  // 确保没有任何样式影响圆角
-                  boxSizing: 'border-box',
-                  lineHeight: '1',
-                  zIndex: 10 // 确保按钮在所有元素上方
-                }}
-                // 确保禁用状态下不响应点击
-                onMouseDown={(e) => { if (!inputValue.trim() || isLoading) e.preventDefault(); }}
-              >
+      <div
+        className="send-button"
+        onClick={handleSendMessage}
+        style={{
+          position: 'absolute',
+          right: '16px', // 调整右边距，使其位于输入框内右下角
+          bottom: '16px', // 调整底边距，使其位于输入框内右下角
+          borderRadius: '50%',
+          width: '36px', // 保持合适的按钮尺寸
+          height: '36px', // 保持合适的按钮尺寸
+          minWidth: '36px',
+          minHeight: '36px',
+          maxWidth: '36px',
+          maxHeight: '36px',
+          padding: '0',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: '#ffffff', // 与输入框背景色一致
+          border: '1px solid #e5e7eb', // 与输入框边框颜色一致
+          boxShadow: '0 2px 6px rgba(0, 0, 0, 0.15)', // 适当增强阴影，提升层次感
+          transition: 'all 0.2s ease',
+          overflow: 'hidden',
+          cursor: (!inputValue.trim() || isLoading) ? 'not-allowed' : 'pointer',
+          opacity: (!inputValue.trim() || isLoading) ? 0.6 : 1,
+          // 确保没有任何样式影响圆角
+          boxSizing: 'border-box',
+          lineHeight: '1',
+          zIndex: 10 // 确保按钮在所有元素上方
+        }}
+        // 确保禁用状态下不响应点击
+        onMouseDown={(e) => { if (!inputValue.trim() || isLoading) e.preventDefault(); }}
+      >
                 {/* 发送图标 - 使用指定的base64编码 */}
                 <img 
                   src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjgiIGhlaWdodD0iMTI4IiB2aWV3Qm94PSIwIDAgMTYgMTYiPjxwYXRoIGZpbGw9ImN1cnJlbnRDb2xvciIgZD0iTTE2IDBMMCA4bDQuNyAxLjZMNSAxNWwyLjUtMi44TDEwIDE2ek03LjUgMTAuNGw0LjMtNS45bC02LjIgNC4zbC0zLTFMMTQuMiAyTDkuNyAxMy44eiIvPjwvc3ZnPg==" 

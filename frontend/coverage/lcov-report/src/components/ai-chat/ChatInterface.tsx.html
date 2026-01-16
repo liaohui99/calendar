@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/240</span>
+                <span class='fraction'>0/241</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/222</span>
+                <span class='fraction'>0/223</span>
             </div>
         
             
@@ -1004,7 +1004,20 @@
 <a name='L939'></a><a href='#L939'>939</a>
 <a name='L940'></a><a href='#L940'>940</a>
 <a name='L941'></a><a href='#L941'>941</a>
-<a name='L942'></a><a href='#L942'>942</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L942'></a><a href='#L942'>942</a>
+<a name='L943'></a><a href='#L943'>943</a>
+<a name='L944'></a><a href='#L944'>944</a>
+<a name='L945'></a><a href='#L945'>945</a>
+<a name='L946'></a><a href='#L946'>946</a>
+<a name='L947'></a><a href='#L947'>947</a>
+<a name='L948'></a><a href='#L948'>948</a>
+<a name='L949'></a><a href='#L949'>949</a>
+<a name='L950'></a><a href='#L950'>950</a>
+<a name='L951'></a><a href='#L951'>951</a>
+<a name='L952'></a><a href='#L952'>952</a>
+<a name='L953'></a><a href='#L953'>953</a>
+<a name='L954'></a><a href='#L954'>954</a>
+<a name='L955'></a><a href='#L955'>955</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -1342,6 +1355,9 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -1367,17 +1383,27 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -2060,9 +2086,9 @@ const STYLES = <span class="cstat-no" title="statement not covered" >{</span>
   scrollButton: {
     position: 'fixed',
     bottom: '150px',
-    right: 'calc(50% - 540px)',
+    right: '20px',
     zIndex: 100,
-    transition: 'bottom 0.2s ease-in-out' // 添加平滑过渡动画
+    transition: 'all 0.2s ease-in-out' // 添加平滑过渡动画
   },
   scrollButtonWrapper: {
     width: '38px',
@@ -2282,7 +2308,10 @@ const ChatInterface: React.FC&lt;ChatInterfaceProps&gt; = <span class="cstat-no"
   const [scrollButtonHovered, setScrollButtonHovered] = <span class="cstat-no" title="statement not covered" >useState&lt;boolean&gt;(false);</span>
   const [scrollButtonPressed, setScrollButtonPressed] = <span class="cstat-no" title="statement not covered" >useState&lt;boolean&gt;(false);</span>
   const [textareaFocused, setTextareaFocused] = <span class="cstat-no" title="statement not covered" >useState&lt;boolean&gt;(false);</span>
-  const [scrollButtonPosition, setScrollButtonPosition] = <span class="cstat-no" title="statement not covered" >useState&lt;{ bottom: string }&gt;({ bottom: '150px' });</span>
+  const [scrollButtonPosition, setScrollButtonPosition] = <span class="cstat-no" title="statement not covered" >useState&lt;{ bottom: string; right: string }&gt;({ </span>
+    bottom: '150px',
+    right: '20px'
+  });
   const inputContainerRef = <span class="cstat-no" title="statement not covered" >useRef&lt;HTMLDivElement&gt;(null);</span>
   const textareaRef = <span class="cstat-no" title="statement not covered" >useRef&lt;HTMLTextAreaElement&gt;(null);</span>
   const messageListRef = <span class="cstat-no" title="statement not covered" >useRef&lt;HTMLDivElement&gt;(null);</span>
@@ -2291,7 +2320,7 @@ const ChatInterface: React.FC&lt;ChatInterfaceProps&gt; = <span class="cstat-no"
 &nbsp;
   /**
    * 计算滚动到底部按钮的位置
-   * 根据输入框高度动态调整
+   * 根据输入框高度动态调整，与输入框保持一致的左右边距
    */
   const calculateScrollButtonPosition = <span class="cstat-no" title="statement not covered" >useCallback(<span class="fstat-no" title="function not covered" >() =</span>&gt; {</span>
     const inputContainer = <span class="cstat-no" title="statement not covered" >inputContainerRef.current;</span>
@@ -2313,12 +2342,22 @@ const ChatInterface: React.FC&lt;ChatInterfaceProps&gt; = <span class="cstat-no"
       // 确保按钮不会超出视口顶部（至少保持20px的间距）
 <span class="cstat-no" title="statement not covered" >      bottomPosition = Math.max(bottomPosition, buttonHeight + viewportPadding);</span>
       
-      // 更新按钮位置
-<span class="cstat-no" title="statement not covered" >      setScrollButtonPosition({ bottom: `${bottomPosition}px` });</span>
+      // 直接使用inputContainer的位置信息，计算按钮的right值
+      // 与输入框容器右侧对齐，保持20px的内边距
+      const rightPosition = <span class="cstat-no" title="statement not covered" >window.innerWidth - containerRect.right + 20;</span>
+      
+      // 更新按钮位置，包括right值
+<span class="cstat-no" title="statement not covered" >      setScrollButtonPosition({ </span>
+        bottom: `${bottomPosition}px`,
+        right: `${rightPosition}px`
+      });
     } catch (error) {
 <span class="cstat-no" title="statement not covered" >      console.error('计算滚动按钮位置失败:', error);</span>
       // 错误时恢复默认位置
-<span class="cstat-no" title="statement not covered" >      setScrollButtonPosition({ bottom: '150px' });</span>
+<span class="cstat-no" title="statement not covered" >      setScrollButtonPosition({ </span>
+        bottom: '150px',
+        right: '20px'
+      });
     }
   }, []);
 &nbsp;
@@ -2893,7 +2932,7 @@ const ChatInterface: React.FC&lt;ChatInterfaceProps&gt; = <span class="cstat-no"
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-01-16T03:50:23.012Z
+                at 2026-01-16T03:56:12.819Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
