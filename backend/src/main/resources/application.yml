@@ -31,6 +31,7 @@ spring:
 # 服务器配置（所有环境共享）
 server:
     port: 8080
+    address: 0.0.0.0
     # 字符编码配置，确保所有响应使用UTF-8编码
     servlet:
         encoding:

@@ -5,6 +5,8 @@ import dev.langchain4j.service.SystemMessage;
 import dev.langchain4j.service.UserMessage;
 import dev.langchain4j.service.spring.AiService;
 import dev.langchain4j.service.spring.AiServiceWiringMode;
+import dev.langchain4j.service.tool.ToolProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import reactor.core.publisher.Flux;
 
 /**
@@ -21,6 +23,11 @@ import reactor.core.publisher.Flux;
         tools = {"dateUtils","deviceService","deviceTypeService","locationService","reservationService"}
 )
 public interface CalendarChatAssistant {
+
+  /*  @Autowired
+    void setToolProvider(ToolProvider toolProvider);  // 注入 ToolProvider
+
+*/
 
     /**
      * 普通输出，不是流式的

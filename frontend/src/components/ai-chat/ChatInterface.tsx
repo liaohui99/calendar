@@ -885,7 +885,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ memoryId }) => {
             }}
           >
             <span style={STYLES.scrollButtonIcon}>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" stroke-linecap="round" stroke-width="2" width="18" height="18">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" strokeLinecap="round" strokeWidth="2" width="18" height="18">
                 <path d="M12 4v16m-6-6l6 6l6-6"/>
               </svg>
             </span>

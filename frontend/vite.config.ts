@@ -6,16 +6,18 @@ import path from 'path'
 export default defineConfig({
   plugins: [react()],
   server: {
+    port: 5175,
+    host: '0.0.0.0',
     proxy: {
       // 针对/api开头的请求进行代理
       '/api': {
-        target: 'http://127.0.0.1:8080',
+        target: 'http://192.168.110.244:8080',
         changeOrigin: true,
         rewrite: (path) => path // 保留/api前缀
       },
       // 针对/ai开头的请求进行代理（如AI聊天接口）
       '/ai': {
-        target: 'http://127.0.0.1:8080',
+        target: 'http://192.168.110.244:8080',
         changeOrigin: true,
         rewrite: (path) => path // 保留/ai前缀
       }

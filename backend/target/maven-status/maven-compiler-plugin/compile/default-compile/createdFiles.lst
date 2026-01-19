@@ -46,7 +46,6 @@ com\calendar\chart\ai\demo\SimpleChat.class
 com\calendar\chart\utils\ByteToUTF8Converter.class
 com\calendar\chart\dao\ChatMemoryStoreDao.class
 com\calendar\chart\service\impl\DeviceTypeServiceImpl.class
-com\calendar\chart\ai\adapter\AiDialogueController.class
 com\calendar\chart\ai\adapter\AiDialogueController$1.class
 com\calendar\chart\ai\req\PromptReq.class
 com\calendar\chart\ai\service\XiaoZhiAssistant$AppointmentTools.class

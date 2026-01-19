@@ -255,3 +255,77 @@ export const sendChatMessageStream = async (request: ChatRequest, onPartialRespo
     throw error;
   }
 };
+
+/**
+ * 清空指定对话的历史记录
+ * 调用后端的清空对话历史接口
+ * @param memoryId 对话内存ID
+ * @returns Promise<boolean> 操作是否成功
+ */
+export const clearChatMemory = async (memoryId: number): Promise<boolean> => {
+  try {
+    console.log('清空对话历史记录:', memoryId);
+    
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
+    
+    const response = await fetch(`/ai/calendar/chat/memory/${memoryId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      signal: controller.signal
+    });
+    
+    clearTimeout(timeoutId);
+    
+    if (response.ok) {
+      console.log('清空对话历史成功');
+      return true;
+    } else {
+      console.warn(`清空对话历史失败: ${response.status}`);
+      return false;
+    }
+  } catch (error) {
+    console.error('清空对话历史异常:', error);
+    return false;
+  }
+};
+
+/**
+ * 创建新的对话会话
+ * 调用后端创建新会话接口
+ * @returns Promise<number> 新创建的对话内存ID
+ */
+export const createNewSession = async (): Promise<number | null> => {
+  try {
+    console.log('创建新对话会话');
+    
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
+    
+    const response = await fetch('/ai/calendar/chat/session', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      signal: controller.signal
+    });
+    
+    clearTimeout(timeoutId);
+    
+    if (response.ok) {
+      const data = await response.json();
+      console.log('创建新会话成功:', data.data);
+      return data.data;
+    } else {
+      console.warn(`创建新会话失败: ${response.status}`);
+      return null;
+    }
+  } catch (error) {
+    console.error('创建新会话异常:', error);
+    return null;
+  }
+};

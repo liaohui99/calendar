@@ -2,25 +2,20 @@ package com.calendar.chart.ai.config;
 
 import com.calendar.chart.ai.service.ChatDemoAssistant;
 import com.calendar.chart.config.ApplicationConfig;
-import dev.langchain4j.data.message.ChatMessage;
-import dev.langchain4j.memory.ChatMemory;
+import dev.langchain4j.mcp.McpToolProvider;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
-import dev.langchain4j.memory.chat.TokenWindowChatMemory;
-import dev.langchain4j.model.TokenCountEstimator;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.model.openai.OpenAiStreamingChatModel;
-import dev.langchain4j.model.openai.OpenAiTokenCountEstimator;
 import dev.langchain4j.service.AiServices;
+import dev.langchain4j.service.tool.ToolProvider;
 import dev.langchain4j.store.memory.chat.ChatMemoryStore;
 import dev.langchain4j.store.memory.chat.InMemoryChatMemoryStore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.List;
 
 
 /**
@@ -49,9 +44,10 @@ public class SpringLLMConfig {
                 .modelName("gpt-4o-mini")*/
                 .baseUrl(applicationConfig.getLangchain4jBaseUrl())
                 .apiKey(applicationConfig.getLangchain4jApiKey())
-                //.modelName(applicationConfig.getLangchain4jModelName())
-                .modelName(applicationConfig.getLangchain4jThinkingModelName())
-                .returnThinking(Boolean.TRUE)
+                .modelName(applicationConfig.getLangchain4jModelName())
+                .temperature(0.7)
+                .logRequests(true)
+                .logResponses(true)
                 .build();
     }
 
@@ -76,8 +72,10 @@ public class SpringLLMConfig {
                 .modelName("gpt-4o-mini")*/
                 .baseUrl(applicationConfig.getLangchain4jBaseUrl())
                 .apiKey(applicationConfig.getLangchain4jApiKey())
-                //.modelName(applicationConfig.getLangchain4jModelName())
-                .modelName(applicationConfig.getLangchain4jThinkingModelName())
+                .modelName(applicationConfig.getLangchain4jModelName())
+                .temperature(0.7)
+                .logRequests(true)
+                .logResponses(true)
                 .build();
     }
 
@@ -141,6 +139,14 @@ public class SpringLLMConfig {
                 .id(userId)
                 .maxMessages(200)
                 .chatMemoryStore(persistentChatMemoryStore)
+                .build();
+    }
+
+
+    //@Bean
+    public ToolProvider myToolProvider() {
+        return McpToolProvider.builder()
+                .mcpClients()
                 .build();
     }
 
