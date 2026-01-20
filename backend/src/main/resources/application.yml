@@ -18,6 +18,11 @@ spring:
         console:
             enabled: true
             path: /h2-console
+    # SQL初始化配置
+    sql:
+        init:
+            mode: always
+            continue-on-error: true
     # Redis配置（所有环境共享）
     redis:
         host: 101.126.13.194

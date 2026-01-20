@@ -28,6 +28,43 @@ export interface ChatResponse {
 }
 
 /**
+ * 会话消息响应数据定义
+ */
+export interface ChatMessageResponse {
+  success: boolean;
+  data: ChatMessageData;
+  error: string | null;
+}
+
+/**
+ * 会话消息数据定义
+ */
+export interface ChatMessageData {
+  memoryId: number;
+  messages: any[];
+}
+
+/**
+ * 会话列表响应数据定义
+ */
+export interface SessionsResponse {
+  success: boolean;
+  data: SessionInfo[];
+  error: string | null;
+}
+
+/**
+ * 会话信息定义
+ */
+export interface SessionInfo {
+  memoryId: number;
+  title: string;
+  messageCount: number;
+  createTime: string;
+  updateTime: string;
+}
+
+/**
  * 模拟聊天回复数据
  * 用于在没有后端服务时提供响应
  */
@@ -327,5 +364,80 @@ export const createNewSession = async (): Promise<number | null> => {
   } catch (error) {
     console.error('创建新会话异常:', error);
     return null;
+  }
+};
+
+/**
+ * 获取指定会话的消息
+ * 调用后端获取会话消息接口
+ * @param memoryId 会话ID
+ * @returns Promise<ChatMessageData> 会话消息数据
+ */
+export const getChatMessages = async (memoryId: number): Promise<ChatMessageData | null> => {
+  try {
+    console.log('获取会话消息:', memoryId);
+    
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
+    
+    const response = await fetch(`/ai/calendar/chat/messages/${memoryId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      signal: controller.signal
+    });
+    
+    clearTimeout(timeoutId);
+    
+    if (response.ok) {
+      const data = await response.json();
+      console.log('获取会话消息成功:', data.data);
+      return data.data;
+    } else {
+      console.warn(`获取会话消息失败: ${response.status}`);
+      return null;
+    }
+  } catch (error) {
+    console.error('获取会话消息异常:', error);
+    return null;
+  }
+};
+
+/**
+ * 获取所有会话列表
+ * 调用后端获取会话列表接口
+ * @returns Promise<SessionInfo[]> 会话列表
+ */
+export const getSessions = async (): Promise<SessionInfo[]> => {
+  try {
+    console.log('获取会话列表');
+    
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
+    
+    const response = await fetch('/ai/calendar/chat/sessions', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      signal: controller.signal
+    });
+    
+    clearTimeout(timeoutId);
+    
+    if (response.ok) {
+      const data = await response.json();
+      console.log('获取会话列表成功:', data.data);
+      return data.data || [];
+    } else {
+      console.warn(`获取会话列表失败: ${response.status}`);
+      return [];
+    }
+  } catch (error) {
+    console.error('获取会话列表异常:', error);
+    return [];
   }
 };

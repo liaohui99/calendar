@@ -20,10 +20,12 @@ spring:
             path: /h2-console
             settings:
                 web-allow-others: true
-    # 禁用SQL脚本自动执行
+    # 启用SQL脚本自动执行
     sql:
         init:
-            enabled: false
+            mode: always
+            schema-locations: classpath:schema-h2.sql
+            continue-on-error: true
     # 配置JPA自动创建表
     jpa:
         hibernate:

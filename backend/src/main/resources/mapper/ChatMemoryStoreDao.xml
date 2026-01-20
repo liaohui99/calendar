@@ -2,37 +2,46 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.calendar.chart.dao.ChatMemoryStoreDao">
- 
+
     <!-- 结果映射 -->
     <resultMap id="ChatMessagesResultMap" type="com.calendar.chart.entity.ChatMessages">
-        <id column="id" property="id" />
-        <result column="message_id" property="messageId" />
-        <result column="content" property="content" />
+        <id column="ID" property="id" />
+        <result column="MESSAGE_ID" property="messageId" />
+        <result column="CONTENT" property="content" />
+        <result column="CREATE_TIME" property="createTime" />
+        <result column="UPDATE_TIME" property="updateTime" />
     </resultMap>
- 
-    <!-- 新增 -->
+
+    <!-- 新增 - 使用MyBatis-Plus的insert方法 -->
     <insert id="save">
-        INSERT INTO chat_messages (message_id, content)
-        VALUES (#{messageId}, #{content})
+        INSERT INTO CHAT_MESSAGES (MESSAGE_ID, CONTENT, CREATE_TIME, UPDATE_TIME)
+        VALUES (#{messageId}, #{content}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
     </insert>
- 
+
     <!-- 更新 -->
     <update id="updateData">
-        UPDATE chat_messages 
-        SET content = #{content}
-        WHERE message_id = #{messageId}
+        UPDATE CHAT_MESSAGES
+        SET CONTENT = #{content}, UPDATE_TIME = CURRENT_TIMESTAMP
+        WHERE MESSAGE_ID = #{messageId}
     </update>
- 
+
     <!-- 删除 -->
     <delete id="deleteByMemoryId">
-        DELETE FROM chat_messages 
-        WHERE message_id = #{memoryId}
+        DELETE FROM CHAT_MESSAGES
+        WHERE MESSAGE_ID = #{memoryId}
     </delete>
- 
+
     <!-- 查询 -->
     <select id="getMessages" resultMap="ChatMessagesResultMap">
-        SELECT id, message_id, content
-        FROM chat_messages
-        WHERE message_id = #{memoryId}
+        SELECT ID, MESSAGE_ID, CONTENT, CREATE_TIME, UPDATE_TIME
+        FROM CHAT_MESSAGES
+        WHERE MESSAGE_ID = #{memoryId}
+    </select>
+
+    <!-- 获取所有会话列表 -->
+    <select id="getAllSessions" resultMap="ChatMessagesResultMap">
+        SELECT ID, MESSAGE_ID, CONTENT, CREATE_TIME, UPDATE_TIME
+        FROM CHAT_MESSAGES
+        ORDER BY CREATE_TIME DESC
     </select>
 </mapper>

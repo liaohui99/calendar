@@ -1,9 +1,17 @@
 // src/components/ai-chat/ChatInterface.tsx
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Button, List, Avatar, Typography, Tooltip } from '@douyinfe/semi-ui';
-import { sendChatMessageStream } from '../../services/aiChatService';
+import { sendChatMessageStream, getChatMessages } from '../../services/aiChatService';
 import { IconArrowUpRight } from '@douyinfe/semi-icons';
 import MarkdownRenderer from './MarkdownRenderer';
+
+/**
+ * 会话消息数据定义
+ */
+interface ChatMessageData {
+  memoryId: number;
+  messages: any[];
+}
 
 // 样式常量 - 参考优秀AI问答页面设计
 const STYLES = {
@@ -299,33 +307,56 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ memoryId }) => {
     addResponsiveStyles();
   }, []);
   
-  const [messages, setMessages] = useState<Message[]>(() => {
-    const storageKey = `calendar-chat-messages-${memoryId}`;
-    const saved = localStorage.getItem(storageKey);
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed;
-        }
-      } catch (e) {
-        console.error('Failed to parse saved messages:', e);
-      }
-    }
-    return [
-      {
-        id: 'welcome',
-        content: '你好！我是日历图表助手，有什么可以帮到你的吗？',
-        sender: 'bot'
-      }
-    ];
-  });
+  // 加载状态
+  const [isMessagesLoading, setIsMessagesLoading] = useState<boolean>(true);
   
-  // 持久化messages到localStorage
+  const [messages, setMessages] = useState<Message[]>([]);
+  
+  /**
+   * 从后端加载会话消息
+   */
+  const loadMessagesFromBackend = useCallback(async () => {
+    setIsMessagesLoading(true);
+    try {
+      const chatMessageData = await getChatMessages(memoryId);
+      if (chatMessageData && chatMessageData.messages && chatMessageData.messages.length > 0) {
+        // 转换后端消息格式为前端消息格式
+        const convertedMessages = chatMessageData.messages.map((msg: any) => ({
+          id: `${msg.type}-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+          content: msg.text || '',
+          sender: msg.type === 'USER' ? 'user' : 'bot',
+          isError: false
+        }));
+        setMessages(convertedMessages);
+      } else {
+        // 没有消息时显示欢迎消息
+        setMessages([
+          {
+            id: 'welcome',
+            content: '你好！我是日历图表助手，有什么可以帮到你的吗？',
+            sender: 'bot'
+          }
+        ]);
+      }
+    } catch (error) {
+      console.error('加载会话消息失败:', error);
+      // 加载失败时显示欢迎消息
+      setMessages([
+        {
+          id: 'welcome',
+          content: '你好！我是日历图表助手，有什么可以帮到你的吗？',
+          sender: 'bot'
+        }
+      ]);
+    } finally {
+      setIsMessagesLoading(false);
+    }
+  }, [memoryId]);
+  
+  // 初始加载会话消息
   useEffect(() => {
-    const storageKey = `calendar-chat-messages-${memoryId}`;
-    localStorage.setItem(storageKey, JSON.stringify(messages));
-  }, [messages, memoryId]);
+    loadMessagesFromBackend();
+  }, [loadMessagesFromBackend]);
   
   const [inputValue, setInputValue] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -766,7 +797,16 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ memoryId }) => {
           className="message-list"
           style={STYLES.messageList}
         >
-        {messages.length === 0 ? (
+        {isMessagesLoading ? (
+          <div style={{
+            padding: '20px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}>
+            <Text type="secondary">加载中...</Text>
+          </div>
+        ) : messages.length === 0 ? (
           <div style={STYLES.emptyState}>
             <EmptyChatIcon />
             <Text type="secondary" style={{ fontSize: '16px', marginBottom: '10px' }}>

@@ -11,13 +11,13 @@ export default defineConfig({
     proxy: {
       // 针对/api开头的请求进行代理
       '/api': {
-        target: 'http://192.168.110.244:8080',
+        target: 'http://localhost:8080',
         changeOrigin: true,
         rewrite: (path) => path // 保留/api前缀
       },
       // 针对/ai开头的请求进行代理（如AI聊天接口）
       '/ai': {
-        target: 'http://192.168.110.244:8080',
+        target: 'http://localhost:8080',
         changeOrigin: true,
         rewrite: (path) => path // 保留/ai前缀
       }

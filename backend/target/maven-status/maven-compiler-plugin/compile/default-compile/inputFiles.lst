@@ -26,6 +26,7 @@ E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\ai\service\X
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\dao\DeviceDao.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\ai\demo\MCPClientStdio.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\dto\ReservationRequest.java
+E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\dto\ChatMessageResponse.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\service\impl\LocationServiceImpl.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\utils\ByteToUTF8Converter.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\ai\tools\WeatherTools.java
@@ -42,6 +43,7 @@ E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\ai\service\F
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\utils\DateUtils.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\entity\DeviceType.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\ai\demo\RAGTest.java
+E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\dto\SessionInfo.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\ai\config\SpringLLMConfig.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\ai\demo\EncodingTest.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\ai\demo\TokenStreamDemo.java

@@ -18,4 +18,20 @@ public class PromptReq {
     @NotNull(message = "userMessage不能为空")
     String userMessage;
 
+    // 显式添加getter和setter以确保Lombok问题时代码仍可编译
+    public Long getMemoryId() {
+        return memoryId;
+    }
+
+    public void setMemoryId(Long memoryId) {
+        this.memoryId = memoryId;
+    }
+
+    public String getUserMessage() {
+        return userMessage;
+    }
+
+    public void setUserMessage(String userMessage) {
+        this.userMessage = userMessage;
+    }
 }

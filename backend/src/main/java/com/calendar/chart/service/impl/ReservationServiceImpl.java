@@ -91,7 +91,7 @@ public class ReservationServiceImpl extends ServiceImpl<ReservationDao, Reservat
         reservation.setUserName(request.getUserName());
         reservation.setUserContact(request.getUserContact());
         reservation.setReason(request.getReason());
-        reservation.setStatus(0); // 初始状态：待使用
+        reservation.setStatus(Integer.valueOf(0)); // 初始状态：待使用
         reservation.setCreateTime(new Date());
         reservation.setUpdateTime(new Date());
         
@@ -172,7 +172,7 @@ public class ReservationServiceImpl extends ServiceImpl<ReservationDao, Reservat
         }
         
         // 软删除：将状态改为已取消
-        reservation.setStatus(2); // 2: 已取消
+        reservation.setStatus(Integer.valueOf(2)); // 2: 已取消
         reservation.setUpdateTime(new Date());
         
         return updateById(reservation);

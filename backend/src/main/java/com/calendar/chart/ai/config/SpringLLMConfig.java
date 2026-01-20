@@ -1,5 +1,6 @@
 package com.calendar.chart.ai.config;
 
+import com.calendar.chart.ai.config.memory.MysqlChatMemoryStore;
 import com.calendar.chart.ai.service.ChatDemoAssistant;
 import com.calendar.chart.config.ApplicationConfig;
 import dev.langchain4j.mcp.McpToolProvider;
@@ -12,16 +13,14 @@ import dev.langchain4j.model.openai.OpenAiStreamingChatModel;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.tool.ToolProvider;
 import dev.langchain4j.store.memory.chat.ChatMemoryStore;
-import dev.langchain4j.store.memory.chat.InMemoryChatMemoryStore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 
 /**
- * @author Gabriel
- * @date 2025/12/1 14:25
- * @description: TODO
+ * LLM配置类
+ * 配置LangChain4j相关的Bean
  */
 @Configuration
 @RequiredArgsConstructor
@@ -31,11 +30,10 @@ public class SpringLLMConfig {
 
 
     /**
-     * @return dev.langchain4j.model.chat.StreamingChatLanguageModel
-     * @Author Gabriel
-     * @Description 流式对话接口 StreamingChatModel
-     * @Date 2025/12/1 14:30
-     **/
+     * 创建流式对话模型Bean
+     *
+     * @return StreamingChatModel
+     */
     @Bean
     public StreamingChatModel streamingChatModel() {
         return OpenAiStreamingChatModel.builder()
@@ -59,11 +57,10 @@ public class SpringLLMConfig {
 
 
     /**
+     * 创建普通对话模型Bean
+     *
      * @return ChatModel
-     * @Author Gabriel
-     * @Description 普通对话接口 ChatModel
-     * @Date 2025/12/1 14:31
-     **/
+     */
     @Bean
     public ChatModel chatModelSimple() {
         return OpenAiChatModel.builder()
@@ -87,52 +84,24 @@ public class SpringLLMConfig {
     // }
 
     /**
-     * @Author Gabriel
-     * @Description 创建自定义持久化类对象
-     * @Date  2025/12/1 14:47
-     * @return dev.langchain4j.store.memory.chat.ChatMemoryStore
-     **/
-//    @Bean
-//    public ChatMemory tokenWindowChatMemory() {
-//        return TokenWindowChatMemory.withMaxTokens(10000, new OpenAiTokenCountEstimator(applicationConfig.getLangchain4jThinkingModelName()));
-//        //return new PersistentChatMemoryStore();
-//    }
-
-
-/*    @Bean
-    public ChatMemory tokenWindowChatMemory() {
-        // 使用自定义的令牌计数估算器
-        return TokenWindowChatMemory.withMaxTokens(10000,
-                new TokenCountEstimator() {
-                    @Override
-                    public int estimateTokenCount(String text) {
-                        // 简单的字符长度估算或使用其他库
-                        return text.length() / 4; // 粗略估算
-                    }
-
-                    @Override
-                    public int estimateTokenCount(List<ChatMessage> messages) {
-                        // 实现消息列表的令牌估算逻辑
-                        return messages.stream()
-                                .mapToInt(msg -> estimateTokenCount(msg.toString()))
-                                .sum();
-                    }
-                });
-    }*/
-
-
+     * 创建MySQL会话消息存储Bean
+     * 使用MysqlChatMemoryStore替代InMemoryChatMemoryStore，实现会话持久化
+     *
+     * @param mysqlChatMemoryStore MySQL会话消息存储
+     * @return ChatMemoryStore
+     */
     @Bean
-    public ChatMemoryStore chatMemoryStore() {
-        return new InMemoryChatMemoryStore();
+    public ChatMemoryStore chatMemoryStore(MysqlChatMemoryStore mysqlChatMemoryStore) {
+        return mysqlChatMemoryStore;
     }
 
 
     /**
-     * @Author Gabriel
-     * @Descriptionv 创建自定义持久化类对象
-     * @Date  2025/12/1 14:46
-     * @return dev.langchain4j.memory.chat.ChatMemoryProvider
-     **/
+     * 创建会话内存提供者Bean
+     *
+     * @param persistentChatMemoryStore 会话消息存储
+     * @return ChatMemoryProvider
+     */
     @Bean
     public ChatMemoryProvider chatMemoryProvider(ChatMemoryStore persistentChatMemoryStore) {
         return userId -> MessageWindowChatMemory.builder()
