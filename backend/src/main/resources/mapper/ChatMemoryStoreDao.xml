@@ -13,7 +13,7 @@
     </resultMap>
 
     <!-- 新增 - 使用MyBatis-Plus的insert方法 -->
-    <insert id="save">
+    <insert id="save" parameterType="com.calendar.chart.entity.ChatMessages">
         INSERT INTO CHAT_MESSAGES (MESSAGE_ID, CONTENT, CREATE_TIME, UPDATE_TIME)
         VALUES (#{messageId}, #{content}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
     </insert>

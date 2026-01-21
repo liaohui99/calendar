@@ -16,6 +16,7 @@ E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\ai\demo\Tool
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\ai\config\memory\MysqlChatMemoryStore.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\config\ApplicationConfig.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\dao\ChatMemoryStoreDao.java
+E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\config\JacksonConfig.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\ai\config\AiServiceRegisteredEventListener.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\ai\service\CalendarChatAssistant.java
 E:\study\AI\calendar-chart\backend\src\main\java\com\calendar\chart\ai\config\memory\PersistentChatMemoryStore.java

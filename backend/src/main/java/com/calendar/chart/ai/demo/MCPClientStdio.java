@@ -5,6 +5,7 @@ import dev.langchain4j.mcp.McpToolProvider;
 import dev.langchain4j.mcp.client.DefaultMcpClient;
 import dev.langchain4j.mcp.client.McpClient;
 import dev.langchain4j.mcp.client.transport.McpTransport;
+import dev.langchain4j.mcp.client.transport.http.StreamableHttpMcpTransport;
 import dev.langchain4j.mcp.client.transport.stdio.StdioMcpTransport;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
@@ -29,6 +30,10 @@ public class MCPClientStdio {
         McpTransport transport = StdioMcpTransport.builder()
                 .command(List.of("npx.cmd", "@playwright/mcp@latest"))
                 .logEvents(true) //设置为true，可以查看日志中的McpTransport数据
+                .build();
+
+        StreamableHttpMcpTransport streamableHttpMcpTransport = StreamableHttpMcpTransport.builder()
+                .url("")
                 .build();
         // 3. 定义McpClient
         McpClient mcpClient = DefaultMcpClient.builder()

@@ -70,10 +70,12 @@ public class MysqlChatMemoryStore implements ChatMemoryStore {
             if (chatMessages == null) {
                 // 新增会话记录
                 ChatMessages newRecord = new ChatMessages();
-                newRecord.setMessageId(memoryId.toString());
+                String msgId = memoryId.toString();
+                newRecord.setMessageId(msgId);
                 newRecord.setContent(messagesJson);
-                log.info("会话 {} 准备新增记录，messageId={}", memoryId, newRecord.getMessageId());
-                int saveResult = chatMemoryStoreDao.save(newRecord);
+                log.info("会话 {} 准备新增记录，messageId={}, contentLength={}", 
+                        memoryId, msgId, messagesJson.length());
+                int saveResult = chatMemoryStoreDao.insert(newRecord);
                 log.info("会话 {} 新增结果：{}", memoryId, saveResult > 0 ? "成功" : "失败");
             } else {
                 // 更新已有会话记录

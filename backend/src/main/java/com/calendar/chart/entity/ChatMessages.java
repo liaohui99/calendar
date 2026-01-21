@@ -39,6 +39,9 @@ public class ChatMessages {
     /**
      * 会话消息JSON
      */
+    @TableField("content")
+    @Lob
+    @Column(name = "CONTENT", columnDefinition = "TEXT")
     private String content;
 
     /**

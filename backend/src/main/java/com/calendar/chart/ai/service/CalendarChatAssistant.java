@@ -16,7 +16,7 @@ import reactor.core.publisher.Flux;
  * @description: 日历助手
  */
 @AiService(
-        wiringMode = AiServiceWiringMode.EXPLICIT,
+        wiringMode = AiServiceWiringMode.AUTOMATIC,
         chatModel = "chatModelSimple",
         streamingChatModel="streamingChatModel",
         chatMemoryProvider = "chatMemoryProvider",
