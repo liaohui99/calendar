@@ -96,22 +96,23 @@ public class AiDialogueController {
     // http://localhost:9005/chatstream/chat?prompt=天津有什么好吃的
     @GetMapping(value = "/steam/chat")
     public Flux<String> chat(@RequestParam("prompt") String prompt) {
-        return Flux.create(emitter -> {
+        return Flux.create(sink -> {
             streamingChatLanguageModel.chat(prompt, new StreamingChatResponseHandler() {
                 @Override
                 public void onPartialResponse(String partialResponse) {
-                    System.out.print(partialResponse);
-                    emitter.next(partialResponse);
+                    log.info("onPartialResponse:{}", partialResponse);
+                    sink.next(partialResponse);
                 }
 
                 @Override
                 public void onCompleteResponse(ChatResponse completeResponse) {
-                    emitter.complete();
+                    log.info("complete:{}", completeResponse);
+                    sink.complete();
                 }
 
                 @Override
-                public void onError(Throwable throwable) {
-                    emitter.error(throwable);
+                public void onError(Throwable error) {
+                    sink.error(error);
                 }
             });
         });

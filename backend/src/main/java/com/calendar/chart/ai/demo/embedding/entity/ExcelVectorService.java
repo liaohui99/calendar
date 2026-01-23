@@ -1,10 +1,12 @@
 package com.calendar.chart.ai.demo.embedding.entity;
 
+import dev.langchain4j.community.model.dashscope.QwenEmbeddingModel;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2EmbeddingModel;
 import dev.langchain4j.model.ollama.OllamaChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
+import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
 import dev.langchain4j.store.embedding.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import dev.langchain4j.data.segment.TextSegment;
@@ -21,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,19 +38,30 @@ import java.util.UUID;
 @Slf4j
 //@RequiredArgsConstructor
 public class ExcelVectorService {
-    private EmbeddingModel embeddingModel = new AllMiniLmL6V2EmbeddingModel();
+    //private EmbeddingModel embeddingModel = new AllMiniLmL6V2EmbeddingModel();
     private EmbeddingStore<TextSegment> embeddingStore = new InMemoryEmbeddingStore<>();
-/*
-    //private  ExcelDataMapper dataMapper;
+    /*
+        //private  ExcelDataMapper dataMapper;
 
-    OllamaChatModel.OllamaChatModelBuilder
-            .baseUrl("http://localhost:11434")
-                .modelName("qwen2:7b")
-                .temperature(0.3)
-                .timeout(Duration.ofMinutes(2))
+        OllamaChatModel.OllamaChatModelBuilder
+                .baseUrl("http://localhost:11434")
+                    .modelName("qwen2:7b")
+                    .temperature(0.3)
+                    .timeout(Duration.ofMinutes(2))
+                .build();
+    */
+    public static EmbeddingModel embeddingModel = QwenEmbeddingModel.builder()
+            .baseUrl("https://dashscope.aliyuncs.com/compatible-mode/v1")
+            .apiKey("sk-36f36bf254134932b98225f6c8fbb616")
+            .modelName("tongyi-embedding-vision-flash")
             .build();
-*/
 
+/*    // ✅ 正确：使用DashScopeEmbeddingModel.builder()
+    EmbeddingModel embeddingModel = DashScopeEmbeddingModel.builder()
+            .apiKey("sk-xxxxxxxxxxxxxxxxxxxx")  // ⚠️ 替换为你的API密钥
+            .modelName("tongyi-embedding-vision-flash")
+            .maxRetries(2)
+            .build();*/
 
     public static OpenAiChatModel simpleChatModel = OpenAiChatModel.builder()
             .baseUrl("http://langchain4j.dev/demo/openai/v1")
@@ -194,13 +208,13 @@ public class ExcelVectorService {
     /**
      * 与Excel向量对话
      */
-    public String chatWithExcel(String userQuery, String fileName) {
+    public String chatWithExcel(String userQuery) {
         // 1. 检索相关向量
         var queryEmbedding = embeddingModel.embed(userQuery);
         EmbeddingSearchRequest request = EmbeddingSearchRequest.builder()
                 .queryEmbedding(queryEmbedding.content())
-                .maxResults(5)
-                .minScore(0.6)
+                .maxResults(10)
+                .minScore(0.7)
                 .build();
         var searchResult = embeddingStore.search(request);
         List<EmbeddingMatch<TextSegment>> relevantMatches = searchResult.matches();

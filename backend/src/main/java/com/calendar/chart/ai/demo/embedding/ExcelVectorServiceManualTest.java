@@ -13,6 +13,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.FileOutputStream;
 import java.time.Duration;
@@ -32,12 +33,53 @@ public class ExcelVectorServiceManualTest {
 
 
     public static void main(String[] args) throws Exception {
+        main2();
+
+
+    }
+
+    public static void main2() throws Exception {
+        ExcelVectorService service = getExcelVectorService("D:\\飞书\\Downloads\\小红书数据.xlsx");
+
+        String[] testQueries = {"首购用户支付金额最大的是多少"};
+
+        for (String query : testQueries) {
+            System.out.println("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+            System.out.println("问: " + query);
+            System.out.println("答: " + service.chatWithExcel(query));
+            Thread.sleep(1000); // 避免请求过快
+        }
+
+        System.out.println("\n🎉 测试完成！");
+    }
+
+    public static void main1() throws Exception {
+        ExcelVectorService service = getExcelVectorService("D:\\飞书\\Downloads\\小红书数据.xlsx");
+
+        String[] testQueries = {
+                "哪个公司收入最高？",
+                "互联网行业的公司有哪些？",
+                "利润超过5000万的公司有多少家？"
+        };
+
+        for (String query : testQueries) {
+            System.out.println("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+            System.out.println("问: " + query);
+            System.out.println("答: " + service.chatWithExcel(query));
+            Thread.sleep(1000); // 避免请求过快
+        }
+
+        System.out.println("\n🎉 测试完成！");
+    }
+
+
+    private static ExcelVectorService getExcelVectorService(String testExcelPath) {
         // ========== 1. 准备测试环境 ==========
         System.out.println("🚀 开始纯Java测试...");
 
         // 创建Excel测试文件（如果不存在）
         //String testExcelPath = "test-sample.xlsx";
-        String testExcelPath = "D:\\飞书\\Downloads\\小红书数据.xlsx";
+        //String testExcelPath = "D:\\飞书\\Downloads\\小红书数据.xlsx";
         //createTestExcel(testExcelPath);
 
         // 手动装配依赖
@@ -67,21 +109,7 @@ public class ExcelVectorServiceManualTest {
 
         // ========== 3. 测试对话功能 ==========
         System.out.println("\n💬 步骤2: 测试对话...");
-
-        String[] testQueries = {
-                "哪个公司收入最高？",
-                "互联网行业的公司有哪些？",
-                "利润超过5000万的公司有多少家？"
-        };
-
-        for (String query : testQueries) {
-            System.out.println("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-            System.out.println("问: " + query);
-            System.out.println("答: " + service.chatWithExcel(query, "test-sample.xlsx"));
-            Thread.sleep(1000); // 避免请求过快
-        }
-
-        System.out.println("\n🎉 测试完成！");
+        return service;
     }
 
     // ========== 辅助类和方法 ==========

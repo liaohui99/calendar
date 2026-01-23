@@ -223,6 +223,14 @@
             <artifactId>langchain4j-ollama</artifactId>
         </dependency>
 
+        <!-- 添加百炼专属依赖（必须） -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-community-dashscope</artifactId>
+            <!--<version>1.9.1-beta17</version>-->
+            <version>${langchain4j-spring.version}</version>
+        </dependency>
+
 <!--        &lt;!&ndash; 内存向量数据库 &ndash;&gt;
         <dependency>
             <groupId>dev.langchain4j</groupId>
